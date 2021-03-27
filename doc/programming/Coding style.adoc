@@ -1,3 +1,5 @@
+:last-update-label!:
+
 = Coding style
 
 == Formatting files
