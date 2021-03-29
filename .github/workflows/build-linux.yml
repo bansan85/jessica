@@ -1,0 +1,74 @@
+---
+name: Linux build
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                include:
+                    - name: ubuntu-gcc
+                      cc: gcc-10
+                      cxx: g++-10
+                      os: ubuntu-latest
+                    - name: ubuntu-clang
+                      cc: clang-11
+                      cxx: clang++-11
+                      os: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+            - name: Install SSH key
+              if: ${{ github.event_name == 'push' }}
+              uses: shimataro/ssh-key-action@v2
+              with:
+                  key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
+                  known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
+            - name: Install gcc
+              if: ${{ matrix.name == 'ubuntu-gcc' }}
+              run: sudo apt-get update && sudo apt-get install -yq g++ gcc
+            - name: Install clang
+              if: ${{ matrix.name == 'ubuntu-clang' }}
+              run: sudo apt-get update && sudo apt-get install -yq clang-11
+            - name: Install 3rdparty
+              run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+            - name: cmake
+              env:
+                  CC: ${{ matrix.cc }}
+                  CXX: ${{ matrix.cxx }}
+              run: |
+                  mkdir build
+                  cmake -S . -B build
+                  cmake --build build/ --target all
+            - name: ctest
+              shell: bash
+              run: |
+                  cd build || exit 1
+                  ctest -O test-result.xml
+                  cd .. || exit 1
+            - name: Publish test
+              if: ${{ github.event_name == 'push' }}
+              run: |
+                  eval `ssh-agent`
+                  git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b ${{ matrix.name }}
+                  cp build/test-result.xml jessica-ci
+                  apt list --installed > jessica-ci/apt-installed.txt
+                  ssh-add ~/.ssh/id_rsa
+                  gpg --version
+                  gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
+                  gpg --import .github/encrypted/github-ci-private.key
+                  cd jessica-ci || exit 1
+                  git config --global user.name "Github CI"
+                  git config --global user.email "github-ci@le-garrec.fr"
+                  git add .
+                  if [ -n "$(git diff-index --name-only HEAD --)" ]; \
+                  then \
+                    git commit -S${{ secrets.GPG_KEY_ID }} -m "${{ github.event.head_commit.message }}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
+                    git push || { echo "Failure git push" && exit 1; } \
+                  fi
+                  cd .. || exit 1

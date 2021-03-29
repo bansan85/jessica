@@ -16,4 +16,15 @@ shellcheck -- **/*.sh || retval=1
 
 safety check -r requirements-linter.txt || retval=1
 
+cd build || exit 1
+iwyu_tool -p . -- -Xiwyu --mapping_file="$(pwd)/../.iwyu-suppressions" > iwyu_tool.log
+if [ "$(grep -c -e "should add these lines" -e "should remove these lines" < iwyu_tool.log)" -ne "0" ]
+then
+  cat iwyu_tool.log
+  retval=1
+  echo "Failure iwyu_tool"
+fi
+cppcheck --enable=all --project=compile_commands.json --error-exitcode=1 --inline-suppr --template="{file},{line},{severity},{id},{message}" --suppressions-list=../.cppcheck-suppressions || { retval=1 && echo "Failure cppcheck"; }
+cd .. || exit 1
+
 exit $retval
