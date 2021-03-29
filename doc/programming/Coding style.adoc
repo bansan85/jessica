@@ -1,7 +1,0 @@
-:last-update-label!:
-
-= Coding style
-
-== Formatting files
-
-Use LF as end of line. A choice must be done between Windows and Linux. Shorter is better and easier.

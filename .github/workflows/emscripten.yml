@@ -1,0 +1,54 @@
+---
+name: emscripten
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install emscripten
+              run: |
+                  git clone --depth=1 https://github.com/emscripten-core/emsdk.git
+                  cd emsdk
+                  ./emsdk install latest
+                  ./emsdk activate latest
+                  source ./emsdk_env.sh
+                  find . -name "*.cmake"
+                  cd ..
+            - name: cmake
+              run: |
+                  source ./emsdk/emsdk_env.sh
+                  mkdir build
+                  cmake -DCMAKE_TOOLCHAIN_FILE="./emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -DBUILD_TESTING=OFF -S . -B build
+                  cmake --build build/ --target all
+                  find .
+#            - name: ctest
+#              run: |
+#                  cd build || exit 1
+#                  ctest -O test-result.xml
+#                  cd .. || exit 1
+#            - name: Publish test
+#              if: ${{ github.event_name == 'push' }}
+#              run: |
+#                  eval `ssh-agent`
+#                  git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b ${{ matrix.name }}
+#                  cp build/test-result.xml jessica-ci
+#                  apt list --installed > jessica-ci/apt-installed.txt
+#                  ssh-add ~/.ssh/id_rsa
+#                  gpg --version
+#                  gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
+#                  gpg --import .github/encrypted/github-ci-private.key
+#                  cd jessica-ci || exit 1
+#                  git config --global user.name "Github CI"
+#                  git config --global user.email "github-ci@le-garrec.fr"
+#                  git add .
+#                  if [ -n "$(git diff-index --name-only HEAD --)" ]; \
+#                  then \
+#                    git commit -S${{ secrets.GPG_KEY_ID }} -m "${{ github.event.head_commit.message }}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
+#                    git push || { echo "Failure git push" && exit 1; } \
+#                  fi
+#                  cd .. || exit 1

@@ -1,0 +1,126 @@
+:last-update-label!:
+:source-highlighter: highlight.js
+:highlightjsdir: highlight
+
+= Coding style
+
+== General rule
+
+The https://google.github.io/styleguide/cppguide.html[Google C++ Style Guide] must be apply.
+
+Rule in the current paragraph is a reminder of the official guide.
+
+=== Naming convention
+
+  * Filename: lower case with underline between words (i.e. `file_name.cc`),
+  * Classe: camel case (i.e. `LoadClass`),
+  * Function: camel case (i.e. `ExecuteRule`).
+  * Accessors (getter / setter) do not use prefix `Get` and `Set`. Getters should not have argument and Setter should have one.
+
+  * Extension:
+    ** C++ source: `.cc` and `.h`,
+    ** Asciidoc: `.adoc`,
+    ** yaml: `.yml`.
+
+Do not use abbreviation.
+
+== More formatting rules
+
+=== Formatting files
+
+Use LF as end of line. A choice must be done between Windows and Linux. Shorter is better and easier.
+
+The main formating code I don't respect in Google standard is that all brackets are in new line. Only exception if both opening and closing bracket are in same line.
+
+== More coding style
+
+=== Functional programming
+
+The software use functional programming when possible. Why ? Because I want to try it.
+
+Getter and Setter are const. Setter return `std::shared_ptr`.
+
+Functional programming makes all data const, so delete or make private / protected move constructor and move assignment.
+
+=== Interface
+
+Each public class should have an interface. This ease test (perfectly compatible with mock of gtest) and hide implementation and private field.
+
+To declare an interface, use pure virtual function everywhere.
+
+https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rc-copy-virtual[A polymorphic class should suppress copying]. All classes have interface, so delete or make private / protected copy constructor and copy assignment.
+
+Using setter need to copy data. https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rh-copy[For making deep copies of polymorphic classes prefer a virtual clone function instead of copy construction/assignment]
+
+Ownership of a return value of a setter must be able to be shared. Use `std::shared_ptr<..*>`.
+
+Default constructor must be declared as protected to be inheritable.
+Copy constructor must be declared as protected to be clonable.
+
+Exemple of interface:
+
+[source,cpp]
+----
+class IFoundationStrip
+{
+ public:
+  IFoundationStrip(IFoundationStrip&&) noexcept = delete;
+  IFoundationStrip& operator=(const IFoundationStrip&) = delete;
+  IFoundationStrip& operator=(IFoundationStrip&&) noexcept = delete;
+  virtual ~IFoundationStrip() = default;
+
+  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> Clone() const = 0;
+
+  [[nodiscard]] virtual double B() const noexcept = 0;
+  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> B(double b) = 0;
+
+ protected:
+  IFoundationStrip() = default;
+  IFoundationStrip(const IFoundationStrip&) = default;
+};
+----
+
+Exemple of class:
+
+Copy constructor must be public to use `std::make_shared`.
+
+[source,cpp]
+----
+class FoundationStrip : public IFoundationStrip
+{
+ public:
+  FoundationStrip() = default;
+  FoundationStrip(const FoundationStrip&) = default;
+  FoundationStrip(FoundationStrip&&) noexcept = delete;
+  FoundationStrip& operator=(const FoundationStrip&) = delete;
+  FoundationStrip& operator=(FoundationStrip&&) noexcept = delete;
+  ~FoundationStrip() override = default;
+
+  [[nodiscard]] std::shared_ptr<IFoundationStrip> Clone() const override
+  {
+    return std::make_shared<FoundationStrip>(*this);
+  }
+
+  [[nodiscard]] double B() const noexcept override { return b_; }
+  [[nodiscard]] std::shared_ptr<IFoundationStrip> B(double b) override
+  {
+    auto retval = std::make_shared<FoundationStrip>(*this);
+    retval->b_ = b;
+    return retval;
+  }
+
+ private:
+  double b_ = std::numeric_limits<double>::quiet_NaN();
+};
+----
+
+=== Dependencies
+
+Avoid deep dependencies.
+If you use external dependency for just a few functions that could be easily replaced by another library, create an header adapter. See `jessica/test/test.h` for example.
+
+=== Avoid...
+
+  * ...too much symbol.
+
+Use anonymous namespace where possible.
