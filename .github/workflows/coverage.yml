@@ -1,0 +1,86 @@
+---
+name: coverage
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                include:
+                    - name: coverage-gcc
+                      cc: gcc-10
+                      cxx: g++-10
+                    - name: coverage-clang
+                      cc: clang-11
+                      cxx: clang++-11
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install SSH key
+              if: ${{ github.event_name == 'push' }}
+              uses: shimataro/ssh-key-action@v2
+              with:
+                  key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
+                  known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
+            - name: Install 3rdparty
+              run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+            - name: Install gcc
+              if: ${{ matrix.name == 'coverage-gcc' }}
+              run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov
+            - name: Install clang
+              if: ${{ matrix.name == 'coverage-clang' }}
+              run: sudo apt-get update && sudo apt-get install -yq clang-11 tidy
+            - name: cmake
+              env:
+                  CC: ${{ matrix.cc }}
+                  CXX: ${{ matrix.cxx }}
+              run: |
+                  mkdir build
+                  cmake -S . -B build -DBUILD_COVERAGE:BOOL=ON
+                  cmake --build build/ --target all
+            - name: ctest
+              run: |
+                  cd build || exit 1
+                  ctest -O test-result.xml
+                  cd .. || exit 1
+            - name: Coverage report gcc
+              if: ${{ matrix.name == 'coverage-gcc' }}
+              run: |
+                  lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
+                  lcov --remove build/coverage.info "/usr/include/*" --rc lcov_branch_coverage=1 -o build/coverage2.info
+                  genhtml --output-directory build/coverage --demangle-cpp --num-spaces 2 --sort --function-coverage --branch-coverage --legend build/coverage2.info
+                  find build/coverage -name "*.html" -exec sed -i -r "s#headerValue""\>.*-.*-.* .*:.*:.*td#headerValue""></td#g" {} \;
+            - name: Coverage report clang
+              shell: bash
+              if: ${{ matrix.name == 'coverage-clang' }}
+              run: |
+                  shopt -s globstar dotglob
+                  llvm-profdata-11 merge -output=code.profdata **/*.profraw
+                  mkdir build/coverage
+                  llvm-cov-11 show -use-color --format html -instr-profile=code.profdata ./build/test/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
+                  find build/coverage -name "*.html" -exec tidy -i -m --doctype html5 --drop-empty-elements no {} \;
+                  find build/coverage -name "*.html" -exec sed -i -r "s#Created: .*-.*-.* .*:.*h4#</h4#g" {} \;
+            - name: Publish test
+              if: ${{ github.event_name == 'push' }}
+              run: |
+                  eval `ssh-agent`
+                  git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b ${{ matrix.name }}
+                  rm -Rf jessica-ci/*
+                  cp -R build/coverage jessica-ci/
+                  ssh-add ~/.ssh/id_rsa
+                  gpg --version
+                  gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
+                  gpg --import .github/encrypted/github-ci-private.key
+                  cd jessica-ci || exit 1
+                  git config --global user.name "Github CI"
+                  git config --global user.email "github-ci@le-garrec.fr"
+                  git add .
+                  if [ -n "$(git diff-index --name-only HEAD --)" ]; \
+                  then \
+                    git commit -S${{ secrets.GPG_KEY_ID }} -m "${{ github.event.head_commit.message }}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
+                    git push || { echo "Failure git push" && exit 1; } \
+                  fi
+                  cd .. || exit 1
