@@ -51,6 +51,7 @@ jobs:
               run: |
                   lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
                   lcov --remove build/coverage.info "/usr/include/*" --rc lcov_branch_coverage=1 -o build/coverage2.info
+                  bash <(curl -s https://codecov.io/bash) -f build/coverage2.info
                   genhtml --output-directory build/coverage --demangle-cpp --num-spaces 2 --sort --function-coverage --branch-coverage --legend build/coverage2.info
                   find build/coverage -name "*.html" -exec sed -i -r "s#headerValue""\>.*-.*-.* .*:.*:.*td#headerValue""></td#g" {} \;
             - name: Coverage report clang

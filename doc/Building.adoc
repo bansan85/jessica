@@ -58,7 +58,7 @@ Lots (maybe too much) of linters are used:
 
 === Data generated
 
-I decided to use my own interface and not other well-integrated softwares like https://codecov.io[codecov] or https://codescene.io[codescene] to keep data under control.
+I decided to use my own interface in addition to other well-integrated softwares like https://codecov.io[codecov] to keep data under control.
 
 All data are stored in https://github.com/bansan85/jessica-ci[jessica-ci] repository.
 
