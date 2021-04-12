@@ -25,14 +25,10 @@ jobs:
               with:
                   key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
                   known_hosts: github.com ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS_WINDOWS }}
-            - name: Install MSVC
-              uses: ilammy/msvc-dev-cmd@v1
             - name: Configure Windows Vcpkg
               uses: lukka/set-shell-env@master
               with:
                   VCPKGRESPONSEFILE: "${{ github.workspace }}/config/cmake/vcpkg_x64-windows.txt"
-            - name: Configure Windows Cmake
-              uses: lukka/get-cmake@latest
             - name: Install Windows Vcpkg
               uses: lukka/run-vcpkg@v6
               id: runvcpkg
@@ -40,19 +36,16 @@ jobs:
                   vcpkgArguments: "@${{ env.VCPKGRESPONSEFILE }}"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
                   appendedCacheKey: ${{ hashFiles( env.VCPKGRESPONSEFILE ) }}
-            - name: Run CMake with Ninja
-              uses: lukka/run-cmake@main
-              id: runcmake
-              with:
-                  cmakeListsTxtPath: "${{ github.workspace }}/CMakeLists.txt"
-                  useVcpkgToolchainFile: true
-                  buildWithCMakeArgs: "-- -v"
-                  buildDirectory: "${{ github.workspace }}/build"
+            - name: CMake
+              run: |
+                  mkdir "${{ github.workspace }}/build"
+                  cmake -S "${{ github.workspace }}" -B "${{ github.workspace }}/build" -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+                  cmake --build "${{ github.workspace }}/build" --target ALL_BUILD --config Debug
             - name: ctest
               shell: bash
               run: |
                   cd build || exit 1
-                  ctest -O test-result.xml
+                  ctest -C Debug -O test-result.xml
                   cd .. || exit 1
             - name: Publish test
               shell: bash
