@@ -29,7 +29,7 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
             - name: Install gcc
               if: ${{ matrix.name == 'coverage-gcc' }}
-              run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov
+              run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov libdatetime-perl libdatetime-format-w3cdtf-perl
             - name: Install clang
               if: ${{ matrix.name == 'coverage-clang' }}
               run: sudo apt-get update && sudo apt-get install -yq clang-11 tidy
@@ -49,10 +49,11 @@ jobs:
             - name: Coverage report gcc
               if: ${{ matrix.name == 'coverage-gcc' }}
               run: |
-                  lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
-                  lcov --remove build/coverage.info "/usr/include/*" --rc lcov_branch_coverage=1 -o build/coverage2.info
+                  git clone --depth 1 https://github.com/henry2cox/lcov.git -b diffcov_initial
+                  ./lcov/bin/lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
+                  ./lcov/bin/lcov --remove build/coverage.info "/usr/include/*" --rc lcov_branch_coverage=1 -o build/coverage2.info
                   bash <(curl -s https://codecov.io/bash) -f build/coverage2.info
-                  genhtml --output-directory build/coverage --demangle-cpp --num-spaces 2 --sort --function-coverage --branch-coverage --legend build/coverage2.info
+                  ./lcov/bin/genhtml --output-directory build/coverage --demangle-cpp --num-spaces 2 --sort --function-coverage --branch-coverage --legend build/coverage2.info
                   find build/coverage -name "*.html" -exec sed -i -r "s#headerValue""\>.*-.*-.* .*:.*:.*td#headerValue""></td#g" {} \;
             - name: Coverage report clang
               shell: bash
