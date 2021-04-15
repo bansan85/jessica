@@ -1,0 +1,47 @@
+---
+name: Linux build
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                include:
+                    - sanitizer: address
+                      cc: gcc-10
+                      cxx: g++-10
+                    - sanitizer: thread
+                      cc: gcc-10
+                      cxx: g++-10
+                    - sanitizer: leak
+                      cc: gcc-10
+                      cxx: g++-10
+                    - sanitizer: undefined
+                      cc: gcc-10
+                      cxx: g++-10
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+            - name: Install gcc
+              run: sudo apt-get update && sudo apt-get install -yq g++-10 gcc-10
+            - name: Install 3rdparty
+              run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+            - name: cmake
+              env:
+                  CC: ${{ matrix.cc }}
+                  CXX: ${{ matrix.cxx }}
+              run: |
+                  mkdir build
+                  cmake -S . -B build -DCMAKE_CXX_FLAGS=-fsanitize=${{ matrix.sanitizer }}
+                  cmake --build build/ --target all
+            - name: ctest
+              shell: bash
+              run: |
+                  cd build || exit 1
+                  ctest
+                  cd .. || exit 1
