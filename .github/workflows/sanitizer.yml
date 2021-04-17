@@ -12,29 +12,52 @@ jobs:
             matrix:
                 include:
                     - sanitizer: address
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                     - sanitizer: thread
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                     - sanitizer: leak
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                     - sanitizer: undefined
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                     - sanitizer: address
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
                     - sanitizer: thread
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
                     - sanitizer: leak
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
                     - sanitizer: undefined
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
+                    - sanitizer: cfi
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      cxx_flags: -flto=thin -fvisibility=hidden -fno-sanitize-trap=cfi
+                      ld_flags: -fuse-ld=gold
+                      ranlib: /usr/bin/llvm-ranlib-11
         steps:
             - uses: actions/checkout@v2
               with:
@@ -48,12 +71,9 @@ jobs:
             - name: Install 3rdparty
               run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
             - name: cmake
-              env:
-                  CC: ${{ matrix.cc }}
-                  CXX: ${{ matrix.cxx }}
               run: |
                   mkdir build
-                  cmake -S . -B build -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer"
+                  cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer -g -O0 ${{ matrix.cxx_flags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ld_flags }} -Wl,-O0" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
                   cmake --build build/ --target all
             - name: ctest
               shell: bash

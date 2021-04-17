@@ -6,7 +6,8 @@
 
 JTEST_NAME(data, FoundationStrip)  // NOLINT
 {
-  const auto foundation = Data::Geotechnical::Create::FoundationStrip();
+  const auto foundation =
+      Jessica::Data::Geotechnical::Create::FoundationStrip();
   JTEST_TRUE(std::isnan(foundation->B()));
   const auto foundation2 = foundation->B(1.);
   JTEST_TRUE(std::isnan(foundation->B()));

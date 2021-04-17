@@ -31,7 +31,7 @@ jobs:
                   git config --global user.name "Github CI"
                   git config --global user.email "github-ci@le-garrec.fr"
             - name: 3rdparty part 1
-              run: sudo apt-get update && sudo apt-get install -yq clang-format
+              run: sudo apt-get update && sudo apt-get install -yq clang-format-10
             - name: Set up Python "3.9"
               uses: actions/setup-python@v2
               with:
@@ -54,16 +54,16 @@ jobs:
                     exit 1; \
                   fi
             - name: 3rdparty part 2
-              run: sudo apt-get install -yq libgtest-dev cppcheck iwyu shellcheck clang-tidy clang-11
+              run: sudo apt-get install -yq libgtest-dev cppcheck iwyu shellcheck clang-tidy-10 clang-10
             - name: run-clang-tidy
               env:
-                  CC: clang-11
-                  CXX: clang++-11
+                  CC: clang-10
+                  CXX: clang++-10
               run: |
                   mkdir build
                   cmake -S . -B build
                   cd build || exit 1
-                  run-clang-tidy
+                  run-clang-tidy-10
                   cd .. || exit 1
             - name: Lint
               run: |

@@ -1,13 +1,14 @@
 #include <memory>
 
 #include <jessica/calc/geotechnical/meyerhof.h>
+#include <jessica/compat.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
 
-namespace
+namespace Jessica::Calc::Geotechnical
 {
-class MeyerhofShallowFoundation final
-    : public Calc::Geotechnical::IMeyerhofShallowFoundation
+class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
+    : public Jessica::Calc::Geotechnical::IMeyerhofShallowFoundation
 {
  public:
   MeyerhofShallowFoundation(
@@ -39,18 +40,18 @@ class MeyerhofShallowFoundation final
   }
 
  private:
-  const std::shared_ptr<Data::Load::IVerticalEccentric>& load_;
-  const std::shared_ptr<Data::Geotechnical::IFoundationStrip>& foundation_;
+  const std::shared_ptr<Jessica::Data::Load::IVerticalEccentric>& load_;
+  const std::shared_ptr<Jessica::Data::Geotechnical::IFoundationStrip>&
+      foundation_;
 };
-}  // namespace
 
-namespace Calc::Geotechnical
-{
 std::shared_ptr<IMeyerhofShallowFoundation>
 Geotechnical::Create::MeyerhofShallowFoundation(
-    const std::shared_ptr<Data::Load::IVerticalEccentric>& load,
-    const std::shared_ptr<Data::Geotechnical::IFoundationStrip>& foundation)
+    const std::shared_ptr<Jessica::Data::Load::IVerticalEccentric>& load,
+    const std::shared_ptr<Jessica::Data::Geotechnical::IFoundationStrip>&
+        foundation)
 {
-  return std::make_shared<::MeyerhofShallowFoundation>(load, foundation);
+  return std::make_shared<
+      Jessica::Calc::Geotechnical::MeyerhofShallowFoundation>(load, foundation);
 }
-}  // namespace Calc::Geotechnical
+}  // namespace Jessica::Calc::Geotechnical

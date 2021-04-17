@@ -12,11 +12,15 @@ jobs:
             matrix:
                 include:
                     - name: coverage-gcc
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                     - name: coverage-clang
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
         steps:
             - uses: actions/checkout@v2
             - name: Install SSH key
@@ -34,12 +38,9 @@ jobs:
               if: ${{ matrix.name == 'coverage-clang' }}
               run: sudo apt-get update && sudo apt-get install -yq clang-11 tidy
             - name: cmake
-              env:
-                  CC: ${{ matrix.cc }}
-                  CXX: ${{ matrix.cxx }}
               run: |
                   mkdir build
-                  cmake -S . -B build -DBUILD_COVERAGE:BOOL=ON
+                  cmake -S . -B build -DBUILD_COVERAGE:BOOL=ON -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
                   cmake --build build/ --target all
             - name: ctest
               run: |
@@ -62,7 +63,7 @@ jobs:
                   shopt -s globstar dotglob
                   llvm-profdata-11 merge -output=code.profdata **/*.profraw
                   mkdir build/coverage
-                  llvm-cov-11 show -use-color --format html -instr-profile=code.profdata ./build/test/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
+                  llvm-cov-11 show -use-color --format html -instr-profile=code.profdata ./build/test/backend/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
                   find build/coverage -name "*.html" -exec tidy -i -m --doctype html5 --drop-empty-elements no {} \;
                   find build/coverage -name "*.html" -exec sed -i -r "s#Created: .*-.*-.* .*:.*h4#</h4#g" {} \;
             - name: Publish test

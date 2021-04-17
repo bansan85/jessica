@@ -1,0 +1,18 @@
+:last-update-label!:
+:source-highlighter: highlight.js
+:highlightjsdir: highlight
+
+= Architecture
+
+== Library
+
+The whole backend is build in a single library.
+
+The library must be buildable with option `-fvisibility=hidden`. So all symbols that need to be used must be explicitly exported.
+
+For this job, it will be used:
+
+- `\__declspec(dllimport)` and `__declspec(dllexport)` will be used for https://docs.microsoft.com/en-us/cpp/build/importing-and-exporting[Windows],
+- `\\__attribute__((visibility("default")))` will be used for Linux.
+
+Internally, you must define the macro `BUILDING_JESSICA_DLL`.

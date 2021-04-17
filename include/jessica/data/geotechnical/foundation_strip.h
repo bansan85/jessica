@@ -2,9 +2,11 @@
 
 #include <memory>
 
-namespace Data::Geotechnical
+#include <jessica/compat.h>
+
+namespace Jessica::Data::Geotechnical
 {
-class IFoundationStrip
+class JESSICA_DLL_PUBLIC IFoundationStrip
 {
  public:
   IFoundationStrip(IFoundationStrip&&) = delete;
@@ -22,9 +24,9 @@ class IFoundationStrip
   IFoundationStrip(const IFoundationStrip&) = default;
 };
 
-class Create
+class JESSICA_DLL_PUBLIC Create
 {
  public:
   static std::shared_ptr<IFoundationStrip> FoundationStrip();
 };
-}  // namespace Data::Geotechnical
+}  // namespace Jessica::Data::Geotechnical

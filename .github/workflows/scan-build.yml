@@ -23,12 +23,9 @@ jobs:
             - name: Install 3rdparty
               run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
             - name: cmake
-              env:
-                  CC: clang-11
-                  CXX: clang++-11
               run: |
                   mkdir build scan-build-output
-                  scan-build-11 -o scan-build-output cmake -S . -B build
+                  scan-build-11 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-11 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-11 -DCMAKE_AR=/usr/bin/llvm-ar-11 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-11
                   scan-build-11 -o scan-build-output cmake --build build/ --target all
             - name: Publish result
               if: ${{ github.event_name == 'push' }}

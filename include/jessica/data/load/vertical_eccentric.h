@@ -2,9 +2,11 @@
 
 #include <memory>
 
-namespace Data::Load
+#include <jessica/compat.h>
+
+namespace Jessica::Data::Load
 {
-class IVerticalEccentric
+class JESSICA_DLL_PUBLIC IVerticalEccentric
 {
  public:
   IVerticalEccentric(IVerticalEccentric&&) = delete;
@@ -26,9 +28,9 @@ class IVerticalEccentric
   IVerticalEccentric(const IVerticalEccentric&) = default;
 };
 
-class Create
+class JESSICA_DLL_PUBLIC Create
 {
  public:
   static std::shared_ptr<IVerticalEccentric> VerticalEccentric();
 };
-}  // namespace Data::Load
+}  // namespace Jessica::Data::Load

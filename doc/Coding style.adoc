@@ -39,6 +39,10 @@ For the MIT licence, there is only a copy in the file LICENSE.md.
 
 == More coding style
 
+=== Namespace
+
+All symbols have a main namespace `Jessica`.
+
 === Functional programming
 
 The software use functional programming when possible. Why ? Because I want to try it.
@@ -66,12 +70,14 @@ Exemple of interface:
 
 [source,cpp]
 ----
-class IFoundationStrip
+namespace Jessica::Data::Geotechnical
+{
+class JESSICA_DLL_PUBLIC IFoundationStrip
 {
  public:
-  IFoundationStrip(IFoundationStrip&&) noexcept = delete;
+  IFoundationStrip(IFoundationStrip&&) = delete;
   IFoundationStrip& operator=(const IFoundationStrip&) = delete;
-  IFoundationStrip& operator=(IFoundationStrip&&) noexcept = delete;
+  IFoundationStrip& operator=(IFoundationStrip&&) = delete;
   virtual ~IFoundationStrip() = default;
 
   [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> Clone() const = 0;
@@ -83,6 +89,13 @@ class IFoundationStrip
   IFoundationStrip() = default;
   IFoundationStrip(const IFoundationStrip&) = default;
 };
+
+class JESSICA_DLL_PUBLIC Create
+{
+ public:
+  static std::shared_ptr<IFoundationStrip> FoundationStrip();
+};
+}  // namespace Jessica::Data::Geotechnical
 ----
 
 Exemple of class:
@@ -91,14 +104,17 @@ Copy constructor must be public to use `std::make_shared`.
 
 [source,cpp]
 ----
-class FoundationStrip : public IFoundationStrip
+namespace Jessica::Data::Geotechnical
+{
+class JESSICA_DLL_PUBLIC FoundationStrip
+    : public Jessica::Data::Geotechnical::IFoundationStrip
 {
  public:
   FoundationStrip() = default;
   FoundationStrip(const FoundationStrip&) = default;
-  FoundationStrip(FoundationStrip&&) noexcept = delete;
+  FoundationStrip(FoundationStrip&&) = delete;
   FoundationStrip& operator=(const FoundationStrip&) = delete;
-  FoundationStrip& operator=(FoundationStrip&&) noexcept = delete;
+  FoundationStrip& operator=(FoundationStrip&&) = delete;
   ~FoundationStrip() override = default;
 
   [[nodiscard]] std::shared_ptr<IFoundationStrip> Clone() const override
@@ -117,7 +133,17 @@ class FoundationStrip : public IFoundationStrip
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
+
+std::shared_ptr<IFoundationStrip> Create::FoundationStrip()
+{
+  return std::make_shared<Jessica::Data::Geotechnical::FoundationStrip>();
+}
+}  // namespace Jessica::Data::Geotechnical
 ----
+
+At first, the idea was to put the implementation `FoundationStrip` in a anonymous namespace.
+Infortunatly, to make the sanitizer `cfi` works, the `vtable` of `FoundationStrip` must be exported.
+I kept separation between interface and implementation for tests.
 
 === Dependencies
 

@@ -15,6 +15,8 @@ find_package(Threads REQUIRED)
 
 option(BUILD_COVERAGE "Enable coverage")
 
+add_compile_definitions(BUILDING_JESSICA_DLL)
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   add_compile_options(-Weverything -Werror -Wno-c++98-compat -Wno-padded
                       -Wno-c++98-compat-pedantic -Wno-weak-vtables)

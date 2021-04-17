@@ -12,12 +12,16 @@ jobs:
             matrix:
                 include:
                     - name: ubuntu-gcc
-                      cc: gcc-10
-                      cxx: g++-10
+                      ar: /usr/bin/ar
+                      cc: /usr/bin/gcc-10
+                      cxx: /usr/bin/g++-10
+                      ranlib: /usr/bin/ranlib
                       os: ubuntu-latest
                     - name: ubuntu-clang
-                      cc: clang-11
-                      cxx: clang++-11
+                      ar: /usr/bin/llvm-ar-11
+                      cc: /usr/bin/clang-11
+                      cxx: /usr/bin/clang++-11
+                      ranlib: /usr/bin/llvm-ranlib-11
                       os: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
@@ -38,12 +42,9 @@ jobs:
             - name: Install 3rdparty
               run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
             - name: cmake
-              env:
-                  CC: ${{ matrix.cc }}
-                  CXX: ${{ matrix.cxx }}
               run: |
                   mkdir build
-                  cmake -S . -B build
+                  cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
                   cmake --build build/ --target all
             - name: ctest
               shell: bash

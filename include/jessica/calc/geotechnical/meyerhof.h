@@ -2,12 +2,13 @@
 
 #include <memory>
 
+#include <jessica/compat.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
 
-namespace Calc::Geotechnical
+namespace Jessica::Calc::Geotechnical
 {
-class IMeyerhofShallowFoundation
+class JESSICA_DLL_PUBLIC IMeyerhofShallowFoundation
 {
  public:
   IMeyerhofShallowFoundation(IMeyerhofShallowFoundation&&) = delete;
@@ -27,11 +28,11 @@ class IMeyerhofShallowFoundation
   IMeyerhofShallowFoundation(const IMeyerhofShallowFoundation&) = default;
 };
 
-class Create
+class JESSICA_DLL_PUBLIC Create
 {
  public:
   static std::shared_ptr<IMeyerhofShallowFoundation> MeyerhofShallowFoundation(
       const std::shared_ptr<Data::Load::IVerticalEccentric>& load,
       const std::shared_ptr<Data::Geotechnical::IFoundationStrip>& foundation);
 };
-}  // namespace Calc::Geotechnical
+}  // namespace Jessica::Calc::Geotechnical

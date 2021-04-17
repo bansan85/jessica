@@ -7,10 +7,13 @@
 
 int main()
 {
-  const auto load = Data::Load::Create::VerticalEccentric()->E(0.2)->V(100.);
-  const auto foundation = Data::Geotechnical::Create::FoundationStrip()->B(1.);
+  const auto load =
+      Jessica::Data::Load::Create::VerticalEccentric()->E(0.2)->V(100.);
+  const auto foundation =
+      Jessica::Data::Geotechnical::Create::FoundationStrip()->B(1.);
   const auto calc =
-      Calc::Geotechnical::Create::MeyerhofShallowFoundation(load, foundation);
+      Jessica::Calc::Geotechnical::Create::MeyerhofShallowFoundation(
+          load, foundation);
 
   std::cout << calc->Qref() << " and " << calc->B_() << "\n";
 }

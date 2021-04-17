@@ -10,7 +10,7 @@
 
 Tools needed:
 
-  * Compiler: gcc, clang or Visual Studio,
+  * Compiler: gcc, clang or Visual Studio with C++20 support,
   * https://cmake.org/[cmake].
 
 === Backend
@@ -25,7 +25,7 @@ You need:
 
 == Continuous integration
 
-=== Building
+=== Tools
 
 The build is tested with Ubuntu-LTS with gcc and clang and Windows with Visual Studio.
 

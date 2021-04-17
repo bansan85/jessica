@@ -1,11 +1,13 @@
 #include <limits>
 #include <memory>
 
+#include <jessica/compat.h>
 #include <jessica/data/load/vertical_eccentric.h>
 
-namespace
+namespace Jessica::Data::Load
 {
-class VerticalEccentric : public Data::Load::IVerticalEccentric
+class JESSICA_DLL_PUBLIC VerticalEccentric
+    : public Jessica::Data::Load::IVerticalEccentric
 {
  public:
   VerticalEccentric() = default;
@@ -39,12 +41,9 @@ class VerticalEccentric : public Data::Load::IVerticalEccentric
   double v_ = std::numeric_limits<double>::quiet_NaN();
   double e_ = std::numeric_limits<double>::quiet_NaN();
 };
-}  // namespace
 
-namespace Data::Load
-{
 std::shared_ptr<IVerticalEccentric> Create::VerticalEccentric()
 {
-  return std::make_shared<::VerticalEccentric>();
+  return std::make_shared<Jessica::Data::Load::VerticalEccentric>();
 }
-}  // namespace Data::Load
+}  // namespace Jessica::Data::Load

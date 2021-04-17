@@ -1,11 +1,13 @@
 #include <limits>
 #include <memory>
 
+#include <jessica/compat.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 
-namespace
+namespace Jessica::Data::Geotechnical
 {
-class FoundationStrip : public Data::Geotechnical::IFoundationStrip
+class JESSICA_DLL_PUBLIC FoundationStrip
+    : public Jessica::Data::Geotechnical::IFoundationStrip
 {
  public:
   FoundationStrip() = default;
@@ -31,12 +33,9 @@ class FoundationStrip : public Data::Geotechnical::IFoundationStrip
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
-}  // namespace
 
-namespace Data::Geotechnical
-{
 std::shared_ptr<IFoundationStrip> Create::FoundationStrip()
 {
-  return std::make_shared<::FoundationStrip>();
+  return std::make_shared<Jessica::Data::Geotechnical::FoundationStrip>();
 }
-}  // namespace Data::Geotechnical
+}  // namespace Jessica::Data::Geotechnical

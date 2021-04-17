@@ -6,7 +6,7 @@
 
 JTEST_NAME(data, VerticalEccentric)  // NOLINT
 {
-  const auto load = Data::Load::Create::VerticalEccentric();
+  const auto load = Jessica::Data::Load::Create::VerticalEccentric();
   JTEST_TRUE(std::isnan(load->E()));
   JTEST_TRUE(std::isnan(load->V()));
   const auto load2 = load->V(100000.);
