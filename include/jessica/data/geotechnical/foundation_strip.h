@@ -16,17 +16,11 @@ class JESSICA_DLL_PUBLIC IFoundationStrip
 
   [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> Clone() const = 0;
 
-  [[nodiscard]] virtual double B() const noexcept = 0;
-  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> B(double b) = 0;
+  [[nodiscard]] virtual double B() const = 0;
+  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> B(double b) const = 0;
 
  protected:
   IFoundationStrip() = default;
   IFoundationStrip(const IFoundationStrip&) = default;
-};
-
-class JESSICA_DLL_PUBLIC Create
-{
- public:
-  static std::shared_ptr<IFoundationStrip> FoundationStrip();
 };
 }  // namespace Jessica::Data::Geotechnical

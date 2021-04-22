@@ -6,6 +6,8 @@
 
 == Library
 
+=== Export the interface
+
 The whole backend is build in a single library.
 
 The library must be buildable with option `-fvisibility=hidden`. So all symbols that need to be used must be explicitly exported.
@@ -16,3 +18,259 @@ For this job, it will be used:
 - `\\__attribute__((visibility("default")))` will be used for Linux.
 
 Internally, you must define the macro `BUILDING_JESSICA_DLL`.
+
+== Manage data
+
+Data are stored in class.
+
+Each of these class have an pure abstract interface.
+
+The implementation of the interface is just an adapter to the class that really store the data.
+
+And if needed, you 
+
+=== Interface
+
+Each public class should have an interface. This ease test (perfectly compatible with mock of gtest) and hide implementation and private field.
+
+To declare an interface, use pure virtual function everywhere.
+
+https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rc-copy-virtual[A polymorphic class should suppress copying]. All classes have interface, so delete or make private / protected copy constructor and copy assignment.
+
+Using setter need to copy data. https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rh-copy[For making deep copies of polymorphic classes prefer a virtual clone function instead of copy construction/assignment]
+
+Ownership of a return value of a setter must be able to be shared. Use a `std::shared_ptr<>`.
+
+Default constructor must be declared as protected to be inheritable.
+Copy constructor must be declared as protected to be clonable.
+
+Exemple of interface:
+
+[source,cpp]
+----
+namespace Jessica::Data::Geotechnical
+{
+class JESSICA_DLL_PUBLIC IFoundationStrip
+{
+ public:
+  IFoundationStrip(IFoundationStrip&&) = delete;
+  IFoundationStrip& operator=(const IFoundationStrip&) = delete;
+  IFoundationStrip& operator=(IFoundationStrip&&) = delete;
+  virtual ~IFoundationStrip() = default;
+
+  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> Clone() const = 0;
+
+  [[nodiscard]] virtual double B() const = 0;
+  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> B(double b) const = 0;
+
+ protected:
+  IFoundationStrip() = default;
+  IFoundationStrip(const IFoundationStrip&) = default;
+};
+}  // namespace Jessica::Data::Geotechnical
+----
+
+=== Adapter behind the interface
+
+The interface use a standard paradigm of programmation.
+But internally, all functions are redirected by function that all overload the same function `f`.
+The goal is to ease the use of template class to decorate all functions with a single template function.
+
+To deal with function without argument or with same number of arguments of same type, I needed to add an explicit symbol. I don't want to force this symbol (a `struct`) in argument to avoid empty parameter. So I add his symbol in the name via `template`. This symbol will be explicit for function without argument and implicit for function with arguments.
+
+Copy constructor must be public to use `std::make_shared`.
+
+At first, the idea was to put the implementation `FoundationStrip` in a anonymous namespace.
+Infortunatly, to make the sanitizer `cfi` works, the `vtable` of `FoundationStrip` must be exported.
+I kept separation between interface and implementation for tests with mocks.
+
+Exemple of class that convert a class with classic functions `FoundationStrip` to a class with all the same functions `f` `FoundationStripImpl`.
+
+You can noticed the class is template. This is to add decorator to the class (see after). If decorator is not needed, just use `FoundationStripImpl` as template;
+
+[source,cpp]
+----
+namespace Jessica::Data::Geotechnical
+{
+template <typename T>
+class JESSICA_DLL_PUBLIC FoundationStrip final
+    : public Jessica::Data::Geotechnical::IFoundationStrip
+{
+ public:
+  FoundationStrip() = default;
+  FoundationStrip(const FoundationStrip&) = default;
+  FoundationStrip(FoundationStrip&&) = delete;
+  FoundationStrip& operator=(const FoundationStrip&) = delete;
+  FoundationStrip& operator=(FoundationStrip&&) = delete;
+  ~FoundationStrip() override = default;
+
+  [[nodiscard]] std::shared_ptr<IFoundationStrip> Clone() const override
+  {
+    return std::make_shared<FoundationStrip>(*this);
+  }
+
+  [[nodiscard]] double B() const override
+  {
+    // If function has no argument, you must explicit the template.
+    return T::template f<FoundationStripImpl::GetB>(*impl_);
+  }
+
+  [[nodiscard]] std::shared_ptr<IFoundationStrip> B(double b) const override
+  {
+    auto retval = std::make_shared<FoundationStrip>(*this);
+    retval->impl_ =
+        T::template f(*retval->impl_, FoundationStripImpl::SetB{.b = b});
+    return retval;
+  }
+
+ private:
+  std::shared_ptr<FoundationStripImpl> impl_ =
+      std::make_shared<FoundationStripImpl>();
+};
+}  // namespace Jessica::Data::Geotechnical
+----
+
+=== Implementation behind the adapter
+
+Example of class `..Impl`:
+
+Inside the class, you must start to define symbol that will be used to differentiate `f` specialization.
+This struct must define an explicit `ReturnType`.
+
+[source,cpp]
+----
+class JESSICA_DLL_PUBLIC FoundationStripImpl
+{
+ public:
+  // List of all struct, one for each function templated specialized.
+  struct Clone
+  {
+    using ReturnType = std::shared_ptr<FoundationStripImpl>;
+  };
+
+  struct GetB
+  {
+    using ReturnType = double;
+  };
+
+  struct SetB
+  {
+    using ReturnType = std::shared_ptr<FoundationStripImpl>;
+    double b;
+  };
+
+  FoundationStripImpl() = default;
+  FoundationStripImpl(const FoundationStripImpl&) = default;
+  FoundationStripImpl(FoundationStripImpl&&) = delete;
+  FoundationStripImpl& operator=(const FoundationStripImpl&) = delete;
+  FoundationStripImpl& operator=(FoundationStripImpl&&) = delete;
+
+  // General template for function without argument.
+  template <typename T>
+  static typename T::ReturnType f(const FoundationStripImpl&)
+  {
+    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+  }
+
+  // General template for function with arguments.
+  template <typename T>
+  static typename T::ReturnType f(const FoundationStripImpl&, const T&)
+  {
+    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+  }
+
+ private:
+  double b_ = std::numeric_limits<double>::quiet_NaN();
+};
+
+// Clone function
+template <>
+[[nodiscard]] std::shared_ptr<FoundationStripImpl>
+FoundationStripImpl::f<FoundationStripImpl::Clone>(
+    const FoundationStripImpl& self)
+{
+  return std::make_shared<FoundationStripImpl>(self);
+}
+
+// Getter function
+template <>
+[[nodiscard]] double FoundationStripImpl::f<FoundationStripImpl::GetB>(
+    const FoundationStripImpl& self)
+{
+  return self.b_;
+}
+
+// Setter function
+template <>
+[[nodiscard]] std::shared_ptr<FoundationStripImpl> FoundationStripImpl::f<>(
+    const FoundationStripImpl& self, const SetB& b)
+{
+  auto retval = std::make_shared<FoundationStripImpl>(self);
+  retval->b_ = b.b;
+  return retval;
+}
+----
+
+=== Decorator
+
+Decorators may be add between the adapter and the implementation.
+
+You have to implement two generalized template functions.
+One for `f` functions without argument and one for `f` functions with argument.
+
+If needed, you can specialize some functions.
+
+[source,cpp]
+----
+template <typename T>
+class JESSICA_DLL_PUBLIC LogCall
+{
+ public:
+  using Root = typename Jessica::Helper::ExtractRootType<T>::Root;
+
+  template <typename Args>
+  static auto f(const Root& classe, const Args&& args)
+  {
+    std::cout << "DecoratorLogger " << typeid(T).name() << " "
+              << typeid(Args).name() << std::endl;
+    return T::template f(classe, std::forward<const Args>(args));
+  }
+
+  template <typename Args>
+  static auto f(const Root& classe)
+  {
+    std::cout << "DecoratorLogger " << typeid(T).name() << " "
+              << typeid(Args).name() << std::endl;
+    return T::template f<Args>(classe);
+  }
+};
+----
+
+=== All together
+
+You can create the data without decorator.
+
+[source,cpp]
+----
+  const auto load = std::make_shared<Jessica::Data::Load::VerticalEccentric<
+      Jessica::Data::Load::VerticalEccentricImpl>>();
+----
+
+or with decorator.
+
+[source,cpp]
+----
+  using Decorator =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Data::Load::VerticalEccentricImpl>>;
+
+  const auto load =
+      std::make_shared<Jessica::Data::Load::VerticalEccentric<Decorator>>();
+----
+
+After, use the instance just the way you like.
+
+[source,cpp]
+----
+  const auto load2 = load->V(100000.);
+----

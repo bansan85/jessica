@@ -17,7 +17,7 @@ shellcheck -- **/*.sh || retval=1
 safety check -r requirements-linter.txt || retval=1
 
 cd build || exit 1
-iwyu_tool -p . -- -Xiwyu --mapping_file="$(pwd)/../.iwyu-suppressions" > iwyu_tool.log
+iwyu_tool -p . -- -Xiwyu --mapping_file="$(pwd)/../.iwyu-suppressions" -Xiwyu --no_fwd_decls > iwyu_tool.log
 if [ "$(grep -c -e "should add these lines" -e "should remove these lines" < iwyu_tool.log)" -ne "0" ]
 then
   cat iwyu_tool.log

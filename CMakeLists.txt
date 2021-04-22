@@ -18,8 +18,14 @@ option(BUILD_COVERAGE "Enable coverage")
 add_compile_definitions(BUILDING_JESSICA_DLL)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_compile_options(-Weverything -Werror -Wno-c++98-compat -Wno-padded
-                      -Wno-c++98-compat-pedantic -Wno-weak-vtables)
+  add_compile_options(
+    -Weverything
+    -Werror
+    -Wno-c++98-compat
+    -Wno-padded
+    -Wno-c++98-compat-pedantic
+    -Wno-weak-vtables
+    -Wno-c99-extensions)
   check_cxx_compiler_flag("-Wno-return-std-move-in-c++11"
                           COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
@@ -52,7 +58,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd4710
     /wd4820
     /wd5026
-    /wd5027)
+    /wd5027
+    /wd4251)
 else()
   message(WARNING "${CMAKE_CXX_COMPILER_ID} is unknown")
 endif()

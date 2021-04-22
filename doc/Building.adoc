@@ -56,6 +56,10 @@ Lots (maybe too much) of linters are used:
   * requirements.txt: https://github.com/pyupio/safety[safety],
   * cc : https://include-what-you-use.org/[iwyu], http://cppcheck.sourceforge.net/[cppcheck], https://clang.llvm.org/extra/clang-tidy/[clang-tidy].
 
+=== Sanitizers
+
+Enable all sanitizers : address, thread, leak, undefined, cfi.
+
 === Data generated
 
 I decided to use my own interface in addition to other well-integrated softwares like https://codecov.io[codecov] to keep data under control.

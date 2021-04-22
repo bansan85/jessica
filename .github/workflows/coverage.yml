@@ -45,7 +45,7 @@ jobs:
             - name: ctest
               run: |
                   cd build || exit 1
-                  ctest -O test-result.xml
+                  ctest -O test-result.xml --output-on-failure
                   cd .. || exit 1
             - name: Coverage report gcc
               if: ${{ matrix.name == 'coverage-gcc' }}
