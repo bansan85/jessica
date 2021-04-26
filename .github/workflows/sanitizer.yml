@@ -1,83 +1,83 @@
 ---
 name: Sanitizer
 on:
-    push:
-        branches: [master]
-    pull_request:
-        branches: [master]
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                include:
-                    - sanitizer: address
-                      ar: /usr/bin/ar
-                      cc: /usr/bin/gcc-10
-                      cxx: /usr/bin/g++-10
-                      ranlib: /usr/bin/ranlib
-                    - sanitizer: thread
-                      ar: /usr/bin/ar
-                      cc: /usr/bin/gcc-10
-                      cxx: /usr/bin/g++-10
-                      ranlib: /usr/bin/ranlib
-                    - sanitizer: leak
-                      ar: /usr/bin/ar
-                      cc: /usr/bin/gcc-10
-                      cxx: /usr/bin/g++-10
-                      ranlib: /usr/bin/ranlib
-                    - sanitizer: undefined
-                      ar: /usr/bin/ar
-                      cc: /usr/bin/gcc-10
-                      cxx: /usr/bin/g++-10
-                      ranlib: /usr/bin/ranlib
-                    - sanitizer: address
-                      ar: /usr/bin/llvm-ar-11
-                      cc: /usr/bin/clang-11
-                      cxx: /usr/bin/clang++-11
-                      ranlib: /usr/bin/llvm-ranlib-11
-                    - sanitizer: thread
-                      ar: /usr/bin/llvm-ar-11
-                      cc: /usr/bin/clang-11
-                      cxx: /usr/bin/clang++-11
-                      ranlib: /usr/bin/llvm-ranlib-11
-                    - sanitizer: leak
-                      ar: /usr/bin/llvm-ar-11
-                      cc: /usr/bin/clang-11
-                      cxx: /usr/bin/clang++-11
-                      ranlib: /usr/bin/llvm-ranlib-11
-                    - sanitizer: undefined
-                      ar: /usr/bin/llvm-ar-11
-                      cc: /usr/bin/clang-11
-                      cxx: /usr/bin/clang++-11
-                      ranlib: /usr/bin/llvm-ranlib-11
-                    - sanitizer: cfi
-                      ar: /usr/bin/llvm-ar-11
-                      cc: /usr/bin/clang-11
-                      cxx: /usr/bin/clang++-11
-                      cxx_flags: -flto=thin -fvisibility=hidden -fno-sanitize-trap=cfi
-                      ld_flags: -fuse-ld=gold
-                      ranlib: /usr/bin/llvm-ranlib-11
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  submodules: recursive
-            - name: Install gcc
-              if: ${{ matrix.cc == 'gcc-10' }}
-              run: sudo apt-get update && sudo apt-get install -yq g++-10 gcc-10
-            - name: Install clang
-              if: ${{ matrix.cc == 'clang-11' }}
-              run: sudo apt-get update && sudo apt-get install -yq clang-11
-            - name: Install 3rdparty
-              run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
-            - name: cmake
-              run: |
-                  mkdir build
-                  cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer -g -O0 ${{ matrix.cxx_flags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ld_flags }} -Wl,-O0" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
-                  cmake --build build/ --target all
-            - name: ctest
-              shell: bash
-              run: |
-                  cd build || exit 1
-                  ctest --output-on-failure
-                  cd .. || exit 1
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - sanitizer: address
+            ar: /usr/bin/ar
+            cc: /usr/bin/gcc-10
+            cxx: /usr/bin/g++-10
+            ranlib: /usr/bin/ranlib
+          - sanitizer: thread
+            ar: /usr/bin/ar
+            cc: /usr/bin/gcc-10
+            cxx: /usr/bin/g++-10
+            ranlib: /usr/bin/ranlib
+          - sanitizer: leak
+            ar: /usr/bin/ar
+            cc: /usr/bin/gcc-10
+            cxx: /usr/bin/g++-10
+            ranlib: /usr/bin/ranlib
+          - sanitizer: undefined
+            ar: /usr/bin/ar
+            cc: /usr/bin/gcc-10
+            cxx: /usr/bin/g++-10
+            ranlib: /usr/bin/ranlib
+          - sanitizer: address
+            ar: /usr/bin/llvm-ar-11
+            cc: /usr/bin/clang-11
+            cxx: /usr/bin/clang++-11
+            ranlib: /usr/bin/llvm-ranlib-11
+          - sanitizer: thread
+            ar: /usr/bin/llvm-ar-11
+            cc: /usr/bin/clang-11
+            cxx: /usr/bin/clang++-11
+            ranlib: /usr/bin/llvm-ranlib-11
+          - sanitizer: leak
+            ar: /usr/bin/llvm-ar-11
+            cc: /usr/bin/clang-11
+            cxx: /usr/bin/clang++-11
+            ranlib: /usr/bin/llvm-ranlib-11
+          - sanitizer: undefined
+            ar: /usr/bin/llvm-ar-11
+            cc: /usr/bin/clang-11
+            cxx: /usr/bin/clang++-11
+            ranlib: /usr/bin/llvm-ranlib-11
+          - sanitizer: cfi
+            ar: /usr/bin/llvm-ar-11
+            cc: /usr/bin/clang-11
+            cxx: /usr/bin/clang++-11
+            cxx_flags: -flto=thin -fvisibility=hidden -fno-sanitize-trap=cfi
+            ld_flags: -fuse-ld=gold
+            ranlib: /usr/bin/llvm-ranlib-11
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install gcc
+        if: ${{ matrix.cc == 'gcc-10' }}
+        run: sudo apt-get update && sudo apt-get install -yq g++-10 gcc-10
+      - name: Install clang
+        if: ${{ matrix.cc == 'clang-11' }}
+        run: sudo apt-get update && sudo apt-get install -yq clang-11
+      - name: Install 3rdparty
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+      - name: cmake
+        run: |
+          mkdir build
+          cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer -g -O0 ${{ matrix.cxx_flags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ld_flags }} -Wl,-O0" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
+          cmake --build build/ --target all
+      - name: ctest
+        shell: bash
+        run: |
+          cd build || exit 1
+          ctest --output-on-failure
+          cd .. || exit 1

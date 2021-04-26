@@ -1,0 +1,5 @@
+build
+vcpkg
+doc/highlight/highlight.min.js
+doc/highlight/styles/github.min.css
+

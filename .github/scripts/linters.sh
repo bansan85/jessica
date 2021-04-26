@@ -7,6 +7,9 @@ retval=0
 
 for i in **/*.yml
 do
+  if [[ $i == *"node_modules"* ]]; then
+    continue
+  fi
   echo "yamllint $i"
   yamllint "$i" || retval=1
 done

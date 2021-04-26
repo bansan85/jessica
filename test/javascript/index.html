@@ -1,0 +1,28 @@
+<head>
+  <script type="text/javascript" src="jessica.js"></script>
+  <script type="text/javascript">
+    jessica().then(async (instance) => {
+      const vert1 = new instance.VerticalEccentricDeco();
+      console.log(`${vert1.getE()}`);
+      console.log(`${vert1.getV()}`);
+      const vert2 = vert1.setE(0.2);
+      console.log(`${vert2.getE()}`);
+      console.log(`${vert2.getV()}`);
+      const vert3 = vert2.setV(100);
+      console.log(`${vert3.getE()}`);
+      console.log(`${vert3.getV()}`);
+
+      const found1 = new instance.FoundationStripDeco();
+      console.log(`${found1.getB()}`);
+      const found2 = found1.setB(1.0);
+      console.log(`${found2.getB()}`);
+
+      const meyer1 = new instance.MeyerhofShallowFoundationDeco(vert3, found2);
+      console.log(`${meyer1.getQref()}`);
+      console.log(`${meyer1.getB_()}`);
+
+      console.log(`STOP`);
+    });
+  </script>
+</head>
+<body></body>

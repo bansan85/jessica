@@ -81,7 +81,7 @@ template <>
 [[nodiscard]] std::shared_ptr<VerticalEccentricImpl> VerticalEccentricImpl::f(
     const VerticalEccentricImpl& self, const SetV& a)
 {
-  auto retval = std::make_shared<VerticalEccentricImpl>(self);
+  auto retval = f<VerticalEccentricImpl::Clone>(self);
   retval->v_ = a.v;
   return retval;
 }
@@ -97,7 +97,7 @@ template <>
 [[nodiscard]] std::shared_ptr<VerticalEccentricImpl> VerticalEccentricImpl::f(
     const VerticalEccentricImpl& self, const SetE& a)
 {
-  auto retval = std::make_shared<VerticalEccentricImpl>(self);
+  auto retval = f<VerticalEccentricImpl::Clone>(self);
   retval->e_ = a.e;
   return retval;
 }

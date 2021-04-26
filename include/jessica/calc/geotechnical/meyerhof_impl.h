@@ -90,8 +90,9 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
  public:
   MeyerhofShallowFoundation(
-      const std::shared_ptr<Data::Load::IVerticalEccentric>& load,
-      const std::shared_ptr<Data::Geotechnical::IFoundationStrip>& foundation)
+      const std::shared_ptr<Jessica::Data::Load::IVerticalEccentric>& load,
+      const std::shared_ptr<Jessica::Data::Geotechnical::IFoundationStrip>&
+          foundation)
       : impl_(std::make_shared<MeyerhofShallowFoundationImpl>(load, foundation))
   {
   }

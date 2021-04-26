@@ -25,7 +25,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wno-padded
     -Wno-c++98-compat-pedantic
     -Wno-weak-vtables
-    -Wno-c99-extensions)
+    -Wno-c99-extensions
+    -Wno-global-constructors)
   check_cxx_compiler_flag("-Wno-return-std-move-in-c++11"
                           COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
@@ -36,8 +37,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                         -runtime-counter-relocation)
     set(CMAKE_EXE_LINKER_FLAGS
         "${CMAKE_EXE_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
+  elseif(EMSCRIPTEN)
+    add_compile_options(-Oz)
   else()
-    add_compile_options(-O2)
+    add_compile_options(-O3)
   endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_compile_options(-Wall -Werror -Wextra -Wpedantic)
@@ -45,7 +48,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-O0 --coverage -fanalyzer)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   else()
-    add_compile_options(-O2)
+    add_compile_options(-O3)
   endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(

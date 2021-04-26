@@ -2,5 +2,7 @@
 extends: default
 
 rules:
-    line-length: false
-    truthy: false
+  line-length: false
+  truthy: false
+  indentation:
+    spaces: 2

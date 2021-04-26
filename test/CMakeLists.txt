@@ -1,1 +1,5 @@
-add_subdirectory(backend)
+if(DEFINED EMSCRIPTEN)
+  add_subdirectory(javascript)
+else()
+  add_subdirectory(backend)
+endif()

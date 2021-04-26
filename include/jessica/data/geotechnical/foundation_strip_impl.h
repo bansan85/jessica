@@ -69,7 +69,7 @@ template <>
 [[nodiscard]] std::shared_ptr<FoundationStripImpl> FoundationStripImpl::f<>(
     const FoundationStripImpl& self, const SetB& b)
 {
-  auto retval = std::make_shared<FoundationStripImpl>(self);
+  auto retval = f<FoundationStripImpl::Clone>(self);
   retval->b_ = b.b;
   return retval;
 }

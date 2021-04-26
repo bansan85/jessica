@@ -1,0 +1,126 @@
+:last-update-label!:
+:source-highlighter: highlight.js
+:highlightjsdir: highlight
+
+= Emscripten
+
+== Examples
+
+=== Bindings
+
+First, you need to define bindings in cpp source.
+
+You only need to explicitly define symbols you externally need.
+
+The syntax is easy, just don't forget to:
+
+  * all function and constructor you will need,
+  * declare all symbol when used in return type or argument:
+    ** smart pointer symbol (''unique_ptr'' and ''shared_ptr'') with ''smart_ptr'',
+    ** interface and inheritance with ''base<>''.
+  * declare all bindings in the same cpp source file. I have trouble with the linker and duplicated weak symbols.
+
+[source,cpp]
+----
+#include <iostream>
+#include <memory>
+
+#include <emscripten/bind.h>
+
+#include <jessica/calc/geotechnical/meyerhof.h>
+#include <jessica/calc/geotechnical/meyerhof_impl.h>
+#include <jessica/data/geotechnical/foundation_strip.h>
+#include <jessica/data/geotechnical/foundation_strip_impl.h>
+#include <jessica/data/load/vertical_eccentric.h>
+#include <jessica/data/load/vertical_eccentric_impl.h>
+#include <jessica/util/decorator/log_call.h>
+#include <jessica/util/decorator/log_duration.h>
+
+using namespace emscripten;
+
+EMSCRIPTEN_BINDINGS(jessica)
+{
+  class_<Jessica::Data::Geotechnical::IFoundationStrip>("IFoundationStrip")
+      .smart_ptr<
+          std::shared_ptr<Jessica::Data::Geotechnical::IFoundationStrip>>(
+          "IFoundationStrip")
+      .function(
+          "setB",
+          select_overload<std::shared_ptr<
+              Jessica::Data::Geotechnical::IFoundationStrip>(double) const>(
+              &Jessica::Data::Geotechnical::IFoundationStrip::B))
+      .function("getB", select_overload<double() const>(
+                            &Jessica::Data::Geotechnical::IFoundationStrip::B));
+
+  class_<Jessica::Data::Geotechnical::FoundationStrip<
+             Jessica::Util::Decorator::LogCall<
+                 Jessica::Util::Decorator::LogDuration<
+                     Jessica::Data::Geotechnical::FoundationStripImpl>>>,
+         base<Jessica::Data::Geotechnical::IFoundationStrip>>(
+      "FoundationStripDeco")
+      .constructor<>()
+      .function(
+          "clone",
+          &Jessica::Data::Geotechnical::FoundationStrip<
+              Jessica::Util::Decorator::LogCall<
+                  Jessica::Util::Decorator::LogDuration<
+                      Jessica::Data::Geotechnical::FoundationStripImpl>>>::
+              Clone)
+      .function(
+          "setB",
+          select_overload<std::shared_ptr<
+              Jessica::Data::Geotechnical::IFoundationStrip>(double) const>(
+              &Jessica::Data::Geotechnical::FoundationStrip<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Data::Geotechnical::FoundationStripImpl>>>::
+                  B))
+      .function(
+          "getB",
+          select_overload<double() const>(
+              &Jessica::Data::Geotechnical::FoundationStrip<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Data::Geotechnical::FoundationStripImpl>>>::
+                  B));
+}
+----
+
+Compile this source with ''-s EXPORT_NAME=jessica -s MODULARIZE=1 --bind''.
+''--bind'' will keep every symbol. This will grow size but it's easier than ''-s EXPORTED_FUNCTIONS=[]''.
+
+=== Usage in HTML
+
+Remember you need to declare with ''EMSCRIPTEN_BINDINGS'' symbols you want to use. The source must be compile with ''-s MODULARIZE=1''.
+
+[source,html]
+----
+<head>
+  <script type="text/javascript" src="jessica.js"></script>
+  <script type="text/javascript">
+    jessica().then(async (instance) => {
+      const vert1 = new instance.VerticalEccentricDeco();
+      console.log(`${vert1.getE()}`);
+      console.log(`${vert1.getV()}`);
+      const vert2 = vert1.setE(0.2);
+      console.log(`${vert2.getE()}`);
+      console.log(`${vert2.getV()}`);
+      const vert3 = vert2.setV(100);
+      console.log(`${vert3.getE()}`);
+      console.log(`${vert3.getV()}`);
+
+      const found1 = new instance.FoundationStripDeco();
+      console.log(`${found1.getB()}`);
+      const found2 = found1.setB(1.0);
+      console.log(`${found2.getB()}`);
+
+      const meyer1 = new instance.MeyerhofShallowFoundationDeco(vert3, found2);
+      console.log(`${meyer1.getQref()}`);
+      console.log(`${meyer1.getB_()}`);
+
+      console.log(`STOP`);
+    });
+  </script>
+</head>
+<body></body>
+----

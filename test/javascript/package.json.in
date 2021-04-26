@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "test": "node --trace-warnings --unhandled-rejections=strict node_modules/.bin/jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+ }

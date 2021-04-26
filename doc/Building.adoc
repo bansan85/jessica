@@ -4,6 +4,61 @@
 
 = Building
 
+== How to
+
+=== Linux
+
+[source,sh]
+----
+mkdir build
+cmake -S . -B build
+cmake --build build/ --target all
+cd build
+ctest --output-on-failure
+cd ..
+----
+
+=== Windows
+
+[source,sh]
+----
+.\vcpkg\bootstrap-vcpkg.bat
+.\vcpkg\vcpkg install gtest
+mkdir build
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build build --target ALL_BUILD --config Debug
+cd build
+ctest -C Debug --output-on-failure
+cd ..
+----
+
+=== Web Assembly
+
+You need to install https://emscripten.org/docs/getting_started/downloads.html[Emscripten].
+
+Run once:
+
+[source,sh]
+----
+git clone --depth=1 https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+----
+
+Run everytime:
+
+[source,sh]
+----
+source ./emsdk_env.sh
+mkdir build
+emcmake cmake -S . -B build
+emcmake cmake --build build/ --target all
+cd build
+ctest --output-on-failure
+cd ..
+----
+
 == Dependencies
 
 === Building
@@ -22,6 +77,17 @@ No dependencies.
 You need:
 
   * https://github.com/google/googletest[gtest].
+
+=== Documentation
+
+You need https://highlightjs.org[highlight.js].
+
+Build it with:
+
+[source,sh]
+----
+node tools/build.js -t browser cpp bash javascript html
+----
 
 == Continuous integration
 
@@ -51,10 +117,13 @@ This is done in the `linters` workflow. If a file need to be formatted, a new co
 
 Lots (maybe too much) of linters are used:
 
-  * yml: https://github.com/adrienverge/yamllint[yamllint],
-  * sh: https://github.com/koalaman/shellcheck[shellcheck],
+  * yaml: https://github.com/adrienverge/yamllint[yamllint],
+  * bash: https://github.com/koalaman/shellcheck[shellcheck],
   * requirements.txt: https://github.com/pyupio/safety[safety],
-  * cc : https://include-what-you-use.org/[iwyu], http://cppcheck.sourceforge.net/[cppcheck], https://clang.llvm.org/extra/clang-tidy/[clang-tidy].
+  * c++: https://include-what-you-use.org/[iwyu], http://cppcheck.sourceforge.net/[cppcheck], https://clang.llvm.org/extra/clang-tidy/[clang-tidy].
+  * javascript: https://eslint.org/[ESLint],
+  * css: https://stylelint.io/[stylelint],
+  * html: https://prettier.io[prettier]
 
 === Sanitizers
 
@@ -75,7 +144,8 @@ Every commit, following data are generated:
 |Tests
 |ubuntu-clang,
 ubuntu-gcc,
-windows-msbuild.
+windows-msbuild,
+emscripten.
 |Duration of each tests,
 List of installed packages for Linux.
 
