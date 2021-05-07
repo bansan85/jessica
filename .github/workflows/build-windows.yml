@@ -1,10 +1,10 @@
 ---
 name: Windows build
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_run:
+    workflows: ["format"]
+    types:
+      - completed
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -16,11 +16,17 @@ jobs:
             cxx: cl
             os: windows-latest
     steps:
+      - name: Stop if format failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: exit 1
+      - uses: bansan85/action-workflow_run-status@main
+        env:
+          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
       - uses: actions/checkout@v2
         with:
           submodules: recursive
       - name: Install SSH key
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
@@ -49,7 +55,7 @@ jobs:
           cd .. || exit 1
       - name: Publish test
         shell: bash
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         run: |
           eval `ssh-agent`
           git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b ${{ matrix.name }}

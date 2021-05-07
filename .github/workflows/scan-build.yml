@@ -1,19 +1,23 @@
 ---
 name: Scan-build
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_run:
+    workflows: ["format"]
+    types:
+      - completed
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Stop if format failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: exit 1
+      - uses: bansan85/action-workflow_run-status@main
       - uses: actions/checkout@v2
         with:
           submodules: recursive
       - name: Install SSH key
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
@@ -28,7 +32,7 @@ jobs:
           scan-build-11 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-11 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-11 -DCMAKE_AR=/usr/bin/llvm-ar-11 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-11
           scan-build-11 -o scan-build-output cmake --build build/ --target all
       - name: Publish result
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         run: |
           eval `ssh-agent`
           git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b scan-build

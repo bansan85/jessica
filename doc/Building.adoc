@@ -86,7 +86,7 @@ Build it with:
 
 [source,sh]
 ----
-node tools/build.js -t browser cpp bash javascript html
+node tools/build.js -t browser bash cpp xml javascript yaml
 ----
 
 == Continuous integration
@@ -111,7 +111,20 @@ Packages are installed with ''vcpkg''.
 
 Don't spend to much time about formatting. Continuous integration will automatically create commit to fix them with https://github.com/cheshirekow/cmake_format[cmake-format] and https://clang.llvm.org/docs/ClangFormat.html[clang-format].
 
-This is done in the `linters` workflow. If a file need to be formatted, a new commit is added with a fix and the current build will fail.
+This is done in the `format` workflow. If a file need to be formatted, a new commit is added with a fix and the current build and next workflows will fail.
+
+GitHub does not support two things:
+
+  * When a workflow runs when another workflow has finished, the result is not added to the status of the commit. https://github.com/bansan85/action-workflow_run-status[action-workflow_run-status] fix it.
+  * The start of a workflow that runs on `completed` event does not depend on the success or the failure of the previous workflow. Use the following code to fix it.
+
+[source,yml]
+----
+      - name: Stop if format failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: exit 1
+----
+
 
 === Linters
 

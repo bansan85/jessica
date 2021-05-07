@@ -1,17 +1,21 @@
 ---
 name: Emscripten
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  workflow_run:
+    workflows: ["format"]
+    types:
+      - completed
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Stop if format failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: exit 1
+      - uses: bansan85/action-workflow_run-status@main
       - uses: actions/checkout@v2
       - name: Install SSH key
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
@@ -38,7 +42,7 @@ jobs:
           ctest -O test-result.xml --output-on-failure
           cd .. || exit 1
       - name: Publish test
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
         run: |
           eval `ssh-agent`
           git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b emscripten

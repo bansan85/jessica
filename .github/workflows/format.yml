@@ -1,0 +1,55 @@
+---
+name: format
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Install SSH key
+        if: ${{ github.event_name == 'push' }}
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
+          known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
+      - name: Configure git
+        run: |
+          eval `ssh-agent`
+          ssh-add ~/.ssh/id_rsa
+          gpg --version
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
+          gpg --import .github/encrypted/github-ci-private.key
+          git config --global user.name "Github CI"
+          git config --global user.email "github-ci@le-garrec.fr"
+      - name: 3rdparty
+        run: sudo apt-get update && sudo apt-get install -yq clang-format-10
+      - name: Set up Python "3.9"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - name: Install python modules dependencies
+        run: |
+          python -m pip install --upgrade pip pipdeptree wheel
+          pip install -r requirements-linter.txt
+          pipdeptree -f > requirements-linter-ci.tmp
+          diff -pu requirements-linter.txt requirements-linter-ci.tmp
+      - name: Install node dependencies
+        run: |
+          npm install eslint eslint-config-google eslint-plugin-html
+      - name: formatter
+        shell: bash
+        run: |
+          bash ./.github/scripts/format.sh
+          git add .
+          if [ -n "$(git diff-index --name-only HEAD --)" ]; \
+          then \
+            git commit -S${{ secrets.GPG_KEY_ID }} -m "Fix formatting $GITHUB_SHA" ; \
+            git push || { echo "Failure git push" && exit 1; }; \
+            exit 1; \
+          fi
