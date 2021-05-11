@@ -23,78 +23,86 @@ Internally, you must define the macro `BUILDING_JESSICA_DLL`.
 
 Data are stored in class.
 
-Each of these class have an pure abstract interface.
+Each of these class have an interface with concept.
 
 The implementation of the interface is just an adapter to the class that really store the data.
 
-And if needed, you 
+Between each adapter and data, you may add decorators.
 
 === Interface
 
-Each public class should have an interface. This ease test (perfectly compatible with mock of gtest) and hide implementation and private field.
+Each public class should have an interface. This ease test (perfectly compatible with mock of gtest) and hide implementation and private fields.
 
-To declare an interface, use pure virtual function everywhere.
-
-https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rc-copy-virtual[A polymorphic class should suppress copying]. All classes have interface, so delete or make private / protected copy constructor and copy assignment.
-
-Using setter need to copy data. https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rh-copy[For making deep copies of polymorphic classes prefer a virtual clone function instead of copy construction/assignment]
-
-Ownership of a return value of a setter must be able to be shared. Use a `std::shared_ptr<>`.
-
-Default constructor must be declared as protected to be inheritable.
-Copy constructor must be declared as protected to be clonable.
+Ownership of a return value of a setter must be able to be shared. Use a `std::shared_ptr<>`. Pass them by reference and store them by copy.
 
 Exemple of interface:
 
 [source,cpp]
 ----
+#if !defined(JCONCEPTS) && __has_include(<concepts>)
+  #define JCONCEPTS
+  #include <concepts>
+#endif
+
+#ifdef JCONCEPTS
+  #include <memory>
+
 namespace Jessica::Data::Geotechnical
 {
-class JESSICA_DLL_PUBLIC IFoundationStrip
+template <typename T>
+concept FoundationStripConcept = requires(const T t)
 {
- public:
-  IFoundationStrip(IFoundationStrip&&) = delete;
-  IFoundationStrip& operator=(const IFoundationStrip&) = delete;
-  IFoundationStrip& operator=(IFoundationStrip&&) = delete;
-  virtual ~IFoundationStrip() = default;
-
-  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> Clone() const = 0;
-
-  [[nodiscard]] virtual double B() const = 0;
-  [[nodiscard]] virtual std::shared_ptr<IFoundationStrip> B(double b) const = 0;
-
- protected:
-  IFoundationStrip() = default;
-  IFoundationStrip(const IFoundationStrip&) = default;
+  {
+    t.Clone()
+  }
+  ->std::same_as<std::shared_ptr<T>>;
+  {
+    t.B()
+  }
+  ->std::same_as<double>;
+  {
+    t.B(std::declval<double>())
+  }
+  ->std::same_as<std::shared_ptr<T>>;
 };
 }  // namespace Jessica::Data::Geotechnical
+
+#endif
 ----
+
+TODO: remove `JCONCEPTS` when emscripten will support concepts.
 
 === Adapter behind the interface
 
 The interface use a standard paradigm of programmation.
-But internally, all functions are redirected by function that all overload the same function `f`.
+But internally, all functions are redirected to functions that all overload the same function `f`.
 The goal is to ease the use of template class to decorate all functions with a single template function.
 
-To deal with function without argument or with same number of arguments of same type, I needed to add an explicit symbol. I don't want to force this symbol (a `struct`) in argument to avoid empty parameter. So I add his symbol in the name via `template`. This symbol will be explicit for function without argument and implicit for function with arguments.
+To deal with functions without argument or with same number of arguments of same type, I needed to add an explicit symbol.
+I don't want to force this symbol (a `struct`) in argument to avoid empty parameter. So I also add this symbol in the name via `template`. This symbol will be explicit for function without argument and implicit for function with arguments:
+
+[source,cpp]
+----
+T::template f<FoundationStripImpl::GetB>(*impl_);
+T::template f(*retval->impl_, FoundationStripImpl::SetB{.b = b});
+----
 
 Copy constructor must be public to use `std::make_shared`.
 
-At first, the idea was to put the implementation `FoundationStrip` in a anonymous namespace.
-Infortunatly, to make the sanitizer `cfi` works, the `vtable` of `FoundationStrip` must be exported.
-I kept separation between interface and implementation for tests with mocks.
-
-Exemple of class that convert a class with classic functions `FoundationStrip` to a class with all the same functions `f` `FoundationStripImpl`.
+Example of class that convert a class with classic functions `FoundationStrip` to a class with all the same functions `f` `FoundationStripImpl`.
 
 You can noticed the class is template. This is to add decorator to the class (see after). If decorator is not needed, just use `FoundationStripImpl` as template;
 
 [source,cpp]
 ----
+#include <jessica/compat.h>
+#include <jessica/data/geotechnical/foundation_strip_concept.h>
+#include <jessica/helper/template.h>
+
 namespace Jessica::Data::Geotechnical
 {
 template <typename T>
 class JESSICA_DLL_PUBLIC FoundationStrip final
-    : public Jessica::Data::Geotechnical::IFoundationStrip
 {
  public:
   FoundationStrip() = default;
@@ -102,22 +110,20 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   FoundationStrip(FoundationStrip&&) = delete;
   FoundationStrip& operator=(const FoundationStrip&) = delete;
   FoundationStrip& operator=(FoundationStrip&&) = delete;
-  ~FoundationStrip() override = default;
 
-  [[nodiscard]] std::shared_ptr<IFoundationStrip> Clone() const override
+  [[nodiscard]] std::shared_ptr<FoundationStrip<T>> Clone() const
   {
-    return std::make_shared<FoundationStrip>(*this);
+    return std::make_shared<FoundationStrip<T>>(*this);
   }
 
-  [[nodiscard]] double B() const override
+  [[nodiscard]] double B() const
   {
-    // If function has no argument, you must explicit the template.
     return T::template f<FoundationStripImpl::GetB>(*impl_);
   }
 
-  [[nodiscard]] std::shared_ptr<IFoundationStrip> B(double b) const override
+  [[nodiscard]] std::shared_ptr<FoundationStrip<T>> B(double b) const
   {
-    auto retval = std::make_shared<FoundationStrip>(*this);
+    auto retval = std::make_shared<FoundationStrip<T>>(*this);
     retval->impl_ =
         T::template f(*retval->impl_, FoundationStripImpl::SetB{.b = b});
     return retval;
@@ -127,6 +133,10 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   std::shared_ptr<FoundationStripImpl> impl_ =
       std::make_shared<FoundationStripImpl>();
 };
+
+#ifdef JCONCEPTS
+static_assert(FoundationStripConcept<FoundationStrip<int>>);
+#endif
 }  // namespace Jessica::Data::Geotechnical
 ----
 
@@ -134,15 +144,21 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
 
 Example of class `..Impl`:
 
-Inside the class, you must start to define symbol that will be used to differentiate `f` specialization.
+Inside the class, you must start to define the symbol that will be used to specialize `f` function.
 This struct must define an explicit `ReturnType`.
+
+In this example, standard specialization is used.
 
 [source,cpp]
 ----
+#include <jessica/compat.h>
+#include <jessica/helper/template.h>
+
+namespace Jessica::Data::Geotechnical
+{
 class JESSICA_DLL_PUBLIC FoundationStripImpl
 {
  public:
-  // List of all struct, one for each function templated specialized.
   struct Clone
   {
     using ReturnType = std::shared_ptr<FoundationStripImpl>;
@@ -165,14 +181,12 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
   FoundationStripImpl& operator=(const FoundationStripImpl&) = delete;
   FoundationStripImpl& operator=(FoundationStripImpl&&) = delete;
 
-  // General template for function without argument.
   template <typename T>
   static typename T::ReturnType f(const FoundationStripImpl&)
   {
     static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
   }
 
-  // General template for function with arguments.
   template <typename T>
   static typename T::ReturnType f(const FoundationStripImpl&, const T&)
   {
@@ -183,7 +197,6 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
 
-// Clone function
 template <>
 [[nodiscard]] std::shared_ptr<FoundationStripImpl>
 FoundationStripImpl::f<FoundationStripImpl::Clone>(
@@ -192,7 +205,6 @@ FoundationStripImpl::f<FoundationStripImpl::Clone>(
   return std::make_shared<FoundationStripImpl>(self);
 }
 
-// Getter function
 template <>
 [[nodiscard]] double FoundationStripImpl::f<FoundationStripImpl::GetB>(
     const FoundationStripImpl& self)
@@ -200,15 +212,15 @@ template <>
   return self.b_;
 }
 
-// Setter function
 template <>
 [[nodiscard]] std::shared_ptr<FoundationStripImpl> FoundationStripImpl::f<>(
     const FoundationStripImpl& self, const SetB& b)
 {
-  auto retval = std::make_shared<FoundationStripImpl>(self);
+  auto retval = f<FoundationStripImpl::Clone>(self);
   retval->b_ = b.b;
   return retval;
 }
+}  // namespace Jessica::Data::Geotechnical
 ----
 
 === Decorator
@@ -216,7 +228,7 @@ template <>
 Decorators may be add between the adapter and the implementation.
 
 You have to implement two generalized template functions.
-One for `f` functions without argument and one for `f` functions with argument.
+One for `f` functions without argument and one for `f` functions with arguments.
 
 If needed, you can specialize some functions.
 
@@ -268,9 +280,190 @@ or with decorator.
       std::make_shared<Jessica::Data::Load::VerticalEccentric<Decorator>>();
 ----
 
-After, use the instance just the way you like.
+After, use the instance just the standard way.
 
 [source,cpp]
 ----
   const auto load2 = load->V(100000.);
+----
+
+=== Data inside data
+
+Some class will need to store data from other class.
+In this case, you need to specific coding to allow decorator around the main class and if needed decorator around children class.
+
+  * Interface
+
+The interface follows the same principle than previously described.
+
+  * Adapter
+
+The adapter still have one template but the template will have inside the type of the data stored. For example:
+
+[source,cpp]
+----
+  // Data 1 without decorator
+  using DecoratorFoundation = Jessica::Data::Geotechnical::FoundationStripImpl;
+  // Data 2 without decorator
+  using DecoratorLoad = Jessica::Data::Load::VerticalEccentricImpl;
+  // Main data with 2 data stored inside.
+  using DecoratorCalc =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
+              DecoratorLoad, DecoratorFoundation>>>;
+
+  MeyerhofShallowFoundation<DecoratorCalc> calculator(...);
+----
+
+And the same with a decorator for every data:
+
+[source,cpp]
+----
+  // Data 1 with decorator
+  using DecoratorFoundation =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Data::Geotechnical::FoundationStripImpl>>;
+  // Data 2 with decorator
+  using DecoratorLoad =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Data::Load::VerticalEccentricImpl>>;
+  // Main data with 2 data stored inside.
+  using DecoratorCalc =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
+              DecoratorLoad, DecoratorFoundation>>>;
+
+  MeyerhofShallowFoundation<DecoratorCalc> calculator(...);
+----
+
+For example, Meyerhof have two data stored.
+
+The class will be the following.
+
+Please note the two `using` `U` and `V`. They extract type from the main template.
+This is done to ease the usage of the class.
+
+[source,cpp]
+----
+template <typename T>
+class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
+{
+ public:
+  using U = typename Jessica::Helper::ExtractRootTypeN<0, T>::Root;
+  using V = typename Jessica::Helper::ExtractRootTypeN<1, T>::Root;
+
+  MeyerhofShallowFoundation(
+      const std::shared_ptr<Jessica::Data::Load::VerticalEccentric<U>>& load,
+      const std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<V>>&
+          foundation)
+      : impl_(std::make_shared<MeyerhofShallowFoundationImpl<U, V>>(load,
+                                                                    foundation))
+  {
+  }
+  MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
+  MeyerhofShallowFoundation(MeyerhofShallowFoundation&&) = delete;
+  MeyerhofShallowFoundation& operator=(const MeyerhofShallowFoundation&) =
+      delete;
+  MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
+  ~MeyerhofShallowFoundation() = default;
+
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> Clone() const
+  {
+    return std::make_shared<MeyerhofShallowFoundation>(*this);
+  }
+
+  [[nodiscard]] double Qref() const
+  {
+    return T::template f<typename MeyerhofShallowFoundationImpl<U, V>::GetQref>(
+        *impl_);
+  }
+
+  [[nodiscard]] double B_() const
+  {
+    return T::template f<typename MeyerhofShallowFoundationImpl<U, V>::GetB_>(
+        *impl_);
+  }
+
+ private:
+  std::shared_ptr<MeyerhofShallowFoundationImpl<U, V>> impl_;
+};
+----
+
+  * Implementation
+
+The implementation needs to have as template the type of data store (`U` and `V`).
+
+This will create a problem for the specialization of `f` functions. They must be specialized with `T` and without `U` and `V`.
+
+Standard says that only class may be partial specialized. Function must be fully specialized. Plus, to be able to specialized a function, the class must be specialized.
+
+Usage of `std::enable_if` will allow to specialized function with class non specialized.
+
+[source,cpp]
+----
+template <typename U, typename V>
+class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
+{
+ public:
+  struct Clone
+  {
+    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl<U, V>>;
+  };
+
+  struct GetQref
+  {
+    using ReturnType = double;
+  };
+
+  struct GetB_
+  {
+    using ReturnType = double;
+  };
+
+  MeyerhofShallowFoundationImpl(
+      const std::shared_ptr<Data::Load::VerticalEccentric<U>>& load,
+      const std::shared_ptr<Data::Geotechnical::FoundationStrip<V>>& foundation)
+      : load_(load), foundation_(foundation)
+  {
+  }
+  MeyerhofShallowFoundationImpl(const MeyerhofShallowFoundationImpl&) = default;
+  MeyerhofShallowFoundationImpl(MeyerhofShallowFoundationImpl&&) = delete;
+  MeyerhofShallowFoundationImpl& operator=(
+      const MeyerhofShallowFoundationImpl&) = delete;
+  MeyerhofShallowFoundationImpl& operator=(MeyerhofShallowFoundationImpl&&) =
+      delete;
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<
+      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::Clone, T>,
+      typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  {
+    return std::make_shared<MeyerhofShallowFoundationImpl<U, V>>(self);
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<
+      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::GetB_, T>,
+      typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  {
+    return self.foundation_->B() - 2. * self.load_->E();
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<
+      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::GetQref, T>,
+      typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  {
+    return self.load_->V() /
+           f<MeyerhofShallowFoundationImpl<U, V>::GetB_>(self);
+  }
+
+ private:
+  const std::shared_ptr<Jessica::Data::Load::VerticalEccentric<U>> load_;
+  const std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<V>>
+      foundation_;
+};
 ----

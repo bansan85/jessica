@@ -6,5 +6,5 @@ execute_process(COMMAND "npm" "install" "jest"
 
 add_test(
   NAME NpmTest
-  COMMAND "npm" "run" "test"
+  COMMAND "npm" "run" "test" "--verbose"
   WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/test/javascript/")

@@ -2,7 +2,6 @@
 #include <memory>
 
 #include <jessica/data/geotechnical/foundation_strip.h>
-#include <jessica/data/geotechnical/foundation_strip_impl.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>

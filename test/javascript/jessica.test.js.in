@@ -3,14 +3,13 @@ const jessica = require('${CMAKE_BINARY_DIR}/src/javascript/wasm/jessica.js');
 jest.spyOn(console, 'log');
 
 test('WarmUpJessica', async () => {
-  jessica().then(async (instance) => {
+  return jessica().then(async (instance) => {
   });
 });
 
-
 test('VerticalEccentric', async () => {
-  jessica().then(async (instance) => {
-    const vert1 = new instance.VerticalEccentricDeco();
+  return jessica().then(async (instance) => {
+    const vert1 = new instance.VerticalEccentricRaw();
     expect(vert1.getE()).toBeNaN();
     expect(vert1.getV()).toBeNaN();
     const vert2 = vert1.setE(0.2);
@@ -26,8 +25,8 @@ test('VerticalEccentric', async () => {
 });
 
 test('FoundationStrip', async () => {
-  jessica().then(async (instance) => {
-    const foundation = new instance.FoundationStripDeco();
+  return jessica().then(async (instance) => {
+    const foundation = new instance.FoundationStripRaw();
     expect(foundation.getB()).toBeNaN();
     const foundation2 = foundation.setB(1.0);
     expect(foundation2.getB()).toBe(1.0);
@@ -37,12 +36,12 @@ test('FoundationStrip', async () => {
 });
 
 test('CalcMeyehof', async () => {
-  jessica().then(async (instance) => {
-    const foundation = new instance.FoundationStripDeco().setB(1.0);
-    const vert = new instance.VerticalEccentricDeco().setV(100000.).setE(0.25);
+  return jessica().then(async (instance) => {
+    const foundation4 = new instance.FoundationStripRaw().setB(1.0);
+    const vert5 = new instance.VerticalEccentricRaw().setV(100000.).setE(0.25);
 
-    const calc = new instance.MeyerhofShallowFoundationDeco(vert, foundation);
-    expect(calc.getB_()).toBe(0.5);
+    const calc = new instance.MeyerhofShallowFoundationDeco(vert5, foundation4);
     expect(calc.getQref()).toBe(200000.);
+    expect(calc.getB_()).toBe(0.5);
   });
 });

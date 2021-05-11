@@ -2,7 +2,6 @@
 #include <memory>
 
 #include <jessica/data/load/vertical_eccentric.h>
-#include <jessica/data/load/vertical_eccentric_impl.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
