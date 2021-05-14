@@ -152,3 +152,22 @@ JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
       load_mine, foundation2);
   JTEST_EQ(calc_mine->B_(), std::numeric_limits<double>::infinity());
 }
+
+JTEST_NAME(data, CalcMeyehofOnly)  // NOLINT
+{
+  using DecoratorFoundation = Jessica::Data::Geotechnical::FoundationStripImpl;
+  using DecoratorLoad = Jessica::Data::Load::VerticalEccentricImpl;
+  using DecoratorCalc =
+      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
+          Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
+              DecoratorLoad, DecoratorFoundation>>>;
+
+  const auto calc = std::make_shared<
+      Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<DecoratorCalc>>();
+  const auto calc2 = calc->LoadE(0.25)->LoadV(100000.)->FoundationB(1.);
+  JTEST_EQ(calc2->LoadE(), 0.25);
+  JTEST_EQ(calc2->LoadV(), 100000.);
+  JTEST_EQ(calc2->FoundationB(), 1.);
+  JTEST_EQ(calc2->B_(), 0.5);
+  JTEST_EQ(calc2->Qref(), 200000.);
+}

@@ -16,7 +16,7 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
  public:
   struct Clone
   {
-    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl<U, V>>;
+    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl>;
   };
 
   struct GetQref
@@ -27,6 +27,39 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   struct GetB_
   {
     using ReturnType = double;
+  };
+
+  struct GetLoadV
+  {
+    using ReturnType = double;
+  };
+
+  struct SetLoadV
+  {
+    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl>;
+    double v;
+  };
+
+  struct GetLoadE
+  {
+    using ReturnType = double;
+  };
+
+  struct SetLoadE
+  {
+    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl>;
+    double e;
+  };
+
+  struct GetFoundationB
+  {
+    using ReturnType = double;
+  };
+
+  struct SetFoundationB
+  {
+    using ReturnType = std::shared_ptr<MeyerhofShallowFoundationImpl>;
+    double b;
   };
 
   MeyerhofShallowFoundationImpl(
@@ -43,37 +76,86 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
       delete;
 
   template <typename T>
-  [[nodiscard]] static std::enable_if_t<
-      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::Clone, T>,
-      typename T::ReturnType>
-  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<Clone, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
   {
-    return std::make_shared<MeyerhofShallowFoundationImpl<U, V>>(self);
+    return std::make_shared<MeyerhofShallowFoundationImpl>(self);
   }
 
   template <typename T>
-  [[nodiscard]] static std::enable_if_t<
-      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::GetB_, T>,
-      typename T::ReturnType>
-  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<GetB_, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
   {
     return self.foundation_->B() - 2. * self.load_->E();
   }
 
   template <typename T>
-  [[nodiscard]] static std::enable_if_t<
-      std::is_same_v<MeyerhofShallowFoundationImpl<U, V>::GetQref, T>,
-      typename T::ReturnType>
-  f(const MeyerhofShallowFoundationImpl<U, V>& self)
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<GetQref, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
   {
-    return self.load_->V() /
-           f<MeyerhofShallowFoundationImpl<U, V>::GetB_>(self);
+    return self.load_->V() / f<GetB_>(self);
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<GetLoadV, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
+  {
+    return self.load_->V();
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<SetLoadV, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self, const T& a)
+  {
+    auto retval = f<Clone>(self);
+    retval->load_ = retval->load_->V(a.v);
+    return retval;
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<GetLoadE, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
+  {
+    return self.load_->E();
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<SetLoadE, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self, const T& a)
+  {
+    auto retval = f<Clone>(self);
+    retval->load_ = retval->load_->E(a.e);
+    return retval;
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<GetFoundationB, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self)
+  {
+    return self.foundation_->B();
+  }
+
+  template <typename T>
+  [[nodiscard]] static std::enable_if_t<std::is_same_v<SetFoundationB, T>,
+                                        typename T::ReturnType>
+  f(const MeyerhofShallowFoundationImpl& self, const T& a)
+  {
+    auto retval = f<Clone>(self);
+    retval->foundation_ = retval->foundation_->B(a.b);
+    return retval;
   }
 
  private:
-  const std::shared_ptr<Jessica::Data::Load::VerticalEccentric<U>> load_;
-  const std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<V>>
-      foundation_;
+  std::shared_ptr<Jessica::Data::Load::VerticalEccentric<U>> load_;
+  std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<V>> foundation_;
 };
 
 template <typename T>
@@ -83,6 +165,13 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   using U = typename Jessica::Helper::ExtractRootTypeN<0, T>::Root;
   using V = typename Jessica::Helper::ExtractRootTypeN<1, T>::Root;
 
+  MeyerhofShallowFoundation()
+      : impl_(std::make_shared<MeyerhofShallowFoundationImpl<U, V>>(
+            std::make_shared<Jessica::Data::Load::VerticalEccentric<U>>(),
+            std::make_shared<
+                Jessica::Data::Geotechnical::FoundationStrip<V>>()))
+  {
+  }
   MeyerhofShallowFoundation(
       const std::shared_ptr<Jessica::Data::Load::VerticalEccentric<U>>& load,
       const std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<V>>&
@@ -113,6 +202,52 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   {
     return T::template f<typename MeyerhofShallowFoundationImpl<U, V>::GetB_>(
         *impl_);
+  }
+
+  [[nodiscard]] double LoadV() const
+  {
+    return T::template f<
+        typename MeyerhofShallowFoundationImpl<U, V>::GetLoadV>(*impl_);
+  }
+
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> LoadV(double v) const
+  {
+    auto retval = Clone();
+    retval->impl_ = T::template f(
+        *retval->impl_,
+        typename MeyerhofShallowFoundationImpl<U, V>::SetLoadV{.v = v});
+    return retval;
+  }
+
+  [[nodiscard]] double LoadE() const
+  {
+    return T::template f<
+        typename MeyerhofShallowFoundationImpl<U, V>::GetLoadE>(*impl_);
+  }
+
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> LoadE(double e) const
+  {
+    auto retval = Clone();
+    retval->impl_ = T::template f(
+        *retval->impl_,
+        typename MeyerhofShallowFoundationImpl<U, V>::SetLoadE{.e = e});
+    return retval;
+  }
+
+  [[nodiscard]] double FoundationB() const
+  {
+    return T::template f<
+        typename MeyerhofShallowFoundationImpl<U, V>::GetFoundationB>(*impl_);
+  }
+
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> FoundationB(
+      double b) const
+  {
+    auto retval = Clone();
+    retval->impl_ = T::template f(
+        *retval->impl_,
+        typename MeyerhofShallowFoundationImpl<U, V>::SetFoundationB{.b = b});
+    return retval;
   }
 
  private:
