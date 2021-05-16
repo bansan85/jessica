@@ -11,22 +11,16 @@ template <typename T>
 class JESSICA_DLL_PUBLIC LogCall
 {
  public:
-  using Root = typename Jessica::Helper::ExtractRootType<T>::Root;
+  using Type = typename Jessica::Helper::ExtractRootType<T>::type;
 
-  template <typename Args>
-  static auto f(const Root& classe, const Args&& args)
+  template <bool CloneT, typename... U, typename... Args>
+  [[nodiscard]] static auto f(const Type& classe, const Args&&... args)
   {
+    using U0 = typename Jessica::Helper::ExtractNthType<0, U...>::type;
     std::cout << "DecoratorLogger " << typeid(T).name() << " "
-              << typeid(Args).name() << std::endl;
-    return T::template f(classe, std::forward<const Args>(args));
-  }
-
-  template <typename Args>
-  static auto f(const Root& classe)
-  {
-    std::cout << "DecoratorLogger " << typeid(T).name() << " "
-              << typeid(Args).name() << std::endl;
-    return T::template f<Args>(classe);
+              << typeid(U0).name() << std::endl;
+    return T::template f<CloneT, U...>(classe,
+                                       std::forward<const Args>(args)...);
   }
 };
 }  // namespace Jessica::Util::Decorator

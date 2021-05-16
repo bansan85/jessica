@@ -28,7 +28,7 @@ jobs:
           git config --global user.name "Github CI"
           git config --global user.email "github-ci@le-garrec.fr"
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq clang-format-10
+        run: sudo apt-get update && sudo apt-get install -yq clang-11 clang-format-11
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:

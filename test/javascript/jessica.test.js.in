@@ -15,7 +15,7 @@ test('VerticalEccentric', async () => {
     const vert2 = vert1.setE(0.2);
     expect(vert2.getE()).toBe(0.2);
     expect(vert2.getV()).toBeNaN();
-    const vert3 = vert2.setV(100);
+    const vert3 = vert2.setV(100.);
     expect(vert3.getE()).toBe(0.2);
     expect(vert3.getV()).toBe(100);
     const vert4 = vert3.clone();

@@ -17,7 +17,7 @@ jobs:
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev cppcheck iwyu shellcheck clang-tidy-10 clang-10
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev cppcheck iwyu shellcheck clang-tidy-11 clang-11
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:
@@ -33,13 +33,15 @@ jobs:
           npm install eslint eslint-config-google eslint-plugin-html
       - name: run-clang-tidy
         env:
-          CC: clang-10
-          CXX: clang++-10
+          AR: /usr/bin/llvm-ar-11
+          CC: /usr/bin/clang-11
+          CXX: /usr/bin/clang++-11
+          RANLIB: /usr/bin/llvm-ranlib-11
         run: |
           mkdir build
           cmake -S . -B build
           cd build || exit 1
-          run-clang-tidy-10
+          run-clang-tidy-11
           cd .. || exit 1
       - name: Lint
         run: |

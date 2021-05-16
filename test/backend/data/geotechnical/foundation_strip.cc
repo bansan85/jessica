@@ -11,12 +11,25 @@ JTEST_NAME(data, FoundationStrip)  // NOLINT
   const auto foundation =
       std::make_shared<Jessica::Data::Geotechnical::FoundationStrip<
           Jessica::Data::Geotechnical::FoundationStripImpl>>();
-  JTEST_TRUE(std::isnan(foundation->B()));
-  const auto foundation2 = foundation->B(1.);
-  JTEST_TRUE(std::isnan(foundation->B()));
-  JTEST_EQ(foundation2->B(), 1.);
+  JTEST_TRUE(std::isnan(
+      foundation
+          ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
+  const auto foundation2 =
+      foundation->f<true, Jessica::Data::Geotechnical::FoundationStripImpl::B>(
+          1.);
+  JTEST_TRUE(std::isnan(
+      foundation
+          ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
+  JTEST_EQ(
+      (foundation2
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()),
+      1.);
   const auto foundation3 = foundation2->Clone();
-  JTEST_EQ(foundation2->B(), foundation3->B());
+  JTEST_EQ(
+      (foundation2
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()),
+      (foundation3
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
@@ -27,10 +40,23 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
 
   const auto foundation = std::make_shared<
       Jessica::Data::Geotechnical::FoundationStrip<Decorator>>();
-  JTEST_TRUE(std::isnan(foundation->B()));
-  const auto foundation2 = foundation->B(1.);
-  JTEST_TRUE(std::isnan(foundation->B()));
-  JTEST_EQ(foundation2->B(), 1.);
+  JTEST_TRUE(std::isnan(
+      foundation
+          ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
+  const auto foundation2 =
+      foundation->f<true, Jessica::Data::Geotechnical::FoundationStripImpl::B>(
+          1.);
+  JTEST_TRUE(std::isnan(
+      foundation
+          ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
+  JTEST_EQ(
+      (foundation2
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()),
+      1.);
   const auto foundation3 = foundation2->Clone();
-  JTEST_EQ(foundation2->B(), foundation3->B());
+  JTEST_EQ(
+      (foundation2
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()),
+      (foundation3
+           ->f<false, Jessica::Data::Geotechnical::FoundationStripImpl::B>()));
 }

@@ -69,10 +69,10 @@ jobs:
         with:
           submodules: recursive
       - name: Install gcc
-        if: ${{ matrix.cc == 'gcc-10' }}
+        if: contains(matrix.cc, 'gcc')
         run: sudo apt-get update && sudo apt-get install -yq g++-10 gcc-10
       - name: Install clang
-        if: ${{ matrix.cc == 'clang-11' }}
+        if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-11
       - name: Install 3rdparty
         run: sudo apt-get update && sudo apt-get install -yq libgtest-dev

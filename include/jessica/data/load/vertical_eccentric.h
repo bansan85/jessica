@@ -4,7 +4,6 @@
 #include <memory>
 
 #include <jessica/compat.h>
-#include <jessica/data/load/vertical_eccentric_concept.h>
 #include <jessica/helper/template.h>
 
 namespace Jessica::Data::Load
@@ -14,29 +13,14 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
  public:
   struct Clone
   {
-    using ReturnType = std::shared_ptr<VerticalEccentricImpl>;
   };
 
-  struct GetV
+  struct V
   {
-    using ReturnType = double;
   };
 
-  struct SetV
+  struct E
   {
-    using ReturnType = std::shared_ptr<VerticalEccentricImpl>;
-    double v;
-  };
-
-  struct GetE
-  {
-    using ReturnType = double;
-  };
-
-  struct SetE
-  {
-    using ReturnType = std::shared_ptr<VerticalEccentricImpl>;
-    double e;
   };
 
   VerticalEccentricImpl() = default;
@@ -46,61 +30,59 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
   VerticalEccentricImpl& operator=(VerticalEccentricImpl&&) = delete;
 
   template <typename T>
-  static typename T::ReturnType f(const VerticalEccentricImpl&)
+  requires std::is_same_v<Clone, T> [[nodiscard]] static std::shared_ptr<
+      VerticalEccentricImpl>
+  f(const VerticalEccentricImpl& self)
   {
-    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+    return std::make_shared<VerticalEccentricImpl>(self);
   }
 
-  template <typename T>
-  static typename T::ReturnType f(const VerticalEccentricImpl&, const T&)
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::false_type>&&
+      std::is_same_v<V, T> [[nodiscard]] static double
+      f(const VerticalEccentricImpl& self)
   {
-    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+    return self.v_;
+  }
+
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::true_type>&&
+      std::is_same_v<V, T> [[nodiscard]] static std::shared_ptr<
+          VerticalEccentricImpl>
+      f(const VerticalEccentricImpl& self, const double v)
+  {
+    auto retval = f<Clone>(self);
+    retval->v_ = v;
+    return retval;
+  }
+
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::false_type>&&
+      std::is_same_v<E, T> [[nodiscard]] static double
+      f(const VerticalEccentricImpl& self)
+  {
+    return self.e_;
+  }
+
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::true_type>&&
+      std::is_same_v<E, T> [[nodiscard]] static std::shared_ptr<
+          VerticalEccentricImpl>
+      f(const VerticalEccentricImpl& self, const double e)
+  {
+    auto retval = f<Clone>(self);
+    retval->e_ = e;
+    return retval;
   }
 
  private:
   double v_ = std::numeric_limits<double>::quiet_NaN();
   double e_ = std::numeric_limits<double>::quiet_NaN();
 };
-
-template <>
-[[nodiscard]] std::shared_ptr<VerticalEccentricImpl>
-VerticalEccentricImpl::f<VerticalEccentricImpl::Clone>(
-    const VerticalEccentricImpl& self)
-{
-  return std::make_shared<VerticalEccentricImpl>(self);
-}
-
-template <>
-[[nodiscard]] double VerticalEccentricImpl::f<VerticalEccentricImpl::GetV>(
-    const VerticalEccentricImpl& self)
-{
-  return self.v_;
-}
-
-template <>
-[[nodiscard]] std::shared_ptr<VerticalEccentricImpl> VerticalEccentricImpl::f(
-    const VerticalEccentricImpl& self, const SetV& a)
-{
-  auto retval = f<VerticalEccentricImpl::Clone>(self);
-  retval->v_ = a.v;
-  return retval;
-}
-
-template <>
-[[nodiscard]] double VerticalEccentricImpl::f<VerticalEccentricImpl::GetE>(
-    const VerticalEccentricImpl& self)
-{
-  return self.e_;
-}
-
-template <>
-[[nodiscard]] std::shared_ptr<VerticalEccentricImpl> VerticalEccentricImpl::f(
-    const VerticalEccentricImpl& self, const SetE& a)
-{
-  auto retval = f<VerticalEccentricImpl::Clone>(self);
-  retval->e_ = a.e;
-  return retval;
-}
 
 template <typename T>
 class JESSICA_DLL_PUBLIC VerticalEccentric final
@@ -112,44 +94,30 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
   VerticalEccentric& operator=(const VerticalEccentric&) = delete;
   VerticalEccentric& operator=(VerticalEccentric&&) = delete;
 
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> Clone() const
+  template <bool CloneT, typename... U, typename... Args>
+  [[nodiscard]] auto f(const Args&&... args) const
   {
-    return std::make_shared<VerticalEccentric>(*this);
+    if constexpr (CloneT)
+    {
+      auto retval = Clone();
+      retval->impl_ = T::template f<CloneT, U...>(
+          *impl_, std::forward<const Args>(args)...);
+      return retval;
+    }
+    else
+    {
+      return T::template f<CloneT, U...>(*impl_,
+                                         std::forward<const Args>(args)...);
+    }
   }
 
-  [[nodiscard]] double V() const
+  [[nodiscard]] std::shared_ptr<VerticalEccentric<T>> Clone() const
   {
-    return T::template f<VerticalEccentricImpl::GetV>(*impl_);
-  }
-
-  [[nodiscard]] double E() const
-  {
-    return T::template f<VerticalEccentricImpl::GetE>(*impl_);
-  }
-
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> V(double v) const
-  {
-    auto retval = Clone();
-    retval->impl_ =
-        T::template f(*retval->impl_, VerticalEccentricImpl::SetV{.v = v});
-    return retval;
-  }
-
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> E(double e) const
-  {
-    auto retval = Clone();
-    retval->impl_ =
-        T::template f(*retval->impl_, VerticalEccentricImpl::SetE{.e = e});
-    return retval;
+    return std::make_shared<VerticalEccentric<T>>(*this);
   }
 
  private:
   std::shared_ptr<VerticalEccentricImpl> impl_ =
       std::make_shared<VerticalEccentricImpl>();
 };
-
-#ifdef JCONCEPTS
-static_assert(VerticalEccentricConcept<VerticalEccentric<int>>);
-#endif
-
 }  // namespace Jessica::Data::Load

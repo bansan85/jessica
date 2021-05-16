@@ -84,7 +84,10 @@
     "variant": "cpp",
     "xlocbuf": "cpp",
     "xlocmes": "cpp",
-    "cfloat": "cpp"
+    "cfloat": "cpp",
+    "any": "cpp",
+    "charconv": "cpp",
+    "format": "cpp"
   },
   "git.ignoreLimitWarning": true
 }

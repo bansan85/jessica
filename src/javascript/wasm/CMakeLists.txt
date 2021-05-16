@@ -3,5 +3,5 @@ set_target_properties(
   jessica_js
   PROPERTIES LINK_FLAGS "-s EXPORT_NAME=jessica\
                          -s MODULARIZE=1\
-                          --bind")
+                         --bind")
 set_target_properties(jessica_js PROPERTIES OUTPUT_NAME "jessica")

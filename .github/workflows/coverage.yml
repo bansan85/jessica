@@ -38,10 +38,10 @@ jobs:
       - name: Install 3rdparty
         run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
       - name: Install gcc
-        if: ${{ matrix.name == 'coverage-gcc' }}
+        if: contains(matrix.cc, 'gcc')
         run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov libdatetime-perl libdatetime-format-w3cdtf-perl
       - name: Install clang
-        if: ${{ matrix.name == 'coverage-clang' }}
+        if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-11 tidy
       - name: cmake
         run: |
@@ -54,7 +54,7 @@ jobs:
           ctest -O test-result.xml --output-on-failure
           cd .. || exit 1
       - name: Coverage report gcc
-        if: ${{ matrix.name == 'coverage-gcc' }}
+        if: contains(matrix.cc, 'gcc')
         run: |
           git clone --depth 1 https://github.com/henry2cox/lcov.git -b diffcov_initial
           ./lcov/bin/lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
@@ -66,7 +66,7 @@ jobs:
           find build/coverage -name "*.html" -exec sed -i -r "s#headerValue""\>.*-.*-.* .*:.*:.*td#headerValue""></td#g" {} \;
       - name: Coverage report clang
         shell: bash
-        if: ${{ matrix.name == 'coverage-clang' }}
+        if: contains(matrix.cc, 'clang')
         run: |
           shopt -s globstar dotglob
           llvm-profdata-11 merge -output=code.profdata **/*.profraw

@@ -4,7 +4,6 @@
 #include <memory>
 
 #include <jessica/compat.h>
-#include <jessica/data/geotechnical/foundation_strip_concept.h>
 #include <jessica/helper/template.h>
 
 namespace Jessica::Data::Geotechnical
@@ -14,18 +13,10 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
  public:
   struct Clone
   {
-    using ReturnType = std::shared_ptr<FoundationStripImpl>;
   };
 
-  struct GetB
+  struct B
   {
-    using ReturnType = double;
-  };
-
-  struct SetB
-  {
-    using ReturnType = std::shared_ptr<FoundationStripImpl>;
-    double b;
   };
 
   FoundationStripImpl() = default;
@@ -35,44 +26,36 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
   FoundationStripImpl& operator=(FoundationStripImpl&&) = delete;
 
   template <typename T>
-  static typename T::ReturnType f(const FoundationStripImpl&)
+  requires std::is_same_v<Clone, T> [[nodiscard]] static std::shared_ptr<
+      FoundationStripImpl>
+  f(const FoundationStripImpl& self)
   {
-    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+    return std::make_shared<FoundationStripImpl>(self);
   }
 
-  template <typename T>
-  static typename T::ReturnType f(const FoundationStripImpl&, const T&)
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::false_type>&&
+      std::is_same_v<B, T> [[nodiscard]] static double
+      f(const FoundationStripImpl& self)
   {
-    static_assert(Jessica::Helper::StaticAssert<T>::value, "Must specialized");
+    return self.b_;
+  }
+
+  template <bool CloneT, typename T>
+  requires std::is_same_v<std::integral_constant<bool, CloneT>,
+                          std::true_type>&& std::
+      is_same_v<B, T> [[nodiscard]] static std::shared_ptr<FoundationStripImpl>
+      f(const FoundationStripImpl& self, const double b)
+  {
+    auto retval = f<Clone>(self);
+    retval->b_ = b;
+    return retval;
   }
 
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
-
-template <>
-[[nodiscard]] std::shared_ptr<FoundationStripImpl>
-FoundationStripImpl::f<FoundationStripImpl::Clone>(
-    const FoundationStripImpl& self)
-{
-  return std::make_shared<FoundationStripImpl>(self);
-}
-
-template <>
-[[nodiscard]] double FoundationStripImpl::f<FoundationStripImpl::GetB>(
-    const FoundationStripImpl& self)
-{
-  return self.b_;
-}
-
-template <>
-[[nodiscard]] std::shared_ptr<FoundationStripImpl> FoundationStripImpl::f<>(
-    const FoundationStripImpl& self, const SetB& b)
-{
-  auto retval = f<FoundationStripImpl::Clone>(self);
-  retval->b_ = b.b;
-  return retval;
-}
 
 template <typename T>
 class JESSICA_DLL_PUBLIC FoundationStrip final
@@ -84,31 +67,30 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   FoundationStrip& operator=(const FoundationStrip&) = delete;
   FoundationStrip& operator=(FoundationStrip&&) = delete;
 
+  template <bool CloneT, typename... U, typename... Args>
+  [[nodiscard]] auto f(const Args&&... args) const
+  {
+    if constexpr (CloneT)
+    {
+      auto retval = Clone();
+      retval->impl_ = T::template f<CloneT, U...>(
+          *impl_, std::forward<const Args>(args)...);
+      return retval;
+    }
+    else
+    {
+      return T::template f<CloneT, U...>(*impl_,
+                                         std::forward<const Args>(args)...);
+    }
+  }
+
   [[nodiscard]] std::shared_ptr<FoundationStrip<T>> Clone() const
   {
     return std::make_shared<FoundationStrip<T>>(*this);
-  }
-
-  [[nodiscard]] double B() const
-  {
-    return T::template f<FoundationStripImpl::GetB>(*impl_);
-  }
-
-  [[nodiscard]] std::shared_ptr<FoundationStrip<T>> B(double b) const
-  {
-    auto retval = std::make_shared<FoundationStrip<T>>(*this);
-    retval->impl_ =
-        T::template f(*retval->impl_, FoundationStripImpl::SetB{.b = b});
-    return retval;
   }
 
  private:
   std::shared_ptr<FoundationStripImpl> impl_ =
       std::make_shared<FoundationStripImpl>();
 };
-
-#ifdef JCONCEPTS
-static_assert(FoundationStripConcept<FoundationStrip<int>>);
-#endif
-
 }  // namespace Jessica::Data::Geotechnical

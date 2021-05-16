@@ -22,17 +22,27 @@ EMSCRIPTEN_BINDINGS(jessica)
       .function("clone",
                 &Jessica::Data::Geotechnical::FoundationStrip<
                     Jessica::Data::Geotechnical::FoundationStripImpl>::Clone)
+      .function("getB",
+                static_cast<double (
+                    Jessica::Data::Geotechnical::FoundationStrip<
+                        Jessica::Data::Geotechnical::FoundationStripImpl>::*)()
+                                const>(
+                    &Jessica::Data::Geotechnical::FoundationStrip<
+                        Jessica::Data::Geotechnical::FoundationStripImpl>::
+                        f<false,
+                          Jessica::Data::Geotechnical::FoundationStripImpl::B>))
       .function(
           "setB",
-          select_overload<
+          static_cast<
               std::shared_ptr<Jessica::Data::Geotechnical::FoundationStrip<
-                  Jessica::Data::Geotechnical::FoundationStripImpl>>(double)
-                  const>(&Jessica::Data::Geotechnical::FoundationStrip<
-                         Jessica::Data::Geotechnical::FoundationStripImpl>::B))
-      .function("getB",
-                select_overload<double() const>(
-                    &Jessica::Data::Geotechnical::FoundationStrip<
-                        Jessica::Data::Geotechnical::FoundationStripImpl>::B));
+                  Jessica::Data::Geotechnical::FoundationStripImpl>> (
+                  Jessica::Data::Geotechnical::FoundationStrip<
+                      Jessica::Data::Geotechnical::FoundationStripImpl>::*)(
+                  const double&&) const>(
+              &Jessica::Data::Geotechnical::FoundationStrip<
+                  Jessica::Data::Geotechnical::FoundationStripImpl>::
+                  f<true,
+                    Jessica::Data::Geotechnical::FoundationStripImpl::B>));
 
   class_<Jessica::Data::Load::VerticalEccentric<
       Jessica::Data::Load::VerticalEccentricImpl>>("VerticalEccentricRaw")
@@ -42,26 +52,41 @@ EMSCRIPTEN_BINDINGS(jessica)
       .function("clone", &Jessica::Data::Load::VerticalEccentric<
                              Jessica::Data::Load::VerticalEccentricImpl>::Clone)
       .function(
-          "setE",
-          select_overload<
-              std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>>(double) const>(
+          "getE",
+          static_cast<double (Jessica::Data::Load::VerticalEccentric<
+                              Jessica::Data::Load::VerticalEccentricImpl>::*)()
+                          const>(
               &Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>::E))
-      .function("getE", select_overload<double() const>(
-                            &Jessica::Data::Load::VerticalEccentric<
-                                Jessica::Data::Load::VerticalEccentricImpl>::E))
+                  Jessica::Data::Load::VerticalEccentricImpl>::
+                  f<false, Jessica::Data::Load::VerticalEccentricImpl::E>))
+      .function(
+          "setE",
+          static_cast<std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
+              Jessica::Data::Load::VerticalEccentricImpl>> (
+              Jessica::Data::Load::VerticalEccentric<
+                  Jessica::Data::Load::VerticalEccentricImpl>::*)(
+              const double&&) const>(
+              &Jessica::Data::Load::VerticalEccentric<
+                  Jessica::Data::Load::VerticalEccentricImpl>::
+                  f<true, Jessica::Data::Load::VerticalEccentricImpl::E>))
+      .function(
+          "getV",
+          static_cast<double (Jessica::Data::Load::VerticalEccentric<
+                              Jessica::Data::Load::VerticalEccentricImpl>::*)()
+                          const>(
+              &Jessica::Data::Load::VerticalEccentric<
+                  Jessica::Data::Load::VerticalEccentricImpl>::
+                  f<false, Jessica::Data::Load::VerticalEccentricImpl::V>))
       .function(
           "setV",
-          select_overload<
-              std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>>(double) const>(
+          static_cast<std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
+              Jessica::Data::Load::VerticalEccentricImpl>> (
+              Jessica::Data::Load::VerticalEccentric<
+                  Jessica::Data::Load::VerticalEccentricImpl>::*)(
+              const double&&) const>(
               &Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>::V))
-      .function("getV",
-                select_overload<double() const>(
-                    &Jessica::Data::Load::VerticalEccentric<
-                        Jessica::Data::Load::VerticalEccentricImpl>::V));
+                  Jessica::Data::Load::VerticalEccentricImpl>::
+                  f<true, Jessica::Data::Load::VerticalEccentricImpl::V>));
 
   class_<Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
       Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
@@ -83,22 +108,52 @@ EMSCRIPTEN_BINDINGS(jessica)
                                     Jessica::Data::Load::VerticalEccentricImpl,
                                     Jessica::Data::Geotechnical::
                                         FoundationStripImpl>>>>::Clone)
-      .function("getQref",
-                &Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
-                    Jessica::Util::Decorator::LogCall<
-                        Jessica::Util::Decorator::LogDuration<
-                            Jessica::Calc::Geotechnical::
-                                MeyerhofShallowFoundationImpl<
-                                    Jessica::Data::Load::VerticalEccentricImpl,
-                                    Jessica::Data::Geotechnical::
-                                        FoundationStripImpl>>>>::Qref)
-      .function("getB_",
-                &Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
-                    Jessica::Util::Decorator::LogCall<
-                        Jessica::Util::Decorator::LogDuration<
-                            Jessica::Calc::Geotechnical::
-                                MeyerhofShallowFoundationImpl<
-                                    Jessica::Data::Load::VerticalEccentricImpl,
-                                    Jessica::Data::Geotechnical::
-                                        FoundationStripImpl>>>>::B_);
+      .function(
+          "getQref",
+          static_cast<double (
+              Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Calc::Geotechnical::
+                              MeyerhofShallowFoundationImpl<
+                                  Jessica::Data::Load::VerticalEccentricImpl,
+                                  Jessica::Data::Geotechnical::
+                                      FoundationStripImpl>>>>::*)() const>(
+              &Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Calc::Geotechnical::
+                              MeyerhofShallowFoundationImpl<
+                                  Jessica::Data::Load::VerticalEccentricImpl,
+                                  Jessica::Data::Geotechnical::
+                                      FoundationStripImpl>>>>::
+                  f<false,
+                    Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
+                        Jessica::Data::Load::VerticalEccentricImpl,
+                        Jessica::Data::Geotechnical::FoundationStripImpl>::
+                        Qref>))
+      .function(
+          "getB_",
+          static_cast<double (
+              Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Calc::Geotechnical::
+                              MeyerhofShallowFoundationImpl<
+                                  Jessica::Data::Load::VerticalEccentricImpl,
+                                  Jessica::Data::Geotechnical::
+                                      FoundationStripImpl>>>>::*)() const>(
+              &Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
+                  Jessica::Util::Decorator::LogCall<
+                      Jessica::Util::Decorator::LogDuration<
+                          Jessica::Calc::Geotechnical::
+                              MeyerhofShallowFoundationImpl<
+                                  Jessica::Data::Load::VerticalEccentricImpl,
+                                  Jessica::Data::Geotechnical::
+                                      FoundationStripImpl>>>>::
+                  f<false,
+                    Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
+                        Jessica::Data::Load::VerticalEccentricImpl,
+                        Jessica::Data::Geotechnical::FoundationStripImpl>::
+                        B_>));
 }
