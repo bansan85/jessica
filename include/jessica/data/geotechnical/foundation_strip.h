@@ -21,10 +21,8 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
   template <Jessica::Helper::F T>
   requires std::is_same_v<
       std::integral_constant<Jessica::Helper::F, T>,
-      std::integral_constant<
-          Jessica::Helper::F,
-          Jessica::Helper::F::Clone>> [[nodiscard]] static std::
-      shared_ptr<FoundationStripImpl>
+      std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Clone>>
+  [[nodiscard]] static std::shared_ptr<FoundationStripImpl>
       f(const FoundationStripImpl& self)
   {
     return std::make_shared<FoundationStripImpl>(self);
@@ -32,25 +30,23 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::B>> [[nodiscard]] static double
-      f(const FoundationStripImpl& self)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::B>>
+  [[nodiscard]] static double f(const FoundationStripImpl& self)
   {
     return self.b_;
   }
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::B>> [[nodiscard]] static std::
-          shared_ptr<FoundationStripImpl>
-          f(const FoundationStripImpl& self, const double b)
+                          std::true_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::B>>
+  [[nodiscard]] static std::shared_ptr<FoundationStripImpl>
+      f(const FoundationStripImpl& self, const double b)
   {
     auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->b_ = b;

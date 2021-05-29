@@ -17,10 +17,10 @@ jobs:
             cxx: /usr/bin/g++-10
             ranlib: /usr/bin/ranlib
           - name: coverage-clang
-            ar: /usr/bin/llvm-ar-11
-            cc: /usr/bin/clang-11
-            cxx: /usr/bin/clang++-11
-            ranlib: /usr/bin/llvm-ranlib-11
+            ar: /usr/bin/llvm-ar-12
+            cc: /usr/bin/clang-12
+            cxx: /usr/bin/clang++-12
+            ranlib: /usr/bin/llvm-ranlib-12
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -42,7 +42,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov libdatetime-perl libdatetime-format-w3cdtf-perl
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get update && sudo apt-get install -yq clang-11 tidy
+        run: sudo apt-get update && sudo apt-get install -yq clang-12 tidy
       - name: cmake
         run: |
           mkdir build
@@ -69,9 +69,9 @@ jobs:
         if: contains(matrix.cc, 'clang')
         run: |
           shopt -s globstar dotglob
-          llvm-profdata-11 merge -output=code.profdata **/*.profraw
+          llvm-profdata-12 merge -output=code.profdata **/*.profraw
           mkdir build/coverage
-          llvm-cov-11 show -use-color --format html -instr-profile=code.profdata ./build/test/backend/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
+          llvm-cov-12 show -use-color --format html -instr-profile=code.profdata ./build/test/backend/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
           find build/coverage -name "*.html" -exec tidy -i -m --doctype html5 --drop-empty-elements no {} \;
           find build/coverage -name "*.html" -exec sed -i -r "s#Created: .*-.*-.* .*:.*h4#</h4#g" {} \;
       - name: Publish test

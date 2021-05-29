@@ -23,18 +23,16 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   }
   MeyerhofShallowFoundationImpl(const MeyerhofShallowFoundationImpl&) = default;
   MeyerhofShallowFoundationImpl(MeyerhofShallowFoundationImpl&&) = delete;
-  MeyerhofShallowFoundationImpl& operator=(
-      const MeyerhofShallowFoundationImpl&) = delete;
-  MeyerhofShallowFoundationImpl& operator=(MeyerhofShallowFoundationImpl&&) =
-      delete;
+  MeyerhofShallowFoundationImpl&
+      operator=(const MeyerhofShallowFoundationImpl&) = delete;
+  MeyerhofShallowFoundationImpl&
+      operator=(MeyerhofShallowFoundationImpl&&) = delete;
 
   template <Jessica::Helper::F T>
   requires std::is_same_v<
       std::integral_constant<Jessica::Helper::F, T>,
-      std::integral_constant<
-          Jessica::Helper::F,
-          Jessica::Helper::F::Clone>> [[nodiscard]] static std::
-      shared_ptr<MeyerhofShallowFoundationImpl>
+      std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Clone>>
+  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
       f(const MeyerhofShallowFoundationImpl& self)
   {
     return std::make_shared<MeyerhofShallowFoundationImpl>(self);
@@ -42,12 +40,11 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::B_>> [[nodiscard]] static double
-      f(const MeyerhofShallowFoundationImpl& self)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::B_>>
+  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self)
   {
     return self.foundation_->template f<false, Jessica::Helper::F::B>() -
            2. * self.load_->template f<false, Jessica::Helper::F::E>();
@@ -55,12 +52,11 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::Qref>> [[nodiscard]] static double
-      f(const MeyerhofShallowFoundationImpl& self)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Qref>>
+  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self)
   {
     return self.load_->template f<false, Jessica::Helper::F::V>() /
            f<false, Jessica::Helper::F::B_>(self);
@@ -69,12 +65,12 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   template <bool CloneT, Jessica::Helper::F T, Jessica::Helper::F... U,
             typename... Args>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::Load>> [[nodiscard]] static double
-      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Load>>
+  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self,
+                                const Args&&... args)
   {
     return self.load_->template f<CloneT, U...>(
         std::forward<const Args>(args)...);
@@ -83,13 +79,12 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   template <bool CloneT, Jessica::Helper::F T, Jessica::Helper::F... U,
             typename... Args>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::Load>> [[nodiscard]] static std::
-          shared_ptr<MeyerhofShallowFoundationImpl>
-          f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
+                          std::true_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Load>>
+  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
+      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
   {
     auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->load_ = retval->load_->template f<CloneT, U...>(
@@ -100,12 +95,12 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   template <bool CloneT, Jessica::Helper::F T, Jessica::Helper::F... U,
             typename... Args>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&& std::
-      is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                std::integral_constant<
-                    Jessica::Helper::F,
-                    Jessica::Helper::F::Foundation>> [[nodiscard]] static double
-      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
+                          std::false_type> &&
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<Jessica::Helper::F,
+                                            Jessica::Helper::F::Foundation>>
+  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self,
+                                const Args&&... args)
   {
     return self.foundation_->template f<CloneT, U...>(
         std::forward<const Args>(args)...);
@@ -114,13 +109,12 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
   template <bool CloneT, Jessica::Helper::F T, Jessica::Helper::F... U,
             typename... Args>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type>&& std::
-      is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                std::integral_constant<
-                    Jessica::Helper::F,
-                    Jessica::Helper::F::Foundation>> [[nodiscard]] static std::
-          shared_ptr<MeyerhofShallowFoundationImpl>
-          f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
+                          std::true_type> &&
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<Jessica::Helper::F,
+                                            Jessica::Helper::F::Foundation>>
+  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
+      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
   {
     auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->foundation_ = retval->foundation_->template f<CloneT, U...>(
@@ -157,8 +151,8 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   }
   MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
   MeyerhofShallowFoundation(MeyerhofShallowFoundation&&) = delete;
-  MeyerhofShallowFoundation& operator=(const MeyerhofShallowFoundation&) =
-      delete;
+  MeyerhofShallowFoundation&
+      operator=(const MeyerhofShallowFoundation&) = delete;
   MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
   ~MeyerhofShallowFoundation() = default;
 

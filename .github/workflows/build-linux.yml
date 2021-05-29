@@ -18,10 +18,10 @@ jobs:
             ranlib: /usr/bin/ranlib
             os: ubuntu-latest
           - name: ubuntu-clang
-            ar: /usr/bin/llvm-ar-11
-            cc: /usr/bin/clang-11
-            cxx: /usr/bin/clang++-11
-            ranlib: /usr/bin/llvm-ranlib-11
+            ar: /usr/bin/llvm-ar-12
+            cc: /usr/bin/clang-12
+            cxx: /usr/bin/clang++-12
+            ranlib: /usr/bin/llvm-ranlib-12
             os: ubuntu-latest
     steps:
       - name: Stop if format failed
@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -yq g++ gcc
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get update && sudo apt-get install -yq clang-11
+        run: sudo apt-get update && sudo apt-get install -yq clang-12
       - name: Install 3rdparty
         run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
       - name: cmake

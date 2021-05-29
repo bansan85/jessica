@@ -21,10 +21,8 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
   template <Jessica::Helper::F T>
   requires std::is_same_v<
       std::integral_constant<Jessica::Helper::F, T>,
-      std::integral_constant<
-          Jessica::Helper::F,
-          Jessica::Helper::F::Clone>> [[nodiscard]] static std::
-      shared_ptr<VerticalEccentricImpl>
+      std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Clone>>
+  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
       f(const VerticalEccentricImpl& self)
   {
     return std::make_shared<VerticalEccentricImpl>(self);
@@ -32,25 +30,23 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::V>> [[nodiscard]] static double
-      f(const VerticalEccentricImpl& self)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::V>>
+  [[nodiscard]] static double f(const VerticalEccentricImpl& self)
   {
     return self.v_;
   }
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::V>> [[nodiscard]] static std::
-          shared_ptr<VerticalEccentricImpl>
-          f(const VerticalEccentricImpl& self, const double v)
+                          std::true_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::V>>
+  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
+      f(const VerticalEccentricImpl& self, const double v)
   {
     auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->v_ = v;
@@ -59,25 +55,23 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::E>> [[nodiscard]] static double
-      f(const VerticalEccentricImpl& self)
+                          std::false_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::E>>
+  [[nodiscard]] static double f(const VerticalEccentricImpl& self)
   {
     return self.e_;
   }
 
   template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type>&&
-      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
-                     std::integral_constant<
-                         Jessica::Helper::F,
-                         Jessica::Helper::F::E>> [[nodiscard]] static std::
-          shared_ptr<VerticalEccentricImpl>
-          f(const VerticalEccentricImpl& self, const double e)
+                          std::true_type> &&
+      std::is_same_v<
+          std::integral_constant<Jessica::Helper::F, T>,
+          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::E>>
+  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
+      f(const VerticalEccentricImpl& self, const double e)
   {
     auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->e_ = e;
