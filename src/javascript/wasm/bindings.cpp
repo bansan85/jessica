@@ -29,8 +29,7 @@ EMSCRIPTEN_BINDINGS(jessica)
                                 const>(
                     &Jessica::Data::Geotechnical::FoundationStrip<
                         Jessica::Data::Geotechnical::FoundationStripImpl>::
-                        f<false,
-                          Jessica::Data::Geotechnical::FoundationStripImpl::B>))
+                        f<false, Jessica::Helper::F::B>))
       .function(
           "setB",
           static_cast<
@@ -41,8 +40,7 @@ EMSCRIPTEN_BINDINGS(jessica)
                   const double&&) const>(
               &Jessica::Data::Geotechnical::FoundationStrip<
                   Jessica::Data::Geotechnical::FoundationStripImpl>::
-                  f<true,
-                    Jessica::Data::Geotechnical::FoundationStripImpl::B>));
+                  f<true, Jessica::Helper::F::B>));
 
   class_<Jessica::Data::Load::VerticalEccentric<
       Jessica::Data::Load::VerticalEccentricImpl>>("VerticalEccentricRaw")
@@ -55,10 +53,9 @@ EMSCRIPTEN_BINDINGS(jessica)
           "getE",
           static_cast<double (Jessica::Data::Load::VerticalEccentric<
                               Jessica::Data::Load::VerticalEccentricImpl>::*)()
-                          const>(
-              &Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>::
-                  f<false, Jessica::Data::Load::VerticalEccentricImpl::E>))
+                          const>(&Jessica::Data::Load::VerticalEccentric<
+                                 Jessica::Data::Load::VerticalEccentricImpl>::
+                                     f<false, Jessica::Helper::F::E>))
       .function(
           "setE",
           static_cast<std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
@@ -68,15 +65,14 @@ EMSCRIPTEN_BINDINGS(jessica)
               const double&&) const>(
               &Jessica::Data::Load::VerticalEccentric<
                   Jessica::Data::Load::VerticalEccentricImpl>::
-                  f<true, Jessica::Data::Load::VerticalEccentricImpl::E>))
+                  f<true, Jessica::Helper::F::E>))
       .function(
           "getV",
           static_cast<double (Jessica::Data::Load::VerticalEccentric<
                               Jessica::Data::Load::VerticalEccentricImpl>::*)()
-                          const>(
-              &Jessica::Data::Load::VerticalEccentric<
-                  Jessica::Data::Load::VerticalEccentricImpl>::
-                  f<false, Jessica::Data::Load::VerticalEccentricImpl::V>))
+                          const>(&Jessica::Data::Load::VerticalEccentric<
+                                 Jessica::Data::Load::VerticalEccentricImpl>::
+                                     f<false, Jessica::Helper::F::V>))
       .function(
           "setV",
           static_cast<std::shared_ptr<Jessica::Data::Load::VerticalEccentric<
@@ -86,7 +82,7 @@ EMSCRIPTEN_BINDINGS(jessica)
               const double&&) const>(
               &Jessica::Data::Load::VerticalEccentric<
                   Jessica::Data::Load::VerticalEccentricImpl>::
-                  f<true, Jessica::Data::Load::VerticalEccentricImpl::V>));
+                  f<true, Jessica::Helper::F::V>));
 
   class_<Jessica::Calc::Geotechnical::MeyerhofShallowFoundation<
       Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
@@ -127,11 +123,7 @@ EMSCRIPTEN_BINDINGS(jessica)
                                   Jessica::Data::Load::VerticalEccentricImpl,
                                   Jessica::Data::Geotechnical::
                                       FoundationStripImpl>>>>::
-                  f<false,
-                    Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
-                        Jessica::Data::Load::VerticalEccentricImpl,
-                        Jessica::Data::Geotechnical::FoundationStripImpl>::
-                        Qref>))
+                  f<false, Jessica::Helper::F::Qref>))
       .function(
           "getB_",
           static_cast<double (
@@ -151,9 +143,5 @@ EMSCRIPTEN_BINDINGS(jessica)
                                   Jessica::Data::Load::VerticalEccentricImpl,
                                   Jessica::Data::Geotechnical::
                                       FoundationStripImpl>>>>::
-                  f<false,
-                    Jessica::Calc::Geotechnical::MeyerhofShallowFoundationImpl<
-                        Jessica::Data::Load::VerticalEccentricImpl,
-                        Jessica::Data::Geotechnical::FoundationStripImpl>::
-                        B_>));
+                  f<false, Jessica::Helper::F::B_>));
 }

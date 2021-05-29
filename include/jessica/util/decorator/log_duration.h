@@ -14,7 +14,7 @@ class JESSICA_DLL_PUBLIC LogDuration
  public:
   using Type = typename Jessica::Helper::ExtractRootType<T>::type;
 
-  template <bool CloneT, typename... U, typename... Args>
+  template <bool CloneT, Jessica::Helper::F... U, typename... Args>
   [[nodiscard]] static auto f(const Type& classe, const Args&&... args)
   {
     const auto t_start = std::chrono::high_resolution_clock::now();

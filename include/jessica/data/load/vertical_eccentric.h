@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <jessica/compat.h>
+#include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
 
 namespace Jessica::Data::Load
@@ -11,70 +12,74 @@ namespace Jessica::Data::Load
 class JESSICA_DLL_PUBLIC VerticalEccentricImpl
 {
  public:
-  struct Clone
-  {
-  };
-
-  struct V
-  {
-  };
-
-  struct E
-  {
-  };
-
   VerticalEccentricImpl() = default;
   VerticalEccentricImpl(const VerticalEccentricImpl&) = default;
   VerticalEccentricImpl(VerticalEccentricImpl&&) = delete;
   VerticalEccentricImpl& operator=(const VerticalEccentricImpl&) = delete;
   VerticalEccentricImpl& operator=(VerticalEccentricImpl&&) = delete;
 
-  template <typename T>
-  requires std::is_same_v<Clone, T> [[nodiscard]] static std::shared_ptr<
-      VerticalEccentricImpl>
-  f(const VerticalEccentricImpl& self)
+  template <Jessica::Helper::F T>
+  requires std::is_same_v<
+      std::integral_constant<Jessica::Helper::F, T>,
+      std::integral_constant<
+          Jessica::Helper::F,
+          Jessica::Helper::F::Clone>> [[nodiscard]] static std::
+      shared_ptr<VerticalEccentricImpl>
+      f(const VerticalEccentricImpl& self)
   {
     return std::make_shared<VerticalEccentricImpl>(self);
   }
 
-  template <bool CloneT, typename T>
+  template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
                           std::false_type>&&
-      std::is_same_v<V, T> [[nodiscard]] static double
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<
+                         Jessica::Helper::F,
+                         Jessica::Helper::F::V>> [[nodiscard]] static double
       f(const VerticalEccentricImpl& self)
   {
     return self.v_;
   }
 
-  template <bool CloneT, typename T>
+  template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
                           std::true_type>&&
-      std::is_same_v<V, T> [[nodiscard]] static std::shared_ptr<
-          VerticalEccentricImpl>
-      f(const VerticalEccentricImpl& self, const double v)
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<
+                         Jessica::Helper::F,
+                         Jessica::Helper::F::V>> [[nodiscard]] static std::
+          shared_ptr<VerticalEccentricImpl>
+          f(const VerticalEccentricImpl& self, const double v)
   {
-    auto retval = f<Clone>(self);
+    auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->v_ = v;
     return retval;
   }
 
-  template <bool CloneT, typename T>
+  template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
                           std::false_type>&&
-      std::is_same_v<E, T> [[nodiscard]] static double
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<
+                         Jessica::Helper::F,
+                         Jessica::Helper::F::E>> [[nodiscard]] static double
       f(const VerticalEccentricImpl& self)
   {
     return self.e_;
   }
 
-  template <bool CloneT, typename T>
+  template <bool CloneT, Jessica::Helper::F T>
   requires std::is_same_v<std::integral_constant<bool, CloneT>,
                           std::true_type>&&
-      std::is_same_v<E, T> [[nodiscard]] static std::shared_ptr<
-          VerticalEccentricImpl>
-      f(const VerticalEccentricImpl& self, const double e)
+      std::is_same_v<std::integral_constant<Jessica::Helper::F, T>,
+                     std::integral_constant<
+                         Jessica::Helper::F,
+                         Jessica::Helper::F::E>> [[nodiscard]] static std::
+          shared_ptr<VerticalEccentricImpl>
+          f(const VerticalEccentricImpl& self, const double e)
   {
-    auto retval = f<Clone>(self);
+    auto retval = f<Jessica::Helper::F::Clone>(self);
     retval->e_ = e;
     return retval;
   }
@@ -94,7 +99,7 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
   VerticalEccentric& operator=(const VerticalEccentric&) = delete;
   VerticalEccentric& operator=(VerticalEccentric&&) = delete;
 
-  template <bool CloneT, typename... U, typename... Args>
+  template <bool CloneT, Jessica::Helper::F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const
   {
     if constexpr (CloneT)
