@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Jessica::Helper
+namespace jessica
 {
 // Extract the type inside nested container.
 // Example:
@@ -68,8 +68,16 @@ struct LazyLoadIdentity
 
 template <std::size_t N, typename... types>
 struct LazyLoadExtractNthType
-    : LazyLoadIdentity<
-          typename Jessica::Helper::ExtractNthType<N, types...>::type>
+    : LazyLoadIdentity<typename ExtractNthType<N, types...>::type>
 {
 };
-}  // namespace Jessica::Helper
+
+// Tell if value in template is the same.
+// Example:
+// template<bool T>
+// requires Equals<bool, true, T>
+// void f(){}
+template <typename T, T V1, T V2>
+concept Equals = std::is_same_v<std::integral_constant<T, V1>,
+                                std::integral_constant<T, V2>>;
+}  // namespace jessica

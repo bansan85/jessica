@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Jessica::Helper
+namespace jessica
 {
 enum class F
 {
@@ -9,8 +9,10 @@ enum class F
   Clone,
   E,
   Foundation,
+  Get,
   Load,
   Qref,
+  Set,
   V
 };
-}  // namespace Jessica::Helper
+}  // namespace jessica

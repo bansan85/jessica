@@ -1,5 +1,5 @@
 ---
-Checks: "*,-llvm-header-guard,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-llvmlibc-restrict-system-libc-headers,-llvmlibc-implementation-in-namespace,-llvmlibc-callee-namespace"
+Checks: "*,-llvm-header-guard,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-llvmlibc-restrict-system-libc-headers,-llvmlibc-implementation-in-namespace,-llvmlibc-callee-namespace,-google-build-using-namespace"
 WarningsAsErrors: "*"
 HeaderFilterRegex: ""
 AnalyzeTemporaryDtors: false

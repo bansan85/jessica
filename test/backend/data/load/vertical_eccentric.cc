@@ -6,44 +6,39 @@
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
 
+using namespace jessica;
+
 JTEST_NAME(data, VerticalEccentric)  // NOLINT
 {
-  const auto load = std::make_shared<Jessica::Data::Load::VerticalEccentric<
-      Jessica::Data::Load::VerticalEccentricImpl>>();
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::E>()));
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::V>()));
-  const auto load2 = load->f<true, Jessica::Helper::F::V>(100000.);
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::E>()));
-  JTEST_EQ((load2->f<false, Jessica::Helper::F::V>()), 100000.);
-  const auto load3 = load2->f<true, Jessica::Helper::F::E>(0.2);
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::E>()), 0.2);
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::V>()), 100000.);
+  const auto load =
+      std::make_shared<VerticalEccentric<VerticalEccentricImpl>>();
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::V>()));
+  const auto load2 = load->f<F::Set, F::V>(100000.);
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
+  JTEST_EQ((load2->f<F::Get, F::V>()), 100000.);
+  const auto load3 = load2->f<F::Set, F::E>(0.2);
+  JTEST_EQ((load3->f<F::Get, F::E>()), 0.2);
+  JTEST_EQ((load3->f<F::Get, F::V>()), 100000.);
   const auto load4 = load3->Clone();
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::E>()),
-           (load4->f<false, Jessica::Helper::F::E>()));
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::V>()),
-           (load4->f<false, Jessica::Helper::F::V>()));
+  JTEST_EQ((load3->f<F::Get, F::E>()), (load4->f<F::Get, F::E>()));
+  JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
 }
 
 JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
 {
-  using Decorator =
-      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
-          Jessica::Data::Load::VerticalEccentricImpl>>;
+  using Decorator = LogCall<LogDuration<VerticalEccentricImpl>>;
 
-  const auto load =
-      std::make_shared<Jessica::Data::Load::VerticalEccentric<Decorator>>();
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::E>()));
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::V>()));
-  const auto load2 = load->f<true, Jessica::Helper::F::V>(100000.);
-  JTEST_TRUE(std::isnan(load->f<false, Jessica::Helper::F::E>()));
-  JTEST_EQ((load2->f<false, Jessica::Helper::F::V>()), 100000.);
-  const auto load3 = load2->f<true, Jessica::Helper::F::E>(0.2);
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::E>()), 0.2);
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::V>()), 100000.);
+  const auto load = std::make_shared<VerticalEccentric<Decorator>>();
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::V>()));
+  const auto load2 = load->f<F::Set, F::V>(100000.);
+  JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
+  JTEST_EQ((load2->f<F::Get, F::V>()), 100000.);
+  const auto load3 = load2->f<F::Set, F::E>(0.2);
+  JTEST_EQ((load3->f<F::Get, F::E>()), 0.2);
+  JTEST_EQ((load3->f<F::Get, F::V>()), 100000.);
   const auto load4 = load3->Clone();
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::E>()),
-           (load4->f<false, Jessica::Helper::F::E>()));
-  JTEST_EQ((load3->f<false, Jessica::Helper::F::V>()),
-           (load4->f<false, Jessica::Helper::F::V>()));
+  JTEST_EQ((load3->f<F::Get, F::E>()), (load4->f<F::Get, F::E>()));
+  JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
 }

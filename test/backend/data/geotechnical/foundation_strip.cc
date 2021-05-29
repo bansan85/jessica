@@ -6,33 +6,29 @@
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
 
+using namespace jessica;
+
 JTEST_NAME(data, FoundationStrip)  // NOLINT
 {
   const auto foundation =
-      std::make_shared<Jessica::Data::Geotechnical::FoundationStrip<
-          Jessica::Data::Geotechnical::FoundationStripImpl>>();
-  JTEST_TRUE(std::isnan(foundation->f<false, Jessica::Helper::F::B>()));
-  const auto foundation2 = foundation->f<true, Jessica::Helper::F::B>(1.);
-  JTEST_TRUE(std::isnan(foundation->f<false, Jessica::Helper::F::B>()));
-  JTEST_EQ((foundation2->f<false, Jessica::Helper::F::B>()), 1.);
+      std::make_shared<FoundationStrip<FoundationStripImpl>>();
+  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
+  const auto foundation2 = foundation->f<F::Set, F::B>(1.);
+  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
+  JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
   const auto foundation3 = foundation2->Clone();
-  JTEST_EQ((foundation2->f<false, Jessica::Helper::F::B>()),
-           (foundation3->f<false, Jessica::Helper::F::B>()));
+  JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
 {
-  using Decorator =
-      Jessica::Util::Decorator::LogCall<Jessica::Util::Decorator::LogDuration<
-          Jessica::Data::Geotechnical::FoundationStripImpl>>;
+  using Decorator = LogCall<LogDuration<FoundationStripImpl>>;
 
-  const auto foundation = std::make_shared<
-      Jessica::Data::Geotechnical::FoundationStrip<Decorator>>();
-  JTEST_TRUE(std::isnan(foundation->f<false, Jessica::Helper::F::B>()));
-  const auto foundation2 = foundation->f<true, Jessica::Helper::F::B>(1.);
-  JTEST_TRUE(std::isnan(foundation->f<false, Jessica::Helper::F::B>()));
-  JTEST_EQ((foundation2->f<false, Jessica::Helper::F::B>()), 1.);
+  const auto foundation = std::make_shared<FoundationStrip<Decorator>>();
+  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
+  const auto foundation2 = foundation->f<F::Set, F::B>(1.);
+  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
+  JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
   const auto foundation3 = foundation2->Clone();
-  JTEST_EQ((foundation2->f<false, Jessica::Helper::F::B>()),
-           (foundation3->f<false, Jessica::Helper::F::B>()));
+  JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
 }

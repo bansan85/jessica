@@ -7,7 +7,7 @@
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
 
-namespace Jessica::Data::Geotechnical
+namespace jessica
 {
 class JESSICA_DLL_PUBLIC FoundationStripImpl
 {
@@ -18,37 +18,27 @@ class JESSICA_DLL_PUBLIC FoundationStripImpl
   FoundationStripImpl& operator=(const FoundationStripImpl&) = delete;
   FoundationStripImpl& operator=(FoundationStripImpl&&) = delete;
 
-  template <Jessica::Helper::F T>
-  requires std::is_same_v<
-      std::integral_constant<Jessica::Helper::F, T>,
-      std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::Clone>>
+  template <F T>
+  requires Equals<F, T, F::Clone>
   [[nodiscard]] static std::shared_ptr<FoundationStripImpl>
       f(const FoundationStripImpl& self)
   {
     return std::make_shared<FoundationStripImpl>(self);
   }
 
-  template <bool CloneT, Jessica::Helper::F T>
-  requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::false_type> &&
-      std::is_same_v<
-          std::integral_constant<Jessica::Helper::F, T>,
-          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::B>>
+  template <F Action, F T>
+  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
   [[nodiscard]] static double f(const FoundationStripImpl& self)
   {
     return self.b_;
   }
 
-  template <bool CloneT, Jessica::Helper::F T>
-  requires std::is_same_v<std::integral_constant<bool, CloneT>,
-                          std::true_type> &&
-      std::is_same_v<
-          std::integral_constant<Jessica::Helper::F, T>,
-          std::integral_constant<Jessica::Helper::F, Jessica::Helper::F::B>>
+  template <F Action, F T>
+  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
   [[nodiscard]] static std::shared_ptr<FoundationStripImpl>
       f(const FoundationStripImpl& self, const double b)
   {
-    auto retval = f<Jessica::Helper::F::Clone>(self);
+    auto retval = f<F::Clone>(self);
     retval->b_ = b;
     return retval;
   }
@@ -67,19 +57,19 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   FoundationStrip& operator=(const FoundationStrip&) = delete;
   FoundationStrip& operator=(FoundationStrip&&) = delete;
 
-  template <bool CloneT, Jessica::Helper::F... U, typename... Args>
+  template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const
   {
-    if constexpr (CloneT)
+    if constexpr (Action == F::Set)
     {
       auto retval = Clone();
-      retval->impl_ = T::template f<CloneT, U...>(
+      retval->impl_ = T::template f<Action, U...>(
           *impl_, std::forward<const Args>(args)...);
       return retval;
     }
     else
     {
-      return T::template f<CloneT, U...>(*impl_,
+      return T::template f<Action, U...>(*impl_,
                                          std::forward<const Args>(args)...);
     }
   }
@@ -93,4 +83,4 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   std::shared_ptr<FoundationStripImpl> impl_ =
       std::make_shared<FoundationStripImpl>();
 };
-}  // namespace Jessica::Data::Geotechnical
+}  // namespace jessica
