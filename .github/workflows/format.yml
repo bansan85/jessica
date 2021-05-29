@@ -42,6 +42,28 @@ jobs:
       - name: Install node dependencies
         run: |
           npm install eslint eslint-config-google eslint-plugin-html
+      - name: Publish documentation
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b format
+          rm -Rf jessica-ci/*
+          apt list --installed > jessica-ci/apt-installed.txt
+          eval `ssh-agent`
+          ssh-add ~/.ssh/id_rsa
+          gpg --version
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
+          gpg --import .github/encrypted/github-ci-private.key
+          cd jessica-ci || exit 1
+          git config --global user.name "Github CI"
+          git config --global user.email "github-ci@le-garrec.fr"
+          git add .
+          if [ -n "$(git diff-index --name-only HEAD --)" ]; \
+          then \
+            git commit -S${{ secrets.GPG_KEY_ID }} -m "${{ github.event.head_commit.message }}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
+            git push || { echo "Failure git push" && exit 1; } \
+          fi
+          cd .. || exit 1
+          rm -Rf jessica-ci
       - name: formatter
         shell: bash
         run: |
