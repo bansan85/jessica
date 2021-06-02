@@ -34,7 +34,7 @@ jobs:
           source ./emsdk/emsdk_env.sh
           mkdir build
           emcmake cmake -S . -B build
-          emcmake cmake --build build/ --target all
+          cmake --build build/ --target all
       - name: ctest
         shell: bash
         run: |

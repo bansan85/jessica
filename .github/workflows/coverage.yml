@@ -54,7 +54,7 @@ jobs:
           ctest -O test-result.xml --output-on-failure
           cd .. || exit 1
       - name: Coverage report gcc
-        if: contains(matrix.cc, 'gcc')
+        if: contains(matrix.cc, 'gcc') && contains('master', github.event.workflow_run.head_branch)
         run: |
           git clone --depth 1 https://github.com/henry2cox/lcov.git -b diffcov_initial
           ./lcov/bin/lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
@@ -66,7 +66,7 @@ jobs:
           find build/coverage -name "*.html" -exec sed -i -r "s#headerValue""\>.*-.*-.* .*:.*:.*td#headerValue""></td#g" {} \;
       - name: Coverage report clang
         shell: bash
-        if: contains(matrix.cc, 'clang')
+        if: contains(matrix.cc, 'clang') && contains('master', github.event.workflow_run.head_branch)
         run: |
           shopt -s globstar dotglob
           llvm-profdata-12 merge -output=code.profdata **/*.profraw
