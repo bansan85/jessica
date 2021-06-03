@@ -15,7 +15,7 @@ safety==1.10.3
     certifi==2020.12.5
     chardet==4.0.0
     idna==2.10
-    urllib3==1.26.4
+    urllib3==1.26.5
   setuptools==49.2.1
 wheel==0.36.2
 yamllint==1.26.1
