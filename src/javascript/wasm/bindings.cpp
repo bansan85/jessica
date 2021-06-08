@@ -14,76 +14,76 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(jessica)
 {
   using namespace jessica;
-  class_<FoundationStrip<FoundationStripImpl>>("FoundationStripRaw")
+  class_<FoundationStrip>("FoundationStripRaw")
       .constructor<>()
-      .smart_ptr<std::shared_ptr<FoundationStrip<FoundationStripImpl>>>(
-          "FoundationStripRaw")
-      .function("clone", &FoundationStrip<FoundationStripImpl>::Clone)
-      .function(
-          "getB",
-          static_cast<double (FoundationStrip<FoundationStripImpl>::*)() const>(
-              &FoundationStrip<FoundationStripImpl>::f<F::Get, F::B>))
-      .function(
-          "setB",
-          static_cast<std::shared_ptr<FoundationStrip<FoundationStripImpl>> (
-              FoundationStrip<FoundationStripImpl>::*)(const double&&) const>(
-              &FoundationStrip<FoundationStripImpl>::f<F::Set, F::B>));
+      .smart_ptr<std::shared_ptr<FoundationStrip>>("FoundationStripRaw")
+      .function("clone", &FoundationStrip::f<F::Set, F::Clone>)
+      .function("getB", static_cast<double (FoundationStrip::*)() const>(
+                            &FoundationStrip::f<F::Get, F::B>))
+      .function("setB", static_cast<std::shared_ptr<FoundationStrip> (
+                            FoundationStrip::*)(const double) const>(
+                            &FoundationStrip::f<F::Set, F::B>));
 
-  class_<VerticalEccentric<VerticalEccentricImpl>>("VerticalEccentricRaw")
+  class_<VerticalEccentric>("VerticalEccentricRaw")
       .constructor<>()
-      .smart_ptr<std::shared_ptr<VerticalEccentric<VerticalEccentricImpl>>>(
-          "VerticalEccentricRaw")
-      .function("clone", &VerticalEccentric<VerticalEccentricImpl>::Clone)
-      .function("getE",
-                static_cast<double (
-                    VerticalEccentric<VerticalEccentricImpl>::*)() const>(
-                    &VerticalEccentric<VerticalEccentricImpl>::f<F::Get, F::E>))
-      .function("setE",
-                static_cast<
-                    std::shared_ptr<VerticalEccentric<VerticalEccentricImpl>> (
-                        VerticalEccentric<VerticalEccentricImpl>::*)(
-                        const double&&) const>(
-                    &VerticalEccentric<VerticalEccentricImpl>::f<F::Set, F::E>))
-      .function("getV",
-                static_cast<double (
-                    VerticalEccentric<VerticalEccentricImpl>::*)() const>(
-                    &VerticalEccentric<VerticalEccentricImpl>::f<F::Get, F::V>))
-      .function("setV",
-                static_cast<
-                    std::shared_ptr<VerticalEccentric<VerticalEccentricImpl>> (
-                        VerticalEccentric<VerticalEccentricImpl>::*)(
-                        const double&&) const>(
-                    &VerticalEccentric<VerticalEccentricImpl>::f<F::Set, F::V>));
+      .smart_ptr<std::shared_ptr<VerticalEccentric>>("VerticalEccentricRaw")
+      .function("clone", &VerticalEccentric::f<F::Set, F::Clone>)
+      .function("getE", static_cast<double (VerticalEccentric::*)() const>(
+                            &VerticalEccentric::f<F::Get, F::E>))
+      .function("setE", static_cast<std::shared_ptr<VerticalEccentric> (
+                            VerticalEccentric::*)(const double) const>(
+                            &VerticalEccentric::f<F::Set, F::E>))
+      .function("getV", static_cast<double (VerticalEccentric::*)() const>(
+                            &VerticalEccentric::f<F::Get, F::V>))
+      .function("setV", static_cast<std::shared_ptr<VerticalEccentric> (
+                            VerticalEccentric::*)(const double) const>(
+                            &VerticalEccentric::f<F::Set, F::V>));
 
-  class_<MeyerhofShallowFoundation<
-      LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-          VerticalEccentricImpl, FoundationStripImpl>>>>>(
-      "MeyerhofShallowFoundationDeco")
-      .constructor<
-          const std::shared_ptr<VerticalEccentric<VerticalEccentricImpl>>,
-          const std::shared_ptr<FoundationStrip<FoundationStripImpl>>>()
-      .function("clone",
-                &MeyerhofShallowFoundation<
-                    LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-                        VerticalEccentricImpl, FoundationStripImpl>>>>::Clone)
-      .function("getQref",
-                static_cast<double (
-                    MeyerhofShallowFoundation<
-                        LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-                            VerticalEccentricImpl, FoundationStripImpl>>>>::*)()
-                                const>(
-                    &MeyerhofShallowFoundation<
-                        LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-                            VerticalEccentricImpl, FoundationStripImpl>>>>::
-                        f<F::Get, F::Qref>))
-      .function("getB_",
-                static_cast<double (
-                    MeyerhofShallowFoundation<
-                        LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-                            VerticalEccentricImpl, FoundationStripImpl>>>>::*)()
-                                const>(
-                    &MeyerhofShallowFoundation<
-                        LogCall<LogDuration<MeyerhofShallowFoundationImpl<
-                            VerticalEccentricImpl, FoundationStripImpl>>>>::
-                        f<F::Get, F::B_>));
+  class_<MeyerhofShallowFoundationDecorator<
+      LogCall<
+          LogDuration<
+              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>,
+              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
+          MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
+      VerticalEccentric, FoundationStrip>>("MeyerhofShallowFoundationDeco")
+      .constructor<const std::shared_ptr<VerticalEccentric>,
+                   const std::shared_ptr<FoundationStrip>>()
+      .function(
+          "getQref",
+          static_cast<double (
+              MeyerhofShallowFoundationDecorator<
+                  LogCall<LogDuration<MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>,
+                                      MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>>,
+                          MeyerhofShallowFoundation<VerticalEccentric,
+                                                    FoundationStrip>>,
+                  VerticalEccentric, FoundationStrip>::*)() const>(
+              &MeyerhofShallowFoundationDecorator<
+                  LogCall<LogDuration<MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>,
+                                      MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>>,
+                          MeyerhofShallowFoundation<VerticalEccentric,
+                                                    FoundationStrip>>,
+                  VerticalEccentric, FoundationStrip>::f<F::Get, F::Qref>))
+      .function(
+          "getB_",
+          static_cast<double (
+              MeyerhofShallowFoundationDecorator<
+                  LogCall<LogDuration<MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>,
+                                      MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>>,
+                          MeyerhofShallowFoundation<VerticalEccentric,
+                                                    FoundationStrip>>,
+                  VerticalEccentric, FoundationStrip>::*)() const>(
+              &MeyerhofShallowFoundationDecorator<
+                  LogCall<LogDuration<MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>,
+                                      MeyerhofShallowFoundation<
+                                          VerticalEccentric, FoundationStrip>>,
+                          MeyerhofShallowFoundation<VerticalEccentric,
+                                                    FoundationStrip>>,
+                  VerticalEccentric, FoundationStrip>::f<F::Get, F::B_>));
 }

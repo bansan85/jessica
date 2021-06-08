@@ -9,18 +9,16 @@
 
 namespace jessica
 {
-template <typename T>
-class JESSICA_DLL_PUBLIC LogDuration
+template <typename T, typename T0>
+class JESSICA_DLL_PUBLIC LogDuration final
 {
  public:
-  using Type = typename ExtractRootType<T>::type;
-
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] static auto f(const Type& classe, const Args&&... args)
+  [[nodiscard]] auto f(const T0& classe, const Args&&... args)
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
     const auto retval =
-        T::template f<Action, U...>(classe, std::forward<const Args>(args)...);
+        classe->template f<Action, U...>(std::forward<const Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();

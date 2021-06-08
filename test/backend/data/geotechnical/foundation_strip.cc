@@ -10,25 +10,25 @@ using namespace jessica;
 
 JTEST_NAME(data, FoundationStrip)  // NOLINT
 {
-  const auto foundation =
-      std::make_shared<FoundationStrip<FoundationStripImpl>>();
+  const auto foundation = std::make_shared<FoundationStrip>();
   JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
   JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
   JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
-  const auto foundation3 = foundation2->Clone();
+  const auto foundation3 = foundation2->f<F::Set, F::Clone>();
   JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
 {
-  using Decorator = LogCall<LogDuration<FoundationStripImpl>>;
+  using Decorator = FoundationStripDecorator<
+      LogCall<LogDuration<FoundationStrip, FoundationStrip>, FoundationStrip>>;
 
-  const auto foundation = std::make_shared<FoundationStrip<Decorator>>();
+  const auto foundation = std::make_shared<Decorator>();
   JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
   JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
   JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
-  const auto foundation3 = foundation2->Clone();
+  const auto foundation3 = foundation2->f<F::Set, F::Clone>();
   JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
 }

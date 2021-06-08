@@ -9,53 +9,44 @@
 
 namespace jessica
 {
-class JESSICA_DLL_PUBLIC VerticalEccentricImpl
+class JESSICA_DLL_PUBLIC VerticalEccentric final
 {
  public:
-  VerticalEccentricImpl() = default;
-  VerticalEccentricImpl(const VerticalEccentricImpl&) = default;
-  VerticalEccentricImpl(VerticalEccentricImpl&&) = delete;
-  VerticalEccentricImpl& operator=(const VerticalEccentricImpl&) = delete;
-  VerticalEccentricImpl& operator=(VerticalEccentricImpl&&) = delete;
+  VerticalEccentric() = default;
+  VerticalEccentric(const VerticalEccentric&) = default;
+  VerticalEccentric(VerticalEccentric&&) = delete;
+  VerticalEccentric& operator=(const VerticalEccentric&) = delete;
+  VerticalEccentric& operator=(VerticalEccentric&&) = delete;
 
-  template <F T>
-  requires Equals<F, T, F::Clone>
-  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
-      f(const VerticalEccentricImpl& self)
+  template <F Action, F T>
+  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
+  [[nodiscard]] std::shared_ptr<VerticalEccentric> f() const
   {
-    return std::make_shared<VerticalEccentricImpl>(self);
+    return std::make_shared<VerticalEccentric>(*this);
   }
 
   template <F Action, F T>
   requires Equals<F, Action, F::Get> && Equals<F, T, F::V>
-  [[nodiscard]] static double f(const VerticalEccentricImpl& self)
-  {
-    return self.v_;
-  }
+  [[nodiscard]] double f() const { return v_; }
 
   template <F Action, F T>
   requires Equals<F, Action, F::Set> && Equals<F, T, F::V>
-  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
-      f(const VerticalEccentricImpl& self, const double v)
+  [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double v) const
   {
-    auto retval = f<F::Clone>(self);
+    auto retval = f<F::Set, F::Clone>();
     retval->v_ = v;
     return retval;
   }
 
   template <F Action, F T>
   requires Equals<F, Action, F::Get> && Equals<F, T, F::E>
-  [[nodiscard]] static double f(const VerticalEccentricImpl& self)
-  {
-    return self.e_;
-  }
+  [[nodiscard]] double f() const { return e_; }
 
   template <F Action, F T>
   requires Equals<F, Action, F::Set> && Equals<F, T, F::E>
-  [[nodiscard]] static std::shared_ptr<VerticalEccentricImpl>
-      f(const VerticalEccentricImpl& self, const double e)
+  [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double e) const
   {
-    auto retval = f<F::Clone>(self);
+    auto retval = f<F::Set, F::Clone>();
     retval->e_ = e;
     return retval;
   }
@@ -66,39 +57,41 @@ class JESSICA_DLL_PUBLIC VerticalEccentricImpl
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC VerticalEccentric final
+class JESSICA_DLL_PUBLIC VerticalEccentricDecorator final
 {
  public:
-  VerticalEccentric() = default;
-  VerticalEccentric(const VerticalEccentric&) = default;
-  VerticalEccentric(VerticalEccentric&&) = delete;
-  VerticalEccentric& operator=(const VerticalEccentric&) = delete;
-  VerticalEccentric& operator=(VerticalEccentric&&) = delete;
+  VerticalEccentricDecorator() = default;
+  VerticalEccentricDecorator(const VerticalEccentricDecorator&) = default;
+  VerticalEccentricDecorator(VerticalEccentricDecorator&&) = delete;
+  VerticalEccentricDecorator&
+      operator=(const VerticalEccentricDecorator&) = delete;
+  VerticalEccentricDecorator& operator=(VerticalEccentricDecorator&&) = delete;
 
   template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const
   {
     if constexpr (Action == F::Set)
     {
-      auto retval = Clone();
-      retval->impl_ = T::template f<Action, U...>(
-          *impl_, std::forward<const Args>(args)...);
+      auto retval = f<F::Set, F::Clone>();
+      retval->impl_ =
+          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
       return retval;
     }
     else
     {
-      return T::template f<Action, U...>(*impl_,
-                                         std::forward<const Args>(args)...);
+      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
     }
   }
 
-  [[nodiscard]] std::shared_ptr<VerticalEccentric<T>> Clone() const
+  template <F Action, F U>
+  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
+  [[nodiscard]] std::shared_ptr<VerticalEccentricDecorator<T>> f() const
   {
-    return std::make_shared<VerticalEccentric<T>>(*this);
+    return std::make_shared<VerticalEccentricDecorator<T>>(*this);
   }
 
  private:
-  std::shared_ptr<VerticalEccentricImpl> impl_ =
-      std::make_shared<VerticalEccentricImpl>();
+  std::shared_ptr<VerticalEccentric> impl_ =
+      std::make_shared<VerticalEccentric>();
 };
 }  // namespace jessica

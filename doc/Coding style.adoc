@@ -15,7 +15,7 @@ Rule in the current paragraph is a reminder of the official guide.
   * Filename: lower case with underline between words (i.e. `file_name.cc`),
   * Classe: camel case (i.e. `LoadClass`),
   * Function: camel case (i.e. `ExecuteRule`).
-  * Accessors (getter / setter) do not use prefix `Get` and `Set`. Getters should not have argument and Setter should have one.
+  * Accessors (getter / setter) do not use prefix `Get` and `Set`. Use the `f` function pattern described in Architecture file to use decorator.
 
   * Extension:
     ** C++ source: `.cc` and `.h`,
@@ -45,7 +45,7 @@ All symbols have a main namespace `Jessica`.
 
 === Functional programming
 
-The software use functional programming when possible. Why ? Because I want to try it.
+The software use functional programming when possible. Why ? Because I want to try it but only in interesting part of the software.
 
 Getter and Setter are const. Setter return `std::shared_ptr`.
 

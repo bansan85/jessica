@@ -11,108 +11,12 @@
 namespace jessica
 {
 template <typename T0, typename T1>
-class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationImpl
-{
- public:
-  MeyerhofShallowFoundationImpl(
-      const std::shared_ptr<VerticalEccentric<T0>>& load,
-      const std::shared_ptr<FoundationStrip<T1>>& foundation)
-      : load_(load), foundation_(foundation)
-  {
-  }
-  MeyerhofShallowFoundationImpl(const MeyerhofShallowFoundationImpl&) = default;
-  MeyerhofShallowFoundationImpl(MeyerhofShallowFoundationImpl&&) = delete;
-  MeyerhofShallowFoundationImpl&
-      operator=(const MeyerhofShallowFoundationImpl&) = delete;
-  MeyerhofShallowFoundationImpl&
-      operator=(MeyerhofShallowFoundationImpl&&) = delete;
-
-  template <F T>
-  requires Equals<F, T, F::Clone>
-  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
-      f(const MeyerhofShallowFoundationImpl& self)
-  {
-    return std::make_shared<MeyerhofShallowFoundationImpl>(self);
-  }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B_>
-  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self)
-  {
-    return self.foundation_->template f<F::Get, F::B>() -
-           2. * self.load_->template f<F::Get, F::E>();
-  }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Qref>
-  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self)
-  {
-    return self.load_->template f<F::Get, F::V>() / f<F::Get, F::B_>(self);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Load>
-  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self,
-                                const Args&&... args)
-  {
-    return self.load_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Load>
-  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
-      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
-  {
-    auto retval = f<F::Clone>(self);
-    retval->load_ = retval->load_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Foundation>
-  [[nodiscard]] static double f(const MeyerhofShallowFoundationImpl& self,
-                                const Args&&... args)
-  {
-    return self.foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Foundation>
-  [[nodiscard]] static std::shared_ptr<MeyerhofShallowFoundationImpl>
-      f(const MeyerhofShallowFoundationImpl& self, const Args&&... args)
-  {
-    auto retval = f<F::Clone>(self);
-    retval->foundation_ = retval->foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
-
- private:
-  std::shared_ptr<VerticalEccentric<T0>> load_;
-  std::shared_ptr<FoundationStrip<T1>> foundation_;
-};
-
-template <typename T>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
  public:
-  using T0 = typename ExtractRootTypeN<0, T>::type;
-  using T1 = typename ExtractRootTypeN<1, T>::type;
-
-  MeyerhofShallowFoundation()
-      : impl_(std::make_shared<MeyerhofShallowFoundationImpl<T0, T1>>(
-            std::make_shared<VerticalEccentric<T0>>(),
-            std::make_shared<FoundationStrip<T1>>()))
-  {
-  }
-  MeyerhofShallowFoundation(
-      const std::shared_ptr<VerticalEccentric<T0>>& load,
-      const std::shared_ptr<FoundationStrip<T1>>& foundation)
-      : impl_(std::make_shared<MeyerhofShallowFoundationImpl<T0, T1>>(
-            load, foundation))
+  MeyerhofShallowFoundation(const std::shared_ptr<T0>& load,
+                            const std::shared_ptr<T1>& foundation)
+      : load_(load), foundation_(foundation)
   {
   }
   MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
@@ -120,31 +24,122 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   MeyerhofShallowFoundation&
       operator=(const MeyerhofShallowFoundation&) = delete;
   MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
-  ~MeyerhofShallowFoundation() = default;
+
+  template <F Action, F T>
+  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> f() const
+  {
+    return std::make_shared<MeyerhofShallowFoundation>(*this);
+  }
+
+  template <F Action, F T>
+  requires Equals<F, Action, F::Get> && Equals<F, T, F::B_>
+  [[nodiscard]] double f() const
+  {
+    return foundation_->template f<F::Get, F::B>() -
+           2. * load_->template f<F::Get, F::E>();
+  }
+
+  template <F Action, F T>
+  requires Equals<F, Action, F::Get> && Equals<F, T, F::Qref>
+  [[nodiscard]] double f() const
+  {
+    return load_->template f<F::Get, F::V>() / f<F::Get, F::B_>();
+  }
+
+  template <F Action, F T, F... U, typename... Args>
+  requires Equals<F, Action, F::Get> && Equals<F, T, F::Load>
+  [[nodiscard]] double f(const Args&&... args) const
+  {
+    return load_->template f<Action, U...>(std::forward<const Args>(args)...);
+  }
+
+  template <F Action, F T, F... U, typename... Args>
+  requires Equals<F, Action, F::Set> && Equals<F, T, F::Load>
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
+      f(const Args&&... args) const
+  {
+    auto retval = f<F::Set, F::Clone>();
+    retval->load_ = retval->load_->template f<Action, U...>(
+        std::forward<const Args>(args)...);
+    return retval;
+  }
+
+  template <F Action, F T, F... U, typename... Args>
+  requires Equals<F, Action, F::Get> && Equals<F, T, F::Foundation>
+  [[nodiscard]] double f(const Args&&... args) const
+  {
+    return foundation_->template f<Action, U...>(
+        std::forward<const Args>(args)...);
+  }
+
+  template <F Action, F T, F... U, typename... Args>
+  requires Equals<F, Action, F::Set> && Equals<F, T, F::Foundation>
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
+      f(const Args&&... args) const
+  {
+    auto retval = f<F::Set, F::Clone>();
+    retval->foundation_ = retval->foundation_->template f<Action, U...>(
+        std::forward<const Args>(args)...);
+    return retval;
+  }
+
+ private:
+  std::shared_ptr<T0> load_;
+  std::shared_ptr<T1> foundation_;
+};
+
+template <typename T, typename T0, typename T1>
+class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationDecorator final
+{
+ public:
+  MeyerhofShallowFoundationDecorator()
+      : impl_(std::make_shared<MeyerhofShallowFoundation<T0, T1>>(
+            std::make_shared<T0>(), std::make_shared<T1>()))
+  {
+  }
+  MeyerhofShallowFoundationDecorator(const std::shared_ptr<T0>& load,
+                                     const std::shared_ptr<T1>& foundation)
+      : impl_(std::make_shared<MeyerhofShallowFoundation<T0, T1>>(load,
+                                                                  foundation))
+  {
+  }
+  MeyerhofShallowFoundationDecorator(
+      const MeyerhofShallowFoundationDecorator&) = default;
+  MeyerhofShallowFoundationDecorator(MeyerhofShallowFoundationDecorator&&) =
+      delete;
+  MeyerhofShallowFoundationDecorator&
+      operator=(const MeyerhofShallowFoundationDecorator&) = delete;
+  MeyerhofShallowFoundationDecorator&
+      operator=(MeyerhofShallowFoundationDecorator&&) = delete;
+  ~MeyerhofShallowFoundationDecorator() = default;
 
   template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const
   {
     if constexpr (Action == F::Set)
     {
-      auto retval = Clone();
-      retval->impl_ = T::template f<Action, U...>(
-          *impl_, std::forward<const Args>(args)...);
+      auto retval = f<F::Set, F::Clone>();
+      retval->impl_ =
+          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
       return retval;
     }
     else
     {
-      return T::template f<Action, U...>(*impl_,
-                                         std::forward<const Args>(args)...);
+      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
     }
   }
 
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> Clone() const
+  template <F Action, F U>
+  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundationDecorator<T, T0, T1>>
+      f() const
   {
-    return std::make_shared<MeyerhofShallowFoundation>(*this);
+    return std::make_shared<MeyerhofShallowFoundationDecorator<T, T0, T1>>(
+        *this);
   }
 
  private:
-  std::shared_ptr<MeyerhofShallowFoundationImpl<T0, T1>> impl_;
+  std::shared_ptr<MeyerhofShallowFoundation<T0, T1>> impl_;
 };
 }  // namespace jessica

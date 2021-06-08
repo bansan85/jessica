@@ -10,8 +10,7 @@ using namespace jessica;
 
 JTEST_NAME(data, VerticalEccentric)  // NOLINT
 {
-  const auto load =
-      std::make_shared<VerticalEccentric<VerticalEccentricImpl>>();
+  const auto load = std::make_shared<VerticalEccentric>();
   JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
   JTEST_TRUE(std::isnan(load->f<F::Get, F::V>()));
   const auto load2 = load->f<F::Set, F::V>(100000.);
@@ -20,16 +19,17 @@ JTEST_NAME(data, VerticalEccentric)  // NOLINT
   const auto load3 = load2->f<F::Set, F::E>(0.2);
   JTEST_EQ((load3->f<F::Get, F::E>()), 0.2);
   JTEST_EQ((load3->f<F::Get, F::V>()), 100000.);
-  const auto load4 = load3->Clone();
+  const auto load4 = load3->f<F::Set, F::Clone>();
   JTEST_EQ((load3->f<F::Get, F::E>()), (load4->f<F::Get, F::E>()));
   JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
 }
 
 JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
 {
-  using Decorator = LogCall<LogDuration<VerticalEccentricImpl>>;
+  using Decorator = VerticalEccentricDecorator<LogCall<
+      LogDuration<VerticalEccentric, VerticalEccentric>, VerticalEccentric>>;
 
-  const auto load = std::make_shared<VerticalEccentric<Decorator>>();
+  const auto load = std::make_shared<Decorator>();
   JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
   JTEST_TRUE(std::isnan(load->f<F::Get, F::V>()));
   const auto load2 = load->f<F::Set, F::V>(100000.);
@@ -38,7 +38,7 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   const auto load3 = load2->f<F::Set, F::E>(0.2);
   JTEST_EQ((load3->f<F::Get, F::E>()), 0.2);
   JTEST_EQ((load3->f<F::Get, F::V>()), 100000.);
-  const auto load4 = load3->Clone();
+  const auto load4 = load3->f<F::Set, F::Clone>();
   JTEST_EQ((load3->f<F::Get, F::E>()), (load4->f<F::Get, F::E>()));
   JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
 }

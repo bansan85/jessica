@@ -50,7 +50,7 @@ Run everytime:
 
 [source,sh]
 ----
-source ./emsdk_env.sh
+source ./emsdk/emsdk_env.sh
 mkdir build
 emcmake cmake -S . -B build
 emcmake cmake --build build/ --target all
@@ -97,7 +97,7 @@ The build is tested with Ubuntu-LTS with gcc and clang and Windows with Visual S
 
   * Linux
 
-Compilers tested : gcc-10 and clang-11.
+Compilers tested : gcc-10 and clang-12.
 
 Packages are installed with ''apt-get''.
 
@@ -124,7 +124,6 @@ GitHub does not support two things:
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
         run: exit 1
 ----
-
 
 === Linters
 

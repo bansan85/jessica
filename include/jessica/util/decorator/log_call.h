@@ -8,18 +8,15 @@
 
 namespace jessica
 {
-template <typename T>
-class JESSICA_DLL_PUBLIC LogCall
+template <typename T, typename T0>
+class JESSICA_DLL_PUBLIC LogCall final
 {
  public:
-  using Type = typename ExtractRootType<T>::type;
-
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] static auto f(const Type& classe, const Args&&... args)
+  [[nodiscard]] auto f(const T0& classe, const Args&&... args)
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
-    return T::template f<Action, U...>(classe,
-                                       std::forward<const Args>(args)...);
+    return classe->template f<Action, U...>(std::forward<const Args>(args)...);
   }
 };
 }  // namespace jessica
