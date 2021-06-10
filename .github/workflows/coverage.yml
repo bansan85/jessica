@@ -13,8 +13,8 @@ jobs:
         include:
           - name: coverage-gcc
             ar: /usr/bin/ar
-            cc: /usr/bin/gcc-10
-            cxx: /usr/bin/g++-10
+            cc: /usr/bin/gcc-11
+            cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
           - name: coverage-clang
             ar: /usr/bin/llvm-ar-12
@@ -39,7 +39,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get update && sudo apt-get install -yq g++ gcc lcov libdatetime-perl libdatetime-format-w3cdtf-perl
+        run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl
       - name: Install clang
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-12 tidy
@@ -57,7 +57,7 @@ jobs:
         if: contains(matrix.cc, 'gcc') && contains('master', github.event.workflow_run.head_branch)
         run: |
           git clone --depth 1 https://github.com/henry2cox/lcov.git -b diffcov_initial
-          ./lcov/bin/lcov --capture --directory build --gcov-tool /usr/bin/gcov-10 --rc lcov_branch_coverage=1 --output-file build/coverage.info
+          ./lcov/bin/lcov --capture --directory build --gcov-tool /usr/bin/gcov-11 --rc lcov_branch_coverage=1 --output-file build/coverage.info
           ./lcov/bin/lcov --remove build/coverage.info "/usr/include/*" --rc lcov_branch_coverage=1 -o build/coverage2.info
           bash <(curl -s https://codecov.io/bash) -f build/coverage2.info
           ./lcov/bin/lcov --extract build/coverage.info "*/include/jessica/*" "*/src/backend/*" --rc lcov_branch_coverage=1 -o build/coverage_backend.info

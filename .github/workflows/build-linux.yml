@@ -13,8 +13,8 @@ jobs:
         include:
           - name: ubuntu-gcc
             ar: /usr/bin/ar
-            cc: /usr/bin/gcc-10
-            cxx: /usr/bin/g++-10
+            cc: /usr/bin/gcc-11
+            cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
             os: ubuntu-latest
           - name: ubuntu-clang
@@ -42,7 +42,7 @@ jobs:
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get update && sudo apt-get install -yq g++ gcc
+        run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11
       - name: Install clang
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-12
