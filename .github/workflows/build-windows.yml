@@ -31,17 +31,13 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: github.com ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS_WINDOWS }}
-      - name: Configure Windows Vcpkg
-        uses: lukka/set-shell-env@master
-        with:
-          VCPKGRESPONSEFILE: "${{ github.workspace }}/config/cmake/vcpkg_x64-windows.txt"
       - name: Install Windows Vcpkg
         uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgArguments: "@${{ env.VCPKGRESPONSEFILE }}"
+          vcpkgArguments: "@${{ github.workspace }}/config/cmake/vcpkg_x64-windows.txt"
           vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-          appendedCacheKey: ${{ hashFiles( env.VCPKGRESPONSEFILE ) }}
+          appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_x64-windows.txt', github.workspace) ) }}
       - name: CMake
         run: |
           mkdir "${{ github.workspace }}/build"
