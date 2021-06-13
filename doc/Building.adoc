@@ -97,7 +97,7 @@ The build is tested with Ubuntu-LTS with gcc and clang and Windows with Visual S
 
   * Linux
 
-Compilers tested : gcc-10 and clang-12.
+Compilers tested : gcc-11 and clang-12.
 
 Packages are installed with ''apt-get''.
 
