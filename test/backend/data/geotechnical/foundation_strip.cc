@@ -3,8 +3,10 @@
 
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/test/test.h>
+#include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
+#include <jessica/util/decorator/start.h>
 
 using namespace jessica;
 
@@ -21,8 +23,8 @@ JTEST_NAME(data, FoundationStrip)  // NOLINT
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
 {
-  using Decorator = FoundationStripDecorator<
-      LogCall<LogDuration<FoundationStrip, FoundationStrip>, FoundationStrip>>;
+  using Decorator =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
 
   const auto foundation = std::make_shared<Decorator>();
   JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));

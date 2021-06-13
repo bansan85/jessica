@@ -41,41 +41,4 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
-
-template <typename T>
-class JESSICA_DLL_PUBLIC FoundationStripDecorator final
-{
- public:
-  FoundationStripDecorator() = default;
-  FoundationStripDecorator(const FoundationStripDecorator&) = default;
-  FoundationStripDecorator(FoundationStripDecorator&&) = delete;
-  FoundationStripDecorator& operator=(const FoundationStripDecorator&) = delete;
-  FoundationStripDecorator& operator=(FoundationStripDecorator&&) = delete;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const Args&&... args) const
-  {
-    if constexpr (Action == F::Set)
-    {
-      auto retval = f<F::Set, F::Clone>();
-      retval->impl_ =
-          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-      return retval;
-    }
-    else
-    {
-      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-    }
-  }
-
-  template <F Action, F U>
-  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
-  [[nodiscard]] std::shared_ptr<FoundationStripDecorator<T>> f() const
-  {
-    return std::make_shared<FoundationStripDecorator<T>>(*this);
-  }
-
- private:
-  std::shared_ptr<FoundationStrip> impl_ = std::make_shared<FoundationStrip>();
-};
 }  // namespace jessica

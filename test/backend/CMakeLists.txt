@@ -16,5 +16,6 @@ endif(${GTest_FOUND})
 
 include_directories("${Jessica_SOURCE_DIR}/include" SYSTEM ${GTEST_INCLUDE_DIR})
 
-add_subdirectory(data)
 add_subdirectory(calc)
+add_subdirectory(data)
+add_subdirectory(util)

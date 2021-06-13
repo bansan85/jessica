@@ -40,11 +40,11 @@ GoogleTest supports mocking with template.
 
 All accessors use the same template function `f`.
 
-You will need two explicit symbol. The first tells if it's a getter or a setter. The second tells which information do you want. This second part may be multiple if you need to go in nested accessor.
+You will need two explicit symbol. The first tells if it's a getter or a setter. The second tells which information you want. This second part may be multiple if you need to go in nested accessor.
 
 If you want to get a value, the first explicit typename is `false`: `f<F::Get, F::Data>()`.
 
-If you want to set a value, the first explicit typename is `true`: `f<F::Set, F::Data, F::Data2>(value)`. The type of the value returned is a `std::shared_ptr<...>` of the current object.
+If you want to set a value, the first explicit typename is `true`: `f<F::Set, F::Data>(value)`. The type of the value returned is a `std::shared_ptr<...>` of the current object.
 
   * Coding style
 
@@ -54,54 +54,11 @@ Ownership of a return value of a setter must be able to be shared. Use a `std::s
 
   * Example of declaration
 
-Adapter for a strip foundation. If you do not need decorator, just use `FoundationStrip`;
+If you do not need decorator, just use `FoundationStrip`.
 
-[source,cpp]
-----
-#include <jessica/compat.h>
-#include <jessica/helper/accessor.h>
-#include <jessica/helper/template.h>
+If you need decorator, you have to put `DecoratorStart` and `DecoratorEnd` around decorator(s).
 
-namespace jessica
-{
-template <typename T>
-class JESSICA_DLL_PUBLIC FoundationStripDecorator final
-{
- public:
-  FoundationStripDecorator() = default;
-  FoundationStripDecorator(const FoundationStripDecorator&) = default;
-  FoundationStripDecorator(FoundationStripDecorator&&) = delete;
-  FoundationStripDecorator& operator=(const FoundationStripDecorator&) = delete;
-  FoundationStripDecorator& operator=(FoundationStripDecorator&&) = delete;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const Args&&... args) const
-  {
-    if constexpr (Action == F::Set)
-    {
-      auto retval = f<F::Set, F::Clone>();
-      retval->impl_ =
-          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-      return retval;
-    }
-    else
-    {
-      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-    }
-  }
-
-  template <F Action, F U>
-  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
-  [[nodiscard]] std::shared_ptr<FoundationStripDecorator<T>> f() const
-  {
-    return std::make_shared<FoundationStripDecorator<T>>(*this);
-  }
-
- private:
-  std::shared_ptr<FoundationStrip> impl_ = std::make_shared<FoundationStrip>();
-};
-}  // namespace jessica
-----
+Use `DecoratorStart<LogCall<DecoratorEnd<FoundationStrip>>>`.
 
 === Implementation behind the adapter
 
@@ -160,16 +117,19 @@ They implement the same `f` functions. If needed, you can specialize some of the
 ----
 namespace jessica
 {
-template <typename T, typename T0>
-class JESSICA_DLL_PUBLIC LogDuration final
+template <typename T>
+class JESSICA_DLL_PUBLIC LogDuration : public T
 {
  public:
+  ~LogDuration() override = default;
+
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const T0& classe, const Args&&... args)
+  [[nodiscard]] auto f(const typename T::RootType& classe,
+                       const Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
     const auto retval =
-        classe->template f<Action, U...>(std::forward<const Args>(args)...);
+        T::template f<Action, U...>(classe, std::forward<const Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();
@@ -186,16 +146,15 @@ You can create the data without decorator.
 
 [source,cpp]
 ----
-  const auto load =
-      std::make_shared<FoundationStrip>();
+  const auto foundation = std::make_shared<FoundationStrip>();
 ----
 
 or with decorator.
 
 [source,cpp]
 ----
-  using Decorator = FoundationStripDecorator<
-      LogCall<LogDuration<FoundationStrip, FoundationStrip>, FoundationStrip>>;
+  using Decorator =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
 
   const auto foundation = std::make_shared<Decorator>();
 ----
@@ -230,13 +189,8 @@ An example with only decorator to the main class:
   // Data 2 without decorator
   using DecoratorLoad = VerticalEccentric;
   // Main data with 2 data stored inside.
-  using DecoratorCalc = MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>,
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-          MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-      DecoratorLoad, DecoratorFoundation>;
+  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
   const auto calc = std::make_shared<DecoratorCalc>(load, foundation);
 ----
@@ -246,80 +200,16 @@ And the same with a decorator for every data:
 [source,cpp]
 ----
   // Data 1 with decorator
-  using DecoratorFoundation = FoundationStripDecorator<
-      LogCall<LogDuration<FoundationStrip, FoundationStrip>, FoundationStrip>>;
+  using DecoratorFoundation =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
   // Data 2 with decorator
-  using DecoratorLoad = VerticalEccentricDecorator<LogCall<
-      LogDuration<VerticalEccentric, VerticalEccentric>, VerticalEccentric>>;
+  using DecoratorLoad =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<VerticalEccentric>>>>;
   // Main data with 2 data stored inside.
-  using DecoratorCalc = MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>,
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-          MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-      DecoratorLoad, DecoratorFoundation>;
+  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
   const auto calc = std::make_shared<DecoratorCalc>(load, foundation);
-----
-
-Because this class has two data stored, you need to add boilerplates to all accessors from the main class. They are added in adapter with the generic templated `f` function.
-
-[source,cpp]
-----
-template <typename T, typename T0, typename T1>
-class JESSICA_DLL_PUBLIC MeyerhofShallowFoundationDecorator final
-{
- public:
-  MeyerhofShallowFoundationDecorator()
-      : impl_(std::make_shared<MeyerhofShallowFoundation<T0, T1>>(
-            std::make_shared<T0>(), std::make_shared<T1>()))
-  {
-  }
-  MeyerhofShallowFoundationDecorator(const std::shared_ptr<T0>& load,
-                                     const std::shared_ptr<T1>& foundation)
-      : impl_(std::make_shared<MeyerhofShallowFoundation<T0, T1>>(load,
-                                                                  foundation))
-  {
-  }
-  MeyerhofShallowFoundationDecorator(
-      const MeyerhofShallowFoundationDecorator&) = default;
-  MeyerhofShallowFoundationDecorator(MeyerhofShallowFoundationDecorator&&) =
-      delete;
-  MeyerhofShallowFoundationDecorator&
-      operator=(const MeyerhofShallowFoundationDecorator&) = delete;
-  MeyerhofShallowFoundationDecorator&
-      operator=(MeyerhofShallowFoundationDecorator&&) = delete;
-  ~MeyerhofShallowFoundationDecorator() = default;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const Args&&... args) const
-  {
-    if constexpr (Action == F::Set)
-    {
-      auto retval = f<F::Set, F::Clone>();
-      retval->impl_ =
-          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-      return retval;
-    }
-    else
-    {
-      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-    }
-  }
-
-  template <F Action, F U>
-  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundationDecorator<T, T0, T1>>
-      f() const
-  {
-    return std::make_shared<MeyerhofShallowFoundationDecorator<T, T0, T1>>(
-        *this);
-  }
-
- private:
-  std::shared_ptr<MeyerhofShallowFoundation<T0, T1>> impl_;
-};
 ----
 
   * Implementation
@@ -328,6 +218,8 @@ The implementation needs to have as template the type of data store (`T0` and `T
 
 [source,cpp]
 ----
+namespace jessica
+{
 template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
@@ -406,4 +298,5 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   std::shared_ptr<T0> load_;
   std::shared_ptr<T1> foundation_;
 };
+}  // namespace jessica
 ----

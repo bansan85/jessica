@@ -7,8 +7,10 @@
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/test/test.h>
+#include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
+#include <jessica/util/decorator/start.h>
 
 using namespace jessica;
 
@@ -52,17 +54,12 @@ JTEST_NAME(data, CalcMeyehof)  // NOLINT
 
 JTEST_NAME(data, CalcMeyehofAllDecorator)  // NOLINT
 {
-  using DecoratorFoundation = FoundationStripDecorator<
-      LogCall<LogDuration<FoundationStrip, FoundationStrip>, FoundationStrip>>;
-  using DecoratorLoad = VerticalEccentricDecorator<LogCall<
-      LogDuration<VerticalEccentric, VerticalEccentric>, VerticalEccentric>>;
-  using DecoratorCalc = MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>,
-              MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-          MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>,
-      DecoratorLoad, DecoratorFoundation>;
+  using DecoratorFoundation =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
+  using DecoratorLoad =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<VerticalEccentric>>>>;
+  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
   const auto foundation = std::make_shared<DecoratorFoundation>();
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
@@ -95,13 +92,8 @@ JTEST_NAME(data, CalcMeyehofAllDecorator)  // NOLINT
 
 JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
 {
-  using DecoratorCalc = MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>,
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-          MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-      VerticalEccentric, FoundationStrip>;
+  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>;
 
   const auto foundation = std::make_shared<FoundationStrip>();
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
@@ -134,15 +126,12 @@ JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
 
 JTEST_NAME(data, CalcMeyehofOnly)  // NOLINT
 {
-  using DecoratorCalc = MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>,
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-          MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-      VerticalEccentric, FoundationStrip>;
+  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>;
 
-  const auto calc = std::make_shared<DecoratorCalc>();
+  const auto calc =
+      std::make_shared<DecoratorCalc>(std::make_shared<VerticalEccentric>(),
+                                      std::make_shared<FoundationStrip>());
   const auto calc2 = calc->f<F::Set, F::Load, F::E>(0.25)
                          ->f<F::Set, F::Load, F::V>(100000.)
                          ->f<F::Set, F::Foundation, F::B>(1.);

@@ -4,19 +4,22 @@
 #include <memory>
 
 #include <jessica/helper/accessor.h>
-#include <jessica/helper/template.h>
 
 namespace jessica
 {
-template <typename T, typename T0>
-class JESSICA_DLL_PUBLIC LogCall final
+template <typename T>
+class JESSICA_DLL_PUBLIC LogCall : public T
 {
  public:
+  ~LogCall() override = default;
+
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const T0& classe, const Args&&... args)
+  [[nodiscard]] auto f(const typename T::RootType& classe,
+                       const Args&&... args) const
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
-    return classe->template f<Action, U...>(std::forward<const Args>(args)...);
+    return T::template f<Action, U...>(classe,
+                                       std::forward<const Args>(args)...);
   }
 };
 }  // namespace jessica

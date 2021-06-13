@@ -29,6 +29,8 @@ jobs:
           python -m lizard -x "./3rdparty/*" -x  "./build/*" -x "./doc/*" |sed -r "s/^(.*)@.*@(.*)$/\1 \2/g" > lizard.txt
       - name: Publish metrics
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
+        env:
+          COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
         run: |
           eval `ssh-agent`
           git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b metrics
@@ -44,7 +46,7 @@ jobs:
           git add .
           if [ -n "$(git diff-index --name-only HEAD --)" ]; \
           then \
-            git commit -S${{ secrets.GPG_KEY_ID }} -m "${{ github.event.head_commit.message }}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
+            git commit -S${{ secrets.GPG_KEY_ID }} -m "${COMMIT_MESSAGE//\"/\"\"}" -m "Update from bansan85/jessica@$GITHUB_SHA"; \
             git push || { echo "Failure git push" && exit 1; } \
           fi
           cd .. || exit 1

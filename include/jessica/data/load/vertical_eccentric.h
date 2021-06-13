@@ -55,43 +55,4 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
   double v_ = std::numeric_limits<double>::quiet_NaN();
   double e_ = std::numeric_limits<double>::quiet_NaN();
 };
-
-template <typename T>
-class JESSICA_DLL_PUBLIC VerticalEccentricDecorator final
-{
- public:
-  VerticalEccentricDecorator() = default;
-  VerticalEccentricDecorator(const VerticalEccentricDecorator&) = default;
-  VerticalEccentricDecorator(VerticalEccentricDecorator&&) = delete;
-  VerticalEccentricDecorator&
-      operator=(const VerticalEccentricDecorator&) = delete;
-  VerticalEccentricDecorator& operator=(VerticalEccentricDecorator&&) = delete;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const Args&&... args) const
-  {
-    if constexpr (Action == F::Set)
-    {
-      auto retval = f<F::Set, F::Clone>();
-      retval->impl_ =
-          impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-      return retval;
-    }
-    else
-    {
-      return impl_->template f<Action, U...>(std::forward<const Args>(args)...);
-    }
-  }
-
-  template <F Action, F U>
-  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
-  [[nodiscard]] std::shared_ptr<VerticalEccentricDecorator<T>> f() const
-  {
-    return std::make_shared<VerticalEccentricDecorator<T>>(*this);
-  }
-
- private:
-  std::shared_ptr<VerticalEccentric> impl_ =
-      std::make_shared<VerticalEccentric>();
-};
 }  // namespace jessica

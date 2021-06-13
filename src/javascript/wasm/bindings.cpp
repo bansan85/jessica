@@ -6,8 +6,10 @@
 #include <jessica/calc/geotechnical/meyerhof.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
+#include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
+#include <jessica/util/decorator/start.h>
 
 using namespace emscripten;
 
@@ -39,51 +41,29 @@ EMSCRIPTEN_BINDINGS(jessica)
                             VerticalEccentric::*)(const double) const>(
                             &VerticalEccentric::f<F::Set, F::V>));
 
-  class_<MeyerhofShallowFoundationDecorator<
-      LogCall<
-          LogDuration<
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>,
-              MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-          MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>,
-      VerticalEccentric, FoundationStrip>>("MeyerhofShallowFoundationDeco")
+  class_<DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+      MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>>(
+      "MeyerhofShallowFoundationDeco")
       .constructor<const std::shared_ptr<VerticalEccentric>,
                    const std::shared_ptr<FoundationStrip>>()
       .function(
           "getQref",
           static_cast<double (
-              MeyerhofShallowFoundationDecorator<
-                  LogCall<LogDuration<MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>,
-                                      MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>>,
-                          MeyerhofShallowFoundation<VerticalEccentric,
-                                                    FoundationStrip>>,
-                  VerticalEccentric, FoundationStrip>::*)() const>(
-              &MeyerhofShallowFoundationDecorator<
-                  LogCall<LogDuration<MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>,
-                                      MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>>,
-                          MeyerhofShallowFoundation<VerticalEccentric,
-                                                    FoundationStrip>>,
-                  VerticalEccentric, FoundationStrip>::f<F::Get, F::Qref>))
+              DecoratorStart<
+                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
+                      VerticalEccentric, FoundationStrip>>>>>::*)() const>(
+              &DecoratorStart<
+                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
+                      VerticalEccentric, FoundationStrip>>>>>::f<F::Get,
+                                                                 F::Qref>))
       .function(
           "getB_",
           static_cast<double (
-              MeyerhofShallowFoundationDecorator<
-                  LogCall<LogDuration<MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>,
-                                      MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>>,
-                          MeyerhofShallowFoundation<VerticalEccentric,
-                                                    FoundationStrip>>,
-                  VerticalEccentric, FoundationStrip>::*)() const>(
-              &MeyerhofShallowFoundationDecorator<
-                  LogCall<LogDuration<MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>,
-                                      MeyerhofShallowFoundation<
-                                          VerticalEccentric, FoundationStrip>>,
-                          MeyerhofShallowFoundation<VerticalEccentric,
-                                                    FoundationStrip>>,
-                  VerticalEccentric, FoundationStrip>::f<F::Get, F::B_>));
+              DecoratorStart<
+                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
+                      VerticalEccentric, FoundationStrip>>>>>::*)() const>(
+              &DecoratorStart<
+                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
+                      VerticalEccentric, FoundationStrip>>>>>::f<F::Get,
+                                                                 F::B_>));
 }

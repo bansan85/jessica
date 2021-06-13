@@ -3,8 +3,10 @@
 
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/test/test.h>
+#include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>
+#include <jessica/util/decorator/start.h>
 
 using namespace jessica;
 
@@ -26,8 +28,8 @@ JTEST_NAME(data, VerticalEccentric)  // NOLINT
 
 JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
 {
-  using Decorator = VerticalEccentricDecorator<LogCall<
-      LogDuration<VerticalEccentric, VerticalEccentric>, VerticalEccentric>>;
+  using Decorator =
+      DecoratorStart<LogCall<LogDuration<DecoratorEnd<VerticalEccentric>>>>;
 
   const auto load = std::make_shared<Decorator>();
   JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));

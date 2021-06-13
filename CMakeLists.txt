@@ -26,7 +26,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wno-c++98-compat-pedantic
     -Wno-weak-vtables
     -Wno-c99-extensions
-    -Wno-global-constructors)
+    -Wno-global-constructors
+    -Wno-unneeded-member-function)
   check_cxx_compiler_flag("-Wno-return-std-move-in-c++11"
                           COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
