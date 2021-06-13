@@ -23,7 +23,7 @@ cd ..
 [source,sh]
 ----
 .\vcpkg\bootstrap-vcpkg.bat
-.\vcpkg\vcpkg install gtest
+.\vcpkg\vcpkg install "@.\config\cmake\vcpkg_x64-windows.txt"
 mkdir build
 cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build --target ALL_BUILD --config Debug
