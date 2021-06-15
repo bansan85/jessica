@@ -37,10 +37,12 @@ test('FoundationStrip', async () => {
 
 test('CalcMeyehof', async () => {
   return jessica().then(async (instance) => {
+    const logger = new instance.SpdlogStdoutMt('log');
     const foundation4 = new instance.FoundationStripRaw().setB(1.0);
     const vert5 = new instance.VerticalEccentricRaw().setV(100000.).setE(0.25);
 
-    const calc = new instance.MeyerhofShallowFoundationDeco(vert5, foundation4);
+    const calc = new instance.MeyerhofShallowFoundationDeco(
+        logger, logger, vert5, foundation4);
     expect(calc.getQref()).toBe(200000.);
     expect(calc.getB_()).toBe(0.5);
   });

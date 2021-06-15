@@ -17,7 +17,7 @@ For this job, it will be used:
 - `\__declspec(dllimport)` and `__declspec(dllexport)` will be used for https://docs.microsoft.com/en-us/cpp/build/importing-and-exporting[Windows],
 - `\\__attribute__((visibility("default")))` will be used for Linux.
 
-Internally, you must define the macro `BUILDING_JESSICA_DLL`.
+Internally, `JESSICA_BUILDING_DLL` will be defined.
 
 == Manage data
 
@@ -118,24 +118,41 @@ They implement the same `f` functions. If needed, you can specialize some of the
 namespace jessica
 {
 template <typename T>
-class JESSICA_DLL_PUBLIC LogDuration : public T
+class JESSICA_DLL_PUBLIC LogDuration
 {
  public:
-  ~LogDuration() override = default;
+  using RootType = typename T::RootType;
+
+  template <typename... Args>
+  LogDuration(std::shared_ptr<RootType>& impl,
+              const std::shared_ptr<spdlog::logger>& log, Args&&... args)
+      : t(impl, std::forward<Args>(args)...), log_(log)
+  {
+  }
+  LogDuration(const LogDuration&) = default;
+  LogDuration(LogDuration&&) = delete;
+  LogDuration& operator=(const LogDuration&) = delete;
+  LogDuration& operator=(LogDuration&&) = delete;
+
+  ~LogDuration() {}
 
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const typename T::RootType& classe,
-                       const Args&&... args) const
+  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
     const auto retval =
-        T::template f<Action, U...>(classe, std::forward<const Args>(args)...);
+        t.template f<Action, U...>(classe, std::forward<const Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();
-    std::cout << "duration " << elapsed_time_ms << " ms" << std::endl;
+    log_->info("duration " + cfi_to_string(elapsed_time_ms) + " ms");
     return retval;
   }
+
+ private:
+  T t;
+
+  std::shared_ptr<spdlog::logger> log_;
 };
 }  // namespace jessica
 ----

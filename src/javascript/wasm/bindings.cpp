@@ -2,6 +2,8 @@
 #include <memory>
 
 #include <emscripten/bind.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
 
 #include <jessica/calc/geotechnical/meyerhof.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
@@ -16,6 +18,14 @@ using namespace emscripten;
 EMSCRIPTEN_BINDINGS(jessica)
 {
   using namespace jessica;
+
+  function("SpdlogStdoutMt",
+           &spdlog::stdout_logger_mt<spdlog::synchronous_factory>);
+
+  class_<spdlog::logger>("logger")
+      .constructor<std::string>()
+      .smart_ptr<std::shared_ptr<spdlog::logger>>("logger");
+
   class_<FoundationStrip>("FoundationStripRaw")
       .constructor<>()
       .smart_ptr<std::shared_ptr<FoundationStrip>>("FoundationStripRaw")
@@ -44,7 +54,9 @@ EMSCRIPTEN_BINDINGS(jessica)
   class_<DecoratorStart<LogCall<LogDuration<DecoratorEnd<
       MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>>(
       "MeyerhofShallowFoundationDeco")
-      .constructor<const std::shared_ptr<VerticalEccentric>,
+      .constructor<std::shared_ptr<spdlog::logger>,
+                   std::shared_ptr<spdlog::logger>,
+                   const std::shared_ptr<VerticalEccentric>,
                    const std::shared_ptr<FoundationStrip>>()
       .function(
           "getQref",

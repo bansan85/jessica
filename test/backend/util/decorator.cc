@@ -10,8 +10,6 @@
 
 using namespace jessica;
 
-namespace
-{
 class DecoratorTest final
 {
  public:
@@ -48,37 +46,45 @@ class DecoratorTest final
 };
 
 template <typename T>
-class DecoratorMiddle : public T
+class DecoratorMiddle
 {
  public:
-  DecoratorMiddle() = default;
+  using RootType = typename T::RootType;
+
+  template <typename... Args>
+  // cppcheck-suppress constParameter
+  explicit DecoratorMiddle(std::shared_ptr<RootType>& impl, Args&&... args)
+      : t(impl, std::forward<Args>(args)...)
+  {
+  }
   DecoratorMiddle(const DecoratorMiddle&) = default;
   DecoratorMiddle(DecoratorMiddle&&) = delete;
   DecoratorMiddle& operator=(const DecoratorMiddle&) = delete;
   DecoratorMiddle& operator=(DecoratorMiddle&&) = delete;
 
-  ~DecoratorMiddle() override = default;
+  ~DecoratorMiddle() = default;
 
   template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const typename T::RootType& classe,
-                       const Args&&... args) const
+  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
-    return T::template f<Action, U...>(classe,
-                                       std::forward<const Args>(args)...);
+    return t.template f<Action, U...>(classe,
+                                      std::forward<const Args>(args)...);
   }
 
   template <F Action, F V>
   requires Equals<F, Action, F::Set> && Equals<F, V, F::B>
-  [[nodiscard]] std::shared_ptr<typename T::RootType>
-      f(const typename T::RootType& classe, const double b) const
+  [[nodiscard]] std::shared_ptr<RootType> f(const RootType& classe,
+                                            const double b) const
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
-    auto retval = T::template f<Action, V>(classe, b + 1.);
+    auto retval = t.template f<Action, V>(classe, b + 1.);
     return retval;
   }
+
+ private:
+  T t;
 };
-}  // namespace
 
 JTEST_NAME(decorator, Test)  // NOLINT
 {

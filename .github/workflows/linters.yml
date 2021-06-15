@@ -23,7 +23,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev cppcheck iwyu shellcheck clang-tidy-11 clang-12
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-11 clang-12
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:
@@ -67,10 +67,11 @@ jobs:
           CXX: /usr/bin/clang++-12
           RANLIB: /usr/bin/llvm-ranlib-12
         run: |
+          sudo bash -c "patch -d/ -p1 < ${{ github.workspace }}/.github/patches/run-clang-tidy.patch"
           mkdir build
           cmake -S . -B build
           cd build || exit 1
-          run-clang-tidy-11
+          run-clang-tidy-11 -line-filter='[{"name":"logger-inl.h","lines":[[95,95]]}]'
           cd .. || exit 1
       - name: Lint
         run: |

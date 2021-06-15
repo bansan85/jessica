@@ -68,6 +68,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
         run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11
@@ -75,7 +76,10 @@ jobs:
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-12
       - name: Install 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev
+      - name: Fix cfi
+        if: ${{ matrix.sanitizer == 'cfi' }}
+        run: sudo sed -i 's/_M_ptr() .*/\0 __attribute__((__no_sanitize__("cfi"))) /g' /usr/include/c++/*/ext/aligned_buffer.h
       - name: cmake
         run: |
           mkdir build

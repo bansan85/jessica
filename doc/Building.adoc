@@ -70,7 +70,7 @@ Tools needed:
 
 === Backend
 
-No dependencies.
+  * logger: https://github.com/gabime/spdlog[spdlog]
 
 === Tests
 
@@ -97,13 +97,13 @@ The build is tested with Ubuntu-LTS with gcc and clang and Windows with Visual S
 
   * Linux
 
-Compilers tested : gcc-11 and clang-12.
+Compilers tested: gcc-11 and clang-12.
 
 Packages are installed with ''apt-get''.
 
   * Windows
 
-Compilers tested : Visual Studio 2019.
+Compilers tested: ''Visual Studio 2019'' with ''Desktop development with C++''.
 
 Packages are installed with ''vcpkg''.
 
@@ -139,7 +139,7 @@ Lots (maybe too much) of linters are used:
 
 === Sanitizers
 
-Enable all sanitizers : address, thread, leak, undefined, cfi.
+Enable all sanitizers: address, thread, leak, undefined, cfi.
 
 === Data generated
 

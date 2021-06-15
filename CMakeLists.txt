@@ -13,9 +13,9 @@ include(CheckCXXCompilerFlag)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-option(BUILD_COVERAGE "Enable coverage")
+find_package(spdlog REQUIRED)
 
-add_compile_definitions(BUILDING_JESSICA_DLL)
+option(BUILD_COVERAGE "Enable coverage")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   add_compile_options(
@@ -46,7 +46,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_compile_options(-Wall -Werror -Wextra -Wpedantic)
   if(BUILD_COVERAGE)
-    add_compile_options(-O0 --coverage -fanalyzer)
+    add_compile_options(-O0 --coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   else()
     add_compile_options(-O3)
@@ -55,6 +55,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(
     /Wall
     /WX
+    /wd4251
     /wd4275
     /wd4514
     /wd4625
@@ -64,7 +65,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd4820
     /wd5026
     /wd5027
-    /wd4251)
+    /wd5039
+    /wd5045)
 else()
   message(WARNING "${CMAKE_CXX_COMPILER_ID} is unknown")
 endif()

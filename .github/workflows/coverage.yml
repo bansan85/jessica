@@ -29,6 +29,8 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
@@ -36,7 +38,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
         run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl

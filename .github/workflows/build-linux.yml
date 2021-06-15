@@ -16,6 +16,7 @@ jobs:
             cc: /usr/bin/gcc-11
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
+            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY
             os: ubuntu-latest
           - name: ubuntu-clang
             ar: /usr/bin/llvm-ar-12
@@ -47,11 +48,13 @@ jobs:
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get update && sudo apt-get install -yq clang-12
       - name: Install 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev
+        run: |
+          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
+          sudo apt-get update && sudo apt-get install -yq libgtest-dev libgmock-dev libspdlog-dev libfmt-dev
       - name: cmake
         run: |
           mkdir build
-          cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
+          cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}" -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
           cmake --build build/ --target all
       - name: ctest
         shell: bash

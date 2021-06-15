@@ -7,13 +7,12 @@
 namespace jessica
 {
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorStart final : public T
+class JESSICA_DLL_PUBLIC DecoratorStart final
 {
  public:
   template <typename... Args>
   explicit DecoratorStart(Args&&... args)
-      : impl_(
-            std::make_shared<typename T::RootType>(std::forward<Args>(args)...))
+      : deco_(std::make_shared<T>(impl_, std::forward<Args>(args)...))
   {
   }
   DecoratorStart(const DecoratorStart&) = default;
@@ -21,7 +20,7 @@ class JESSICA_DLL_PUBLIC DecoratorStart final : public T
   DecoratorStart& operator=(const DecoratorStart&) = delete;
   DecoratorStart& operator=(DecoratorStart&&) = delete;
 
-  ~DecoratorStart() override = default;
+  ~DecoratorStart() {}
 
   template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const
@@ -29,14 +28,14 @@ class JESSICA_DLL_PUBLIC DecoratorStart final : public T
     if constexpr (Action == F::Set)
     {
       auto retval = f<F::Set, F::Clone>();
-      retval->impl_ = T::template f<Action, U...>(
+      retval->impl_ = deco_->template f<Action, U...>(
           *impl_, std::forward<const Args>(args)...);
       return retval;
     }
     else
     {
-      return T::template f<Action, U...>(*impl_,
-                                         std::forward<const Args>(args)...);
+      return deco_->template f<Action, U...>(*impl_,
+                                             std::forward<const Args>(args)...);
     }
   }
 
@@ -49,5 +48,6 @@ class JESSICA_DLL_PUBLIC DecoratorStart final : public T
 
  private:
   std::shared_ptr<typename T::RootType> impl_;
+  std::shared_ptr<T> deco_;
 };
 }  // namespace jessica

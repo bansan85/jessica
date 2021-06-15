@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
@@ -35,9 +36,10 @@ jobs:
         uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgArguments: "@${{ github.workspace }}/config/cmake/vcpkg_x64-windows.txt"
+          vcpkgArguments: "@${{ github.workspace }}/config/cmake/vcpkg_windows.txt"
           vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-          appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_x64-windows.txt', github.workspace) ) }}
+          vcpkgTriplet: "x64-windows"
+          appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_windows.txt', github.workspace) ) }}
       - name: CMake
         run: |
           mkdir "${{ github.workspace }}/build"

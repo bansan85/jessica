@@ -1,6 +1,9 @@
 #include <cmath>
 #include <memory>
 
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
+
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
@@ -31,7 +34,9 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   using Decorator =
       DecoratorStart<LogCall<LogDuration<DecoratorEnd<VerticalEccentric>>>>;
 
-  const auto load = std::make_shared<Decorator>();
+  auto log = spdlog::get("log");
+
+  const auto load = std::make_shared<Decorator>(log, log);
   JTEST_TRUE(std::isnan(load->f<F::Get, F::E>()));
   JTEST_TRUE(std::isnan(load->f<F::Get, F::V>()));
   const auto load2 = load->f<F::Set, F::V>(100000.);
@@ -43,4 +48,11 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   const auto load4 = load3->f<F::Set, F::Clone>();
   JTEST_EQ((load3->f<F::Get, F::E>()), (load4->f<F::Get, F::E>()));
   JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
+}
+
+int main(int argc, char* argv[])
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  spdlog::stdout_logger_mt("log");
+  return RUN_ALL_TESTS();
 }

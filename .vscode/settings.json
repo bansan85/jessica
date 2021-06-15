@@ -87,7 +87,9 @@
     "cfloat": "cpp",
     "any": "cpp",
     "charconv": "cpp",
-    "format": "cpp"
+    "format": "cpp",
+    "cstdarg": "cpp",
+    "string_view": "cpp"
   },
   "git.ignoreLimitWarning": true
 }

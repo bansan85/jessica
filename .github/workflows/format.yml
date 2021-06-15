@@ -14,9 +14,12 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: checkout@v2 without token
         uses: actions/checkout@v2
         if: ${{ github.event_name != 'push' }}
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Install SSH key
         if: ${{ github.event_name == 'push' }}
         uses: shimataro/ssh-key-action@v2

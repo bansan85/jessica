@@ -14,6 +14,8 @@ jobs:
         run: exit 1
       - uses: bansan85/action-workflow_run-status@main
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2

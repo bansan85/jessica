@@ -3,6 +3,9 @@
 #include <limits>
 #include <memory>
 
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/spdlog.h>
+
 #include <jessica/calc/geotechnical/meyerhof.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
@@ -61,16 +64,20 @@ JTEST_NAME(data, CalcMeyehofAllDecorator)  // NOLINT
   using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
       MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
-  const auto foundation = std::make_shared<DecoratorFoundation>();
+  auto log = spdlog::get("log");
+
+  const auto foundation = std::make_shared<DecoratorFoundation>(log, log);
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
-  const auto load_1 = std::make_shared<DecoratorLoad>();
+  const auto load_1 = std::make_shared<DecoratorLoad>(log, log);
   const auto load_2 = load_1->f<F::Set, F::V>(100000.);
   const auto load = load_2->f<F::Set, F::E>(0.25);
-  const auto calc = std::make_shared<DecoratorCalc>(load, foundation2);
+  const auto calc =
+      std::make_shared<DecoratorCalc>(log, log, load, foundation2);
   JTEST_EQ((calc->f<F::Get, F::B_>()), 0.5);
   JTEST_EQ((calc->f<F::Get, F::Qref>()), 200000.);
   const auto load2 = load->f<F::Set, F::E>(0.5);
-  const auto calc2 = std::make_shared<DecoratorCalc>(load2, foundation2);
+  const auto calc2 =
+      std::make_shared<DecoratorCalc>(log, log, load2, foundation2);
   JTEST_EQ((calc2->f<F::Get, F::B_>()), 0.);
   JTEST_TRUE(std::isinf(calc2->f<F::Get, F::Qref>()));
   const auto calc3 = calc2->f<F::Set, F::Clone>();
@@ -79,13 +86,13 @@ JTEST_NAME(data, CalcMeyehofAllDecorator)  // NOLINT
 
   const auto load_maxe = load->f<F::Set, F::E>(DBL_MAX);
   const auto calc_maxe =
-      std::make_shared<DecoratorCalc>(load_maxe, foundation2);
+      std::make_shared<DecoratorCalc>(log, log, load_maxe, foundation2);
   JTEST_EQ((calc_maxe->f<F::Get, F::B_>()),
            -std::numeric_limits<double>::infinity());
 
   const auto load_mine = load->f<F::Set, F::E>(-DBL_MAX);
   const auto calc_mine =
-      std::make_shared<DecoratorCalc>(load_mine, foundation2);
+      std::make_shared<DecoratorCalc>(log, log, load_mine, foundation2);
   JTEST_EQ((calc_mine->f<F::Get, F::B_>()),
            std::numeric_limits<double>::infinity());
 }
@@ -95,16 +102,20 @@ JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
   using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
       MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>;
 
+  auto log = spdlog::get("log");
+
   const auto foundation = std::make_shared<FoundationStrip>();
   const auto foundation2 = foundation->f<F::Set, F::B>(1.);
   const auto load_1 = std::make_shared<VerticalEccentric>();
   const auto load_2 = load_1->f<F::Set, F::V>(100000.);
   const auto load = load_2->f<F::Set, F::E>(0.25);
-  const auto calc = std::make_shared<DecoratorCalc>(load, foundation2);
+  const auto calc =
+      std::make_shared<DecoratorCalc>(log, log, load, foundation2);
   JTEST_EQ((calc->f<F::Get, F::B_>()), 0.5);
   JTEST_EQ((calc->f<F::Get, F::Qref>()), 200000.);
   const auto load2 = load->f<F::Set, F::E>(0.5);
-  const auto calc2 = std::make_shared<DecoratorCalc>(load2, foundation2);
+  const auto calc2 =
+      std::make_shared<DecoratorCalc>(log, log, load2, foundation2);
   JTEST_EQ((calc2->f<F::Get, F::B_>()), 0.);
   JTEST_TRUE(std::isinf(calc2->f<F::Get, F::Qref>()));
   const auto calc3 = calc2->f<F::Set, F::Clone>();
@@ -113,13 +124,13 @@ JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
 
   const auto load_maxe = load->f<F::Set, F::E>(DBL_MAX);
   const auto calc_maxe =
-      std::make_shared<DecoratorCalc>(load_maxe, foundation2);
+      std::make_shared<DecoratorCalc>(log, log, load_maxe, foundation2);
   JTEST_EQ((calc_maxe->f<F::Get, F::B_>()),
            -std::numeric_limits<double>::infinity());
 
   const auto load_mine = load->f<F::Set, F::E>(-DBL_MAX);
   const auto calc_mine =
-      std::make_shared<DecoratorCalc>(load_mine, foundation2);
+      std::make_shared<DecoratorCalc>(log, log, load_mine, foundation2);
   JTEST_EQ((calc_mine->f<F::Get, F::B_>()),
            std::numeric_limits<double>::infinity());
 }
@@ -129,9 +140,11 @@ JTEST_NAME(data, CalcMeyehofOnly)  // NOLINT
   using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
       MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>;
 
-  const auto calc =
-      std::make_shared<DecoratorCalc>(std::make_shared<VerticalEccentric>(),
-                                      std::make_shared<FoundationStrip>());
+  auto log = spdlog::get("log");
+
+  const auto calc = std::make_shared<DecoratorCalc>(
+      log, log, std::make_shared<VerticalEccentric>(),
+      std::make_shared<FoundationStrip>());
   const auto calc2 = calc->f<F::Set, F::Load, F::E>(0.25)
                          ->f<F::Set, F::Load, F::V>(100000.)
                          ->f<F::Set, F::Foundation, F::B>(1.);
@@ -140,4 +153,11 @@ JTEST_NAME(data, CalcMeyehofOnly)  // NOLINT
   JTEST_EQ((calc2->f<F::Get, F::Foundation, F::B>()), 1.);
   JTEST_EQ((calc2->f<F::Get, F::B_>()), 0.5);
   JTEST_EQ((calc2->f<F::Get, F::Qref>()), 200000.);
+}
+
+int main(int argc, char* argv[])
+{
+  ::testing::InitGoogleTest(&argc, argv);
+  spdlog::stdout_logger_mt("log");
+  return RUN_ALL_TESTS();
 }
