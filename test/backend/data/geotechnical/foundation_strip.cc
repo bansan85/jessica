@@ -40,6 +40,7 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
   JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, char* argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);

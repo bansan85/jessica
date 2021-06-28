@@ -50,6 +50,7 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   JTEST_EQ((load3->f<F::Get, F::V>()), (load4->f<F::Get, F::V>()));
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, char* argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);

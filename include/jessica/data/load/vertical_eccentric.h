@@ -18,6 +18,8 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
   VerticalEccentric& operator=(const VerticalEccentric&) = delete;
   VerticalEccentric& operator=(VerticalEccentric&&) = delete;
 
+  ~VerticalEccentric() = default;
+
   template <F Action, F T>
   requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
   [[nodiscard]] std::shared_ptr<VerticalEccentric> f() const

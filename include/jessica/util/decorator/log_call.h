@@ -17,9 +17,9 @@ class JESSICA_DLL_PUBLIC LogCall
   using RootType = typename T::RootType;
 
   template <typename... Args>
-  LogCall(std::shared_ptr<RootType>& impl,
-          const std::shared_ptr<spdlog::logger>& log, Args&&... args)
-      : t(impl, std::forward<Args>(args)...), log_(log)
+  LogCall(std::shared_ptr<RootType>& impl, std::shared_ptr<spdlog::logger> log,
+          Args&&... args)
+      : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
   LogCall(const LogCall&) = default;

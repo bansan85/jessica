@@ -24,6 +24,10 @@ jobs:
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: 3rdparty
         run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-11 clang-12
+      - name: Fix clang-tidy
+        # Fixed in spdlog 1.8.5
+        run: |
+          sudo sed -i "s/set_formatter(std::move(f));/\0break;/g" /usr/include/spdlog/logger-inl.h
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:
@@ -71,7 +75,7 @@ jobs:
           mkdir build
           cmake -S . -B build
           cd build || exit 1
-          run-clang-tidy-11 -line-filter='[{"name":"logger-inl.h","lines":[[95,95]]}]'
+          run-clang-tidy-11
           cd .. || exit 1
       - name: Lint
         run: |

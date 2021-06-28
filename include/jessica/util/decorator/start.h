@@ -20,7 +20,7 @@ class JESSICA_DLL_PUBLIC DecoratorStart final
   DecoratorStart& operator=(const DecoratorStart&) = delete;
   DecoratorStart& operator=(DecoratorStart&&) = delete;
 
-  ~DecoratorStart() {}
+  ~DecoratorStart() = default;
 
   template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const Args&&... args) const

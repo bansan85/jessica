@@ -155,6 +155,7 @@ JTEST_NAME(data, CalcMeyehofOnly)  // NOLINT
   JTEST_EQ((calc2->f<F::Get, F::Qref>()), 200000.);
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, char* argv[])
 {
   ::testing::InitGoogleTest(&argc, argv);

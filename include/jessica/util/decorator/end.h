@@ -15,7 +15,7 @@ class JESSICA_DLL_PUBLIC DecoratorEnd
   using RootType = T;
 
   template <typename... Args>
-  DecoratorEnd(std::shared_ptr<T>& impl, Args&&... args)
+  explicit DecoratorEnd(std::shared_ptr<T>& impl, Args&&... args)
   {
     impl = std::make_shared<T>(std::forward<Args>(args)...);
   }

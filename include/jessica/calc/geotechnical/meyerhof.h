@@ -14,9 +14,9 @@ template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
  public:
-  MeyerhofShallowFoundation(const std::shared_ptr<T0>& load,
-                            const std::shared_ptr<T1>& foundation)
-      : load_(load), foundation_(foundation)
+  MeyerhofShallowFoundation(std::shared_ptr<T0> load,
+                            std::shared_ptr<T1> foundation)
+      : load_(std::move(load)), foundation_(std::move(foundation))
   {
   }
   MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
@@ -24,6 +24,8 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   MeyerhofShallowFoundation&
       operator=(const MeyerhofShallowFoundation&) = delete;
   MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
+
+  ~MeyerhofShallowFoundation() = default;
 
   template <F Action, F T>
   requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>

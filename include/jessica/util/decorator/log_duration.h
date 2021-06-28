@@ -18,8 +18,8 @@ class JESSICA_DLL_PUBLIC LogDuration
 
   template <typename... Args>
   LogDuration(std::shared_ptr<RootType>& impl,
-              const std::shared_ptr<spdlog::logger>& log, Args&&... args)
-      : t(impl, std::forward<Args>(args)...), log_(log)
+              std::shared_ptr<spdlog::logger> log, Args&&... args)
+      : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
   LogDuration(const LogDuration&) = default;
@@ -27,13 +27,13 @@ class JESSICA_DLL_PUBLIC LogDuration
   LogDuration& operator=(const LogDuration&) = delete;
   LogDuration& operator=(LogDuration&&) = delete;
 
-  ~LogDuration() {}
+  ~LogDuration() = default;
 
   template <F Action, F... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
-    const auto retval =
+    auto retval =
         t.template f<Action, U...>(classe, std::forward<const Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =

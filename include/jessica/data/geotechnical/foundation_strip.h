@@ -18,6 +18,8 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   FoundationStrip& operator=(const FoundationStrip&) = delete;
   FoundationStrip& operator=(FoundationStrip&&) = delete;
 
+  ~FoundationStrip() = default;
+
   template <F Action, F T>
   requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
   [[nodiscard]] std::shared_ptr<FoundationStrip> f() const
