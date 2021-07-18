@@ -97,7 +97,7 @@ jobs:
           git add .
           if [ -n "$(git diff-index --name-only HEAD --)" ]; \
           then \
-            git commit -m "Fix formatting $GITHUB_SHA" ; \
-            git push || { echo "Failure git push" && exit 1; }; \
+            echo "Please, fix formatting with following patch."
+            git diff --cached ; \
             exit 1; \
           fi
