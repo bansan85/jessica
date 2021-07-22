@@ -2,7 +2,7 @@
 name: Windows build
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:
@@ -36,9 +36,9 @@ jobs:
         uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgArguments: "@${{ github.workspace }}/config/cmake/vcpkg_windows.txt"
-          vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-          vcpkgTriplet: "x64-windows"
+          vcpkgArguments: '@${{ github.workspace }}/config/cmake/vcpkg_windows.txt'
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgTriplet: 'x64-windows'
           appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_windows.txt', github.workspace) ) }}
       - name: CMake
         run: |
