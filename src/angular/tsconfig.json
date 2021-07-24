@@ -10,7 +10,10 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "lib-jessica": ["dist/lib-jessica/lib-jessica", "dist/lib-jessica"]
+      "lib-jessica": ["dist/lib-jessica/lib-jessica", "dist/lib-jessica"],
+      "path": ["./node_modules/path-browserify"],
+      "crypto": ["./node_modules/crypto-browserify"],
+      "stream": ["./node_modules/stream-browserify"]
     },
     "declaration": false,
     "downlevelIteration": true,
@@ -19,7 +22,9 @@
     "importHelpers": true,
     "target": "es2017",
     "module": "es2020",
-    "lib": ["es2018", "dom"]
+    "lib": ["es2018", "dom"],
+    "allowJs": true,
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
