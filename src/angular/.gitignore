@@ -43,3 +43,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Auto-generated files
+/projects/app-main/src/assets/jessica.wasm
+/projects/app-main/src/app/ui/main/jessica.js

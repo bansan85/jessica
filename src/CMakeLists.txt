@@ -1,5 +1,8 @@
 add_subdirectory(backend)
 
-add_subdirectory(javascript)
+if(DEFINED EMSCRIPTEN)
+  add_subdirectory(javascript)
+  add_subdirectory(angular)
+endif()
 
 # add_subdirectory(main)
