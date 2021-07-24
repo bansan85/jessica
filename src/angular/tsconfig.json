@@ -10,10 +10,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "lib-jessica": ["dist/lib-jessica/lib-jessica", "dist/lib-jessica"],
-      "path": ["./node_modules/path-browserify"],
-      "crypto": ["./node_modules/crypto-browserify"],
-      "stream": ["./node_modules/stream-browserify"]
+      "lib-jessica": ["dist/lib-jessica"]
     },
     "declaration": false,
     "downlevelIteration": true,
