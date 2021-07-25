@@ -24,6 +24,7 @@
     "**/node_modules/*",
     "**/doc/highlight/highlight.min.js",
     "**/vcpkg/*",
-    "**/src/angular/dist"
+    "**/src/angular/dist",
+    "**/src/angular/projects/lib-jessica/src/lib/jessica-web.js"
   ]
 }

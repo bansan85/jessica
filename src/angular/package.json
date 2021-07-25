@@ -4,8 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "build-app-main": "ng build app-main",
+    "build": "ng build lib-jessica && ng build app-main",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -37,11 +36,5 @@
     "karma-jasmine-html-reporter": "~1.5.0",
     "ng-packagr": "^12.1.0",
     "typescript": "~4.3.2"
-  },
-  "browser": {
-    "crypto": false,
-    "fs": false,
-    "path": false,
-    "stream": false
   }
 }

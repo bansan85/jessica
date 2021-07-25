@@ -55,7 +55,12 @@
             "tsConfig": "projects/app-main/tsconfig.app.json",
             "assets": [
               "projects/app-main/src/favicon.ico",
-              "projects/app-main/src/assets"
+              "projects/app-main/src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/lib-jessica/assets/",
+                "output": "./assets/"
+              }
             ],
             "styles": ["projects/app-main/src/styles.css"],
             "scripts": []
@@ -129,5 +134,5 @@
       }
     }
   },
-  "defaultProject": "lib-jessica"
+  "defaultProject": "app-main"
 }
