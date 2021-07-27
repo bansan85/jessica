@@ -4,7 +4,7 @@
     "commonjs": true,
     "es2021": true
   },
-  "extends": ["google"],
+  "extends": ["eslint:recommended", "google", "plugin:security/recommended"],
   "parserOptions": {
     "ecmaVersion": 12
   },
@@ -17,14 +17,42 @@
         "named": "never",
         "asyncArrow": "always"
       }
-    ]
+    ],
+    "no-undef": "off",
+    "comma-dangle": ["error", "never"]
   },
-  "plugins": ["html"],
+  "plugins": ["html", "security"],
   "ignorePatterns": [
     "**/node_modules/*",
     "**/doc/highlight/highlight.min.js",
     "**/vcpkg/*",
     "**/src/angular/dist",
     "**/src/angular/projects/lib-jessica/src/lib/jessica-web.js"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "google"
+      ],
+      "rules": {
+        "require-jsdoc": "off",
+        "indent": "off",
+        "@typescript-eslint/indent": ["error", 2],
+        "comma-dangle": ["error", "never"],
+        "spaced-comment": "off",
+        "new-cap": [
+          "error",
+          {
+            "capIsNewExceptions": ["Component", "NgModule", "Injectable"]
+          }
+        ]
+      }
+    }
   ]
 }

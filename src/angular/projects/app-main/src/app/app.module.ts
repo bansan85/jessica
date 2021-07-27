@@ -11,6 +11,6 @@ import { LibJessicaModule } from 'lib-jessica';
   declarations: [AppComponent, MainComponent],
   imports: [BrowserModule, AppRoutingModule, LibJessicaModule],
   providers: [],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

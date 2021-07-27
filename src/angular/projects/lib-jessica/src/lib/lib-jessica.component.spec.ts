@@ -8,7 +8,7 @@ describe('LibJessicaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LibJessicaComponent],
+      declarations: [LibJessicaComponent]
     }).compileComponents();
   });
 

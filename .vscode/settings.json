@@ -91,5 +91,7 @@
     "cstdarg": "cpp",
     "string_view": "cpp"
   },
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "editor.tabSize": 2,
+  "files.insertFinalNewline": true
 }

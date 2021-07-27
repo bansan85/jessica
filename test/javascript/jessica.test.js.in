@@ -4,7 +4,7 @@ const jessica =
 jest.spyOn(console, 'log');
 
 test('WarmUpJessica', async () => {
-  return jessica().then(async (instance) => {
+  return jessica().then(async () => {
   });
 });
 
