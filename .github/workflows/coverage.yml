@@ -2,7 +2,7 @@
 name: coverage
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:
@@ -53,7 +53,7 @@ jobs:
       - name: ctest
         run: |
           cd build || exit 1
-          ctest -O test-result.xml --output-on-failure
+          ctest -O test-result.xml --output-on-failure --verbose
           cd .. || exit 1
       - name: Coverage report gcc
         if: contains(matrix.cc, 'gcc') && contains('master', github.event.workflow_run.head_branch)

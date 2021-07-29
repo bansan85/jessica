@@ -2,4 +2,5 @@ build
 vcpkg
 doc/highlight/highlight.min.js
 doc/highlight/styles/github.min.css
-
+src/angular/dist
+src/angular/projects/lib-jessica/src/lib/jessica-web.js

@@ -1,36 +1,36 @@
 ---
-Checks: "*,-llvm-header-guard,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-llvmlibc-restrict-system-libc-headers,-llvmlibc-implementation-in-namespace,-llvmlibc-callee-namespace,-google-build-using-namespace,-cppcoreguidelines-macro-usage,-readability-avoid-const-params-in-decls"
-WarningsAsErrors: "*"
-HeaderFilterRegex: ".*"
+Checks: '*,-llvm-header-guard,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-default-arguments-calls,-llvmlibc-restrict-system-libc-headers,-llvmlibc-implementation-in-namespace,-llvmlibc-callee-namespace,-google-build-using-namespace,-cppcoreguidelines-macro-usage,-readability-avoid-const-params-in-decls'
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
 FormatStyle: none
 CheckOptions:
   - key: cert-dcl16-c.NewSuffixes
-    value: "L;LL;LU;LLU"
+    value: 'L;LL;LU;LLU'
   - key: cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
-    value: "0"
+    value: '0'
   - key: cert-str34-c.DiagnoseSignedUnsignedCharComparisons
-    value: "0"
+    value: '0'
   - key: cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
-    value: "1"
+    value: '1'
   - key: cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
-    value: "1"
+    value: '1'
   - key: google-readability-braces-around-statements.ShortStatementLines
-    value: "1"
+    value: '1'
   - key: google-readability-function-size.StatementThreshold
-    value: "800"
+    value: '800'
   - key: google-readability-namespace-comments.ShortNamespaceLines
-    value: "10"
+    value: '10'
   - key: google-readability-namespace-comments.SpacesBeforeComments
-    value: "2"
+    value: '2'
   - key: llvm-else-after-return.WarnOnConditionVariables
-    value: "0"
+    value: '0'
   - key: llvm-else-after-return.WarnOnUnfixable
-    value: "0"
+    value: '0'
   - key: llvm-qualified-auto.AddConstToQualified
-    value: "0"
+    value: '0'
   - key: modernize-loop-convert.MaxCopySize
-    value: "16"
+    value: '16'
   - key: modernize-loop-convert.MinConfidence
     value: reasonable
   - key: modernize-loop-convert.NamingStyle
@@ -40,6 +40,6 @@ CheckOptions:
   - key: modernize-replace-auto-ptr.IncludeStyle
     value: llvm
   - key: modernize-use-nullptr.NullMacros
-    value: "NULL"
+    value: 'NULL'
 ---
 

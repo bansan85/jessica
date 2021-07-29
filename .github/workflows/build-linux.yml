@@ -2,7 +2,7 @@
 name: Linux build
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:
@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           cd build || exit 1
-          ctest -O test-result.xml --output-on-failure
+          ctest -O test-result.xml --output-on-failure --verbose
           cd .. || exit 1
       - name: Publish test
         if: ${{ github.event.workflow_run.head_branch == 'master' }}

@@ -1,9 +1,10 @@
-const jessica = require('${CMAKE_BINARY_DIR}/src/javascript/wasm/jessica.js');
+const jessica =
+  require('${CMAKE_BINARY_DIR}/src/javascript/wasm/jessica-node.js');
 
 jest.spyOn(console, 'log');
 
 test('WarmUpJessica', async () => {
-  return jessica().then(async (instance) => {
+  return jessica().then(async () => {
   });
 });
 

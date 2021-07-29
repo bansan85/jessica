@@ -2,7 +2,7 @@
 name: Scan-build
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:

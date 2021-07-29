@@ -2,7 +2,7 @@
 name: documentation
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:

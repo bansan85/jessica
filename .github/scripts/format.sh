@@ -16,7 +16,7 @@ do
 done
 
 echo "ESLint... "
-npx eslint --ext .js,.js.in,.html,.html.in . --fix
+npx eslint --ext .js,.js.in,.html,.html.in,.ts . --fix
 
 npx prettier --write .
 

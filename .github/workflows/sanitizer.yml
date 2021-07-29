@@ -2,7 +2,7 @@
 name: Sanitizer
 on:
   workflow_run:
-    workflows: ["format"]
+    workflows: ['format']
     types:
       - completed
 jobs:
@@ -89,5 +89,5 @@ jobs:
         shell: bash
         run: |
           cd build || exit 1
-          ctest --output-on-failure
+          ctest --output-on-failure --verbose
           cd .. || exit 1
