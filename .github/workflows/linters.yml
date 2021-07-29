@@ -41,7 +41,7 @@ jobs:
           diff -pu requirements-linter.txt requirements-linter-ci.tmp
       - name: Install node dependencies
         run: |
-          npm install eslint eslint-config-google eslint-plugin-html
+          npm install
       - name: Publish documentation
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:
