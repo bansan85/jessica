@@ -17,7 +17,7 @@ add_custom_command(
   POST_BUILD
   COMMAND
     ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.wasm"
-    "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/assets"
+    "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
           "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/lib"
   COMMAND

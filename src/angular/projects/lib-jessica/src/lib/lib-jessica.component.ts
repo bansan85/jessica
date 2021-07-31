@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as Module from './jessica-web';
-import { validNumber } from '../util/validator/valid-number.validator';
+import { validNumber } from './util/validator/valid-number.validator';
 import { Subscription } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
