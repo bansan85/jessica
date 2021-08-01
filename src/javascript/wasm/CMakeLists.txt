@@ -12,9 +12,8 @@ set_target_properties(
 set_target_properties(jessica_node_js PROPERTIES OUTPUT_NAME "jessica-node")
 target_link_libraries(jessica_node_js PRIVATE jessica spdlog::spdlog)
 
-add_custom_command(
-  TARGET jessica_web_js
-  POST_BUILD
+add_custom_target(
+  jessica_web_js2 ALL
   COMMAND
     ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.wasm"
     "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets"
@@ -24,3 +23,5 @@ add_custom_command(
     sed -i "s#jessica-web.wasm#assets/jessica-web.wasm#g"
     "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/lib/jessica-web.js"
 )
+
+add_dependencies(jessica_web_js2 jessica_web_js)
