@@ -1,1 +1,5 @@
-<lib-meyerhof-form (changeEvent)="compute($event)"></lib-meyerhof-form>
+<form [formGroup]="form">
+  <lib-meyerhof-form formControlName="meyerhof"></lib-meyerhof-form>
+</form>
+
+<pre>Form Values: {{ result | json }}</pre>

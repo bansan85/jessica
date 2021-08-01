@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { PartialObserver } from 'rxjs';
 import { validNumber } from '../../../util/validator/valid-number.validator';
+import { VerticalEccentric } from './vertical-eccentric';
 /* eslint-enable max-len */
 
 @Component({
@@ -32,7 +33,8 @@ import { validNumber } from '../../../util/validator/valid-number.validator';
   ]
 })
 export class VerticalEccentricFormComponent
-implements ControlValueAccessor, Validator {
+  implements ControlValueAccessor, Validator
+{
   load: FormGroup;
 
   constructor(private fromBuilder: FormBuilder) {
@@ -45,7 +47,7 @@ implements ControlValueAccessor, Validator {
   // ControlValueAccessor
   public onTouched!: () => void;
 
-  writeValue(val: { [key: string]: string | undefined }): void {
+  writeValue(val: VerticalEccentric): void {
     val && this.load.setValue(val, { emitEvent: false });
   }
   registerOnChange(
@@ -61,13 +63,13 @@ implements ControlValueAccessor, Validator {
   }
 
   validate(): ValidationErrors | null {
-    return this.load.valid ?
-      null :
-      {
-        invalidForm: {
-          valid: false,
-          message: 'basicInfoForm fields are invalid'
-        }
-      };
+    return this.load.valid
+      ? null
+      : {
+          invalidForm: {
+            valid: false,
+            message: 'basicInfoForm fields are invalid'
+          }
+        };
   }
 }

@@ -19,7 +19,8 @@
       }
     ],
     "no-undef": "off",
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "never"],
+    "indent": "off"
   },
   "plugins": ["html", "security"],
   "ignorePatterns": [
@@ -43,7 +44,9 @@
       "rules": {
         "require-jsdoc": "off",
         "indent": "off",
-        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/indent": ["off"],
+        "brace-style": ["off"],
+        "operator-linebreak": ["off"],
         "comma-dangle": ["error", "never"],
         "spaced-comment": "off",
         "new-cap": [

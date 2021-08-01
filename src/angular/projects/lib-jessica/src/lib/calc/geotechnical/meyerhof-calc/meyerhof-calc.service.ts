@@ -12,7 +12,6 @@ export class MeyerhofCalcService {
   constructor(private wasm: JessicaWasmService) {}
 
   compute(newItem: MeyerhofForm): MeyerhofResult {
-    console.log('MeyerhofCalcComponent' + JSON.stringify(newItem));
     const ttt: any = this.wasm.wasm();
     const lo: any = this.wasm.log();
     const foundation: any = new ttt.FoundationStripRaw().setB(

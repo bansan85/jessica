@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { PartialObserver } from 'rxjs';
 import { validNumber } from '../../../util/validator/valid-number.validator';
+import { FoundationStrip } from './foundation-strip';
 /* eslint-enable max-len */
 
 @Component({
@@ -32,7 +33,8 @@ import { validNumber } from '../../../util/validator/valid-number.validator';
   ]
 })
 export class FoundationStripFormComponent
-implements ControlValueAccessor, Validator {
+  implements ControlValueAccessor, Validator
+{
   foundation: FormGroup;
 
   constructor(private fromBuilder: FormBuilder) {
@@ -44,7 +46,7 @@ implements ControlValueAccessor, Validator {
   // ControlValueAccessor
   public onTouched!: () => void;
 
-  writeValue(val: { [key: string]: string | undefined }): void {
+  writeValue(val: FoundationStrip): void {
     val && this.foundation.setValue(val, { emitEvent: false });
   }
   registerOnChange(
@@ -60,13 +62,13 @@ implements ControlValueAccessor, Validator {
   }
 
   validate(): ValidationErrors | null {
-    return this.foundation.valid ?
-      null :
-      {
-        invalidForm: {
-          valid: false,
-          message: 'basicInfoForm fields are invalid'
-        }
-      };
+    return this.foundation.valid
+      ? null
+      : {
+          invalidForm: {
+            valid: false,
+            message: 'basicInfoForm fields are invalid'
+          }
+        };
   }
 }
