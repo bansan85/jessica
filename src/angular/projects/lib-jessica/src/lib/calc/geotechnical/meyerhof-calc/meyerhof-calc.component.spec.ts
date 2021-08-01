@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LibJessicaComponent } from './lib-jessica.component';
+import { MeyerhofCalcComponent } from './meyerhof-calc.component';
 
-describe('LibJessicaComponent', () => {
-  let component: LibJessicaComponent;
-  let fixture: ComponentFixture<LibJessicaComponent>;
+describe('MeyerhofCalcComponent', () => {
+  let component: MeyerhofCalcComponent;
+  let fixture: ComponentFixture<MeyerhofCalcComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LibJessicaComponent]
+      declarations: [MeyerhofCalcComponent]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LibJessicaComponent);
+    fixture = TestBed.createComponent(MeyerhofCalcComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

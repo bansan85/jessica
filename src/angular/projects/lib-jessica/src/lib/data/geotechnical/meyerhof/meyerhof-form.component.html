@@ -1,0 +1,12 @@
+<h3>Nested FormGroup</h3>
+
+<form [formGroup]="form">
+  <lib-foundation-strip-form
+    formControlName="foundation"
+  ></lib-foundation-strip-form>
+  <lib-vertical-eccentric-form
+    formControlName="load"
+  ></lib-vertical-eccentric-form>
+</form>
+
+<pre>Form Values: {{ form.valid }} {{ form.value | json }}</pre>
