@@ -13,19 +13,13 @@ export class MeyerhofCalcService {
 
   compute(newItem: MeyerhofForm): MeyerhofResult {
     const ttt: any = this.wasm.wasm();
-    const lo: any = this.wasm.log();
-    const foundation: any = new ttt.FoundationStripRaw().setB(
+    const foundation: any = new ttt.FoundationStrip().setB(
       Number(newItem.foundation.width)
     );
-    const load: any = new ttt.VerticalEccentricRaw()
+    const load: any = new ttt.VerticalEccentric()
       .setV(Number(newItem.load.load))
       .setE(Number(newItem.load.eccentric));
-    const calc: any = new ttt.MeyerhofShallowFoundationDeco(
-      lo,
-      lo,
-      load,
-      foundation
-    );
+    const calc: any = new ttt.MeyerhofShallowFoundation(load, foundation);
 
     return { qref: calc.getQref(), b_: calc.getB_() };
   }

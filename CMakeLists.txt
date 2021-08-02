@@ -39,7 +39,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_EXE_LINKER_FLAGS
         "${CMAKE_EXE_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
   elseif(EMSCRIPTEN)
-    add_compile_options(-Oz)
+    add_compile_options(-O2)
   else()
     add_compile_options(-O3)
   endif()

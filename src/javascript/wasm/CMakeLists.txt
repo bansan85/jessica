@@ -1,14 +1,18 @@
-add_executable(jessica_web_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings.cpp)
+add_executable(jessica_web_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-web.cpp)
 set_target_properties(
-  jessica_web_js PROPERTIES LINK_FLAGS "-s EXPORT_NAME=jessica \
--s MODULARIZE=1 --bind -s ENVIRONMENT=web,worker")
+  jessica_web_js
+  PROPERTIES LINK_FLAGS "-s EXPORT_NAME=jessica -s MODULARIZE=1 --bind \
+-s ENVIRONMENT=web,worker --closure 1 --no-entry -flto -s ASSERTIONS=0 \
+-DNDEBUG -s INVOKE_RUN=0 -s MALLOC='emmalloc'")
 set_target_properties(jessica_web_js PROPERTIES OUTPUT_NAME "jessica-web")
-target_link_libraries(jessica_web_js PRIVATE jessica spdlog::spdlog)
+target_link_libraries(jessica_web_js PRIVATE jessica)
 
-add_executable(jessica_node_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings.cpp)
+add_executable(jessica_node_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-test.cpp)
 set_target_properties(
-  jessica_node_js PROPERTIES LINK_FLAGS "-s EXPORT_NAME=jessica \
--s MODULARIZE=1 --bind")
+  jessica_node_js
+  PROPERTIES LINK_FLAGS "-s EXPORT_NAME=jessica -s MODULARIZE=1 --bind \
+--closure 1 --no-entry -flto -s ASSERTIONS=0 -DNDEBUG -s INVOKE_RUN=0 \
+-s MALLOC='emmalloc'")
 set_target_properties(jessica_node_js PROPERTIES OUTPUT_NAME "jessica-node")
 target_link_libraries(jessica_node_js PRIVATE jessica spdlog::spdlog)
 

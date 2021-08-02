@@ -10,7 +10,7 @@ test('WarmUpJessica', async () => {
 
 test('VerticalEccentric', async () => {
   return jessica().then(async (instance) => {
-    const vert1 = new instance.VerticalEccentricRaw();
+    const vert1 = new instance.VerticalEccentric();
     expect(vert1.getE()).toBeNaN();
     expect(vert1.getV()).toBeNaN();
     const vert2 = vert1.setE(0.2);
@@ -27,7 +27,7 @@ test('VerticalEccentric', async () => {
 
 test('FoundationStrip', async () => {
   return jessica().then(async (instance) => {
-    const foundation = new instance.FoundationStripRaw();
+    const foundation = new instance.FoundationStrip();
     expect(foundation.getB()).toBeNaN();
     const foundation2 = foundation.setB(1.0);
     expect(foundation2.getB()).toBe(1.0);
@@ -39,10 +39,10 @@ test('FoundationStrip', async () => {
 test('CalcMeyehof', async () => {
   return jessica().then(async (instance) => {
     const logger = new instance.SpdlogStdoutMt('log');
-    const foundation4 = new instance.FoundationStripRaw().setB(1.0);
-    const vert5 = new instance.VerticalEccentricRaw().setV(100000.).setE(0.25);
+    const foundation4 = new instance.FoundationStrip().setB(1.0);
+    const vert5 = new instance.VerticalEccentric().setV(100000.).setE(0.25);
 
-    const calc = new instance.MeyerhofShallowFoundationDeco(
+    const calc = new instance.MeyerhofShallowFoundation(
         logger, logger, vert5, foundation4);
     expect(calc.getQref()).toBe(200000.);
     expect(calc.getB_()).toBe(0.5);

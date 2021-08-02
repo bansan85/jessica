@@ -26,9 +26,9 @@ EMSCRIPTEN_BINDINGS(jessica)
       .constructor<std::string>()
       .smart_ptr<std::shared_ptr<spdlog::logger>>("logger");
 
-  class_<FoundationStrip>("FoundationStripRaw")
+  class_<FoundationStrip>("FoundationStrip")
       .constructor<>()
-      .smart_ptr<std::shared_ptr<FoundationStrip>>("FoundationStripRaw")
+      .smart_ptr<std::shared_ptr<FoundationStrip>>("FoundationStrip")
       .function("clone", &FoundationStrip::f<F::Set, F::Clone>)
       .function("getB", static_cast<double (FoundationStrip::*)() const>(
                             &FoundationStrip::f<F::Get, F::B>))
@@ -36,9 +36,9 @@ EMSCRIPTEN_BINDINGS(jessica)
                             FoundationStrip::*)(const double) const>(
                             &FoundationStrip::f<F::Set, F::B>));
 
-  class_<VerticalEccentric>("VerticalEccentricRaw")
+  class_<VerticalEccentric>("VerticalEccentric")
       .constructor<>()
-      .smart_ptr<std::shared_ptr<VerticalEccentric>>("VerticalEccentricRaw")
+      .smart_ptr<std::shared_ptr<VerticalEccentric>>("VerticalEccentric")
       .function("clone", &VerticalEccentric::f<F::Set, F::Clone>)
       .function("getE", static_cast<double (VerticalEccentric::*)() const>(
                             &VerticalEccentric::f<F::Get, F::E>))
@@ -53,7 +53,7 @@ EMSCRIPTEN_BINDINGS(jessica)
 
   class_<DecoratorStart<LogCall<LogDuration<DecoratorEnd<
       MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>>(
-      "MeyerhofShallowFoundationDeco")
+      "MeyerhofShallowFoundation")
       .constructor<std::shared_ptr<spdlog::logger>,
                    std::shared_ptr<spdlog::logger>,
                    const std::shared_ptr<VerticalEccentric>,
