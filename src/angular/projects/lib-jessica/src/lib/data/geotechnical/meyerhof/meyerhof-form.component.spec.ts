@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { MeyerhofFormComponent } from './meyerhof-form.component';
 
@@ -8,6 +9,7 @@ describe('MeyerhofFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
       declarations: [MeyerhofFormComponent]
     }).compileComponents();
   });

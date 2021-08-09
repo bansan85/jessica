@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Module from '../../jessica-web';
+import * as Module from '../../../assets/jessica-web';
 
 @Injectable({
   providedIn: 'root'

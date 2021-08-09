@@ -19,7 +19,6 @@ import { MeyerhofForm } from './meyerhof-form';
   styleUrls: ['./meyerhof-form.component.css'],
   providers: [
     {
-      // Pour faire fonctionner la fonction writeValue.
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => MeyerhofFormComponent),
       multi: true

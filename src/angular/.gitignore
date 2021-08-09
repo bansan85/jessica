@@ -46,4 +46,4 @@ Thumbs.db
 
 # Auto-generated files
 /projects/lib-jessica/src/assets/jessica-web.wasm
-/projects/lib-jessica/src/lib/jessica-web.js
+/projects/lib-jessica/src/assets/jessica-web.js

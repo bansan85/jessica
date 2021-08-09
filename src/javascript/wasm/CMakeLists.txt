@@ -22,10 +22,10 @@ add_custom_target(
     ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.wasm"
     "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
-          "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/lib"
+          "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets"
   COMMAND
     sed -i "s#jessica-web.wasm#assets/jessica-web.wasm#g"
-    "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/lib/jessica-web.js"
+    "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets/jessica-web.js"
 )
 
 add_dependencies(jessica_web_js2 jessica_web_js)

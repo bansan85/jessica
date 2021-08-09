@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { MeyerhofCalcComponent } from './meyerhof-calc.component';
 
@@ -8,6 +9,7 @@ describe('MeyerhofCalcComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
       declarations: [MeyerhofCalcComponent]
     }).compileComponents();
   });
