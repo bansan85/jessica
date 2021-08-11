@@ -16,7 +16,7 @@ jobs:
             cc: /usr/bin/gcc-11
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
-            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY
+            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY -Wno-analyzer-possible-null-dereference
             os: ubuntu-latest
           - name: ubuntu-clang
             ar: /usr/bin/llvm-ar-12
