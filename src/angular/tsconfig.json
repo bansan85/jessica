@@ -9,16 +9,13 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "paths": {
-      "lib-jessica": ["dist/lib-jessica"]
-    },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2020",
-    "module": "es2020",
+    "module": "esnext",
     "lib": ["es2020", "dom"],
     "allowJs": true,
     "esModuleInterop": true
