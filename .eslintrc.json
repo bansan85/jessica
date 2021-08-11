@@ -19,7 +19,8 @@
       }
     ],
     "no-undef": "off",
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "never"],
+    "indent": "off"
   },
   "plugins": ["html", "security"],
   "ignorePatterns": [
@@ -27,7 +28,7 @@
     "**/doc/highlight/highlight.min.js",
     "**/vcpkg/*",
     "**/src/angular/dist",
-    "**/src/angular/projects/lib-jessica/src/lib/jessica-web.js"
+    "**/src/angular/projects/lib-jessica/src/assets/jessica-web.js"
   ],
   "overrides": [
     {
@@ -43,13 +44,21 @@
       "rules": {
         "require-jsdoc": "off",
         "indent": "off",
-        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/indent": ["off"],
+        "brace-style": ["off"],
+        "operator-linebreak": ["off"],
         "comma-dangle": ["error", "never"],
         "spaced-comment": "off",
         "new-cap": [
           "error",
           {
-            "capIsNewExceptions": ["Component", "NgModule", "Injectable"]
+            "capIsNewExceptions": [
+              "Component",
+              "Injectable",
+              "Input",
+              "NgModule",
+              "Output"
+            ]
           }
         ]
       }

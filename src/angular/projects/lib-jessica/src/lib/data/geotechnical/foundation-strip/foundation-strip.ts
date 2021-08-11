@@ -1,3 +1,3 @@
 export interface FoundationStrip {
-  b: number;
+  width: number;
 }

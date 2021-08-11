@@ -1,4 +1,5 @@
 if(DEFINED EMSCRIPTEN)
+  add_subdirectory(angular)
   add_subdirectory(javascript)
 else()
   add_subdirectory(backend)

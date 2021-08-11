@@ -15,9 +15,10 @@ do
   clang-format-12 -style=file "$i" -i
 done
 
-echo "ESLint... "
-npx eslint --ext .js,.js.in,.html,.html.in,.ts . --fix
-
+echo "prettier..."
 npx prettier --write .
+
+echo "eslint..."
+npx eslint --ext .js,.js.in,.html,.html.in,.ts . --fix
 
 exit 0

@@ -17,6 +17,21 @@ find_package(spdlog REQUIRED)
 
 option(BUILD_COVERAGE "Enable coverage")
 
+# Set a default build type if none was specified
+set(DEFAULT_BUILD_TYPE "Release")
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+  set(DEFAULT_BUILD_TYPE "Debug")
+endif()
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(
+    STATUS
+      "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
+  set(CMAKE_BUILD_TYPE
+      "${DEFAULT_BUILD_TYPE}"
+      CACHE STRING "Choose the type of build." FORCE)
+endif()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   add_compile_options(
     -Weverything
@@ -38,18 +53,22 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                         -runtime-counter-relocation)
     set(CMAKE_EXE_LINKER_FLAGS
         "${CMAKE_EXE_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
-  elseif(EMSCRIPTEN)
-    add_compile_options(-Oz)
-  else()
-    add_compile_options(-O3)
-  endif()
+  else(BUILD_COVERAGE)
+    if(EMSCRIPTEN)
+      add_compile_options("$<$<CONFIG:RELEASE>:-O2>"
+                          "$<$<CONFIG:DEBUG>:-O0;-g>")
+    else()
+      add_compile_options("$<$<CONFIG:RELEASE>:-O3>"
+                          "$<$<CONFIG:DEBUG>:-O0;-g>")
+    endif()
+  endif(BUILD_COVERAGE)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_compile_options(-Wall -Werror -Wextra -Wpedantic)
   if(BUILD_COVERAGE)
     add_compile_options(-O0 --coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   else()
-    add_compile_options(-O3)
+    add_compile_options("$<$<CONFIG:RELEASE>:-O3>" "$<$<CONFIG:DEBUG>:-O0;-g>")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(

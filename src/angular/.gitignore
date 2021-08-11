@@ -45,5 +45,7 @@ testem.log
 Thumbs.db
 
 # Auto-generated files
-/projects/lib-jessica/assets/jessica-web.wasm
-/projects/lib-jessica/src/lib/jessica-web.js
+/projects/lib-jessica/src/assets/jessica-web.js
+/projects/lib-jessica/src/assets/jessica-web.js.symbols
+/projects/lib-jessica/src/assets/jessica-web.wasm
+/projects/lib-jessica/src/assets/jessica-web.wasm.map

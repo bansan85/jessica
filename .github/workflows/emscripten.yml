@@ -1,5 +1,5 @@
 ---
-name: Emscripten
+name: Angular and Emscripten
 on:
   workflow_run:
     workflows: ['format']
@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - config: Debug
+          - config: Release
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -46,8 +51,8 @@ jobs:
         run: |
           source ./emsdk/emsdk_env.sh
           mkdir build
-          emcmake cmake -S . -B build -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ env.EMSDK }}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/vcpkg/installed/wasm32-emscripten/share/spdlog
-          cmake --build build/ --target all
+          emcmake cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ env.EMSDK }}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/vcpkg/installed/wasm32-emscripten/share/spdlog
+          cmake --build build/ --target all --config ${{ matrix.config }}
       - name: ctest
         shell: bash
         run: |

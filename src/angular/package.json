@@ -4,9 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build lib-jessica && ng build app-main",
+    "build": "ng build lib-jessica --configuration production && ng build app-main --configuration production",
+    "build-dev": "ng build lib-jessica --configuration development && ng build app-main --configuration development",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
+    "test-headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {

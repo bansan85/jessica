@@ -58,7 +58,7 @@
               "projects/app-main/src/assets",
               {
                 "glob": "**/*",
-                "input": "projects/lib-jessica/assets/",
+                "input": "projects/lib-jessica/src/assets/",
                 "output": "./assets/"
               }
             ],

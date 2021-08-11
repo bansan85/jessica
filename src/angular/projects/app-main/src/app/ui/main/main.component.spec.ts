@@ -1,6 +1,10 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MainComponent } from './main.component';
+
+@Component({ selector: 'lib-meyerhof-calc', template: '' })
+class MeyerhofCalcStubComponent {}
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -8,7 +12,7 @@ describe('MainComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MainComponent]
+      declarations: [MainComponent, MeyerhofCalcStubComponent]
     }).compileComponents();
   });
 

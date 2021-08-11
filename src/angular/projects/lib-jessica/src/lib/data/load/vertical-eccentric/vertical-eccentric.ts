@@ -1,4 +1,4 @@
 export interface VerticalEccentric {
-  v: number;
-  e: number;
+  load: number;
+  eccentric: number;
 }

@@ -3,7 +3,7 @@
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
+    basePath: 'src',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
       require('karma-jasmine'),
@@ -12,6 +12,18 @@ module.exports = function (config) {
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
+    files: [
+      {
+        pattern: 'assets/*.wasm',
+        watched: true,
+        included: false,
+        served: true,
+        nocache: true
+      }
+    ],
+    proxies: {
+      '/_karma_webpack_/assets/': '/base/assets/'
+    },
     client: {
       jasmine: {
         // you can add configuration options for Jasmine here
