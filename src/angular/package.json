@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve app-main --configuration production",
+    "start-dev": "ng serve app-main --configuration development",
     "build": "ng build lib-jessica --configuration production && ng build app-main --configuration production",
     "build-dev": "ng build lib-jessica --configuration development && ng build app-main --configuration development",
     "watch": "ng build --watch --configuration development",
@@ -30,6 +31,7 @@
     "@angular/compiler-cli": "~12.1.1",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
+    "cypress": "^8.2.0",
     "jasmine-core": "~3.7.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
