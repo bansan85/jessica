@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve app-main --configuration production",
-    "start-dev": "ng serve app-main --configuration development",
+    "start": "npx http-server ./dist/app-main -c-1 -p 4200",
     "build": "ng build lib-jessica --configuration production && ng build app-main --configuration production",
     "build-dev": "ng build lib-jessica --configuration development && ng build app-main --configuration development",
     "watch": "ng build --watch --configuration development",
@@ -21,6 +20,7 @@
     "@angular/platform-browser": "~12.1.1",
     "@angular/platform-browser-dynamic": "~12.1.1",
     "@angular/router": "~12.1.1",
+    "http-server": "^13.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"

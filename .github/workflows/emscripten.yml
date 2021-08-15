@@ -66,11 +66,12 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          build: npm run build${{ matrix.config-angular }}
-          start: npm run start${{ matrix.config-angular }}
+          start: npm run start
           working-directory: src/angular
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 300
+          browser: chrome
+          headless: true
       - name: Publish test
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:
