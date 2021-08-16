@@ -8,7 +8,8 @@
     "build-dev": "ng build lib-jessica --configuration development && ng build app-main --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
-    "test-headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
+    "test-headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
+    "extract-i18n": "ng extract-i18n --output-path ./projects/app-main/src/locale"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +18,7 @@
     "@angular/compiler": "~12.1.1",
     "@angular/core": "~12.1.1",
     "@angular/forms": "~12.1.1",
+    "@angular/localize": "~12.1.1",
     "@angular/platform-browser": "~12.1.1",
     "@angular/platform-browser-dynamic": "~12.1.1",
     "@angular/router": "~12.1.1",

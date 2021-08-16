@@ -24,6 +24,12 @@
           },
           "defaultConfiguration": "production"
         },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-i18n:build"
+          }
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -44,6 +50,12 @@
       "root": "projects/app-main",
       "sourceRoot": "projects/app-main/src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "fr": "projects/app-main/src/locale/messages.fr-FR.xlf"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -63,7 +75,9 @@
               }
             ],
             "styles": ["projects/app-main/src/styles.css"],
-            "scripts": []
+            "scripts": [],
+            "localize": true,
+            "aot": true
           },
           "configurations": {
             "production": {

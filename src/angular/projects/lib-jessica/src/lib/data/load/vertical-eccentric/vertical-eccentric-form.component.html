@@ -1,7 +1,11 @@
 <div [formGroup]="load">
-  <label for="load">Load: </label>
+  <label for="load" i18n="input form|Vertical eccentric load, value"
+    >Load:
+  </label>
   <input id="load" type="text" formControlName="load" />
   <br />
-  <label for="eccentric">Eccentric: </label>
+  <label for="eccentric" i18n="input form|Vertical eccentric load, eccentricity"
+    >Eccentric:
+  </label>
   <input id="eccentric" type="text" formControlName="eccentric" />
 </div>
