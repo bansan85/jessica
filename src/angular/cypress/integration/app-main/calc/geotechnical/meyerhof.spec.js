@@ -1,6 +1,6 @@
 describe('My First Test', () => {
   it('clicks the link "type"', () => {
-    cy.visit('/');
+    cy.visit('/en-US/');
 
     cy.contains('Nested FormGroup');
     cy.contains('Width');
