@@ -17,6 +17,13 @@ jobs:
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           ref: ${{ github.event.workflow_run.head_commit.id }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Globally update npm
+        run: npm install -g npm
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
