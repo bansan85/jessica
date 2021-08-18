@@ -57,7 +57,8 @@
               "Injectable",
               "Input",
               "NgModule",
-              "Output"
+              "Output",
+              "Pipe"
             ]
           }
         ]

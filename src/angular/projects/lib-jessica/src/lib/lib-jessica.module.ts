@@ -2,6 +2,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
 import { MeyerhofFormComponent } from './data/geotechnical/meyerhof/meyerhof-form.component';
 import { FoundationStripFormComponent } from './data/geotechnical/foundation-strip/foundation-strip-form.component';
 import { VerticalEccentricFormComponent } from './data/load/vertical-eccentric/vertical-eccentric-form.component';
@@ -15,12 +17,13 @@ import { MeyerhofCalcComponent } from './calc/geotechnical/meyerhof-calc/meyerho
     VerticalEccentricFormComponent,
     MeyerhofCalcComponent
   ],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
   exports: [
     MeyerhofFormComponent,
     FoundationStripFormComponent,
     VerticalEccentricFormComponent,
-    MeyerhofCalcComponent
+    MeyerhofCalcComponent,
+    TranslateModule
   ]
 })
 export class LibJessicaModule {}

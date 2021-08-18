@@ -9,7 +9,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
     "test-headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
-    "extract-i18n": "ng extract-i18n --output-path ./projects/app-main/src/locale"
+    "cypress": "npx cypress run"
   },
   "private": true,
   "dependencies": {
@@ -18,10 +18,11 @@
     "@angular/compiler": "~12.1.1",
     "@angular/core": "~12.1.1",
     "@angular/forms": "~12.1.1",
-    "@angular/localize": "~12.1.1",
     "@angular/platform-browser": "~12.1.1",
     "@angular/platform-browser-dynamic": "~12.1.1",
     "@angular/router": "~12.1.1",
+    "@ngx-translate/core": "^13.0.0",
+    "@ngx-translate/http-loader": "^6.0.0",
     "http-server": "^13.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",

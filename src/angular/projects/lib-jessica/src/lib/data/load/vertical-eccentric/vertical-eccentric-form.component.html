@@ -1,11 +1,9 @@
 <div [formGroup]="load">
-  <label for="load" i18n="input form|Vertical eccentric load, value"
-    >Load:
-  </label>
+  <label for="load">{{ 'JESSICA.VERTICAL-ECCENTRIC.LOAD' | translate }}</label>
   <input id="load" type="text" formControlName="load" />
   <br />
-  <label for="eccentric" i18n="input form|Vertical eccentric load, eccentricity"
-    >Eccentric:
-  </label>
+  <label for="eccentric">{{
+    'JESSICA.VERTICAL-ECCENTRIC.ECCENTRIC' | translate
+  }}</label>
   <input id="eccentric" type="text" formControlName="eccentric" />
 </div>
