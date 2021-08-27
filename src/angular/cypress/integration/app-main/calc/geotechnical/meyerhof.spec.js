@@ -2,7 +2,6 @@ describe('My First Test', () => {
   it('clicks the link "type"', () => {
     cy.visit('/');
 
-    cy.contains('Nested FormGroup');
     cy.contains('Width');
     cy.contains('Load');
     cy.contains('Form Values');
@@ -13,5 +12,9 @@ describe('My First Test', () => {
 
     cy.contains('"qref": 200000');
     cy.contains('"b_": 0.5');
+
+    cy.get('#language').should('have.value', 'en');
+    cy.get('#language').select('fr');
+    cy.get('#language').should('have.value', 'fr');
   });
 });

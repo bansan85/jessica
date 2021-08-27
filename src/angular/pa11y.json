@@ -1,0 +1,11 @@
+{
+  "level": "warning",
+  "ignore": [
+    "WCAG2AAA.Principle1.Guideline1_3.1_3_1.H85.2",
+    "WCAG2AAA.Principle4.Guideline4_1.4_1_2.H91.Select.Value",
+    "WCAG2AAA.Principle3.Guideline3_2.3_2_2.H32.2"
+  ],
+  "includeWarnings": true,
+  "runners": ["axe", "htmlcs"],
+  "standard": "WCAG2AAA"
+}

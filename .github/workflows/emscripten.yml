@@ -72,10 +72,13 @@ jobs:
           cd build || exit 1
           ctest -O test-result.xml --output-on-failure --verbose
           cd .. || exit 1
+      - name: Start server
+        run: |
+          cd src/angular || exit 1
+          npm run start &
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: npm run start
           working-directory: src/angular
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 300
@@ -91,6 +94,10 @@ jobs:
         with:
           name: cypress-videos
           path: src/angular/cypress/videos
+      - name: pa11y
+        run: |
+          cd src/angular || exit 1
+          npx pa11y http://localhost:4200
       - name: Publish test
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:

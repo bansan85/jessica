@@ -1,8 +1,9 @@
 <form [formGroup]="form">
+  <h1>{{ 'JESSICA.MEYERHOF-CALC-FORM.TITLE' | translate }}</h1>
   <lib-meyerhof-form
     ngDefaultControl
     formControlName="meyerhof"
   ></lib-meyerhof-form>
 </form>
 
-<pre>Form Values: {{ result | json }}</pre>
+<div>Form Values: {{ result | json }}</div>

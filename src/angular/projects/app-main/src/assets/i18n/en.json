@@ -1,5 +1,8 @@
 {
   "HOME": {
     "TITLE": "Calculator for Meherhof foundation!"
+  },
+  "ROOT": {
+    "LANGUAGE": "Language:"
   }
 }

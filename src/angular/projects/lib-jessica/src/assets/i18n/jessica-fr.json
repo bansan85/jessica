@@ -3,6 +3,9 @@
     "FONDATION-STRIP": {
       "WIDTH": "Largeur:"
     },
+    "MEYERHOF-CALC-FORM": {
+      "TITLE": "Fondations filantes de Meyerhof"
+    },
     "VERTICAL-ECCENTRIC": {
       "LOAD": "Charge:",
       "ECCENTRIC": "Excentricité:"
