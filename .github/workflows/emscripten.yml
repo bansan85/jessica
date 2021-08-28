@@ -107,6 +107,7 @@ jobs:
           git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b emscripten
           rm -Rf jessica-ci/*
           cp build/test-result.xml jessica-ci
+          cp src/angular/cypress.xml jessica-ci
           apt list --installed > jessica-ci/apt-installed.txt
           ssh-add ~/.ssh/id_rsa
           gpg --version

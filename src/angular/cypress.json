@@ -1,4 +1,9 @@
 {
   "$schema": "https://on.cypress.io/cypress.schema.json",
-  "baseUrl": "http://localhost:4200"
+  "baseUrl": "http://localhost:4200",
+  "reporter": "junit",
+  "reporterOptions": {
+    "mochaFile": "cypress.xml",
+    "toConsole": "true"
+  }
 }
