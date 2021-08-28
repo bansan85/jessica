@@ -41,6 +41,8 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install -yq sshpass
       - name: Install emscripten
         run: |
           git clone --depth=1 https://github.com/emscripten-core/emsdk.git
@@ -123,3 +125,11 @@ jobs:
             git push || { echo "Failure git push" && exit 1; } \
           fi
           cd .. || exit 1
+      - name: Deploy website
+        if: ${{ github.event.workflow_run.head_branch == 'master' }}
+        env:
+          SSHPASS: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          ssh-keyscan -t rsa ${{ secrets.SFTP_URL }} >> ~/.ssh/known_hosts
+          cd src/angular/dist/app-main || exit 1
+          sshpass -e sftp ${{ secrets.SFTP_USER }}@${{ secrets.SFTP_URL }}:${{ secrets.SFTP_ROOT_FOLDER }}/jessica${{ matrix.config-angular }}/ <<< $'put -r .'
