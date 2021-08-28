@@ -104,7 +104,7 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
         run: |
           eval `ssh-agent`
-          git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b emscripten
+          git clone --depth 1 ssh://git@github.com/bansan85/jessica-ci.git -b emscripten${{ matrix.config-angular }}
           rm -Rf jessica-ci/*
           cp build/test-result.xml jessica-ci
           cp src/angular/cypress.xml jessica-ci
