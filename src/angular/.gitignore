@@ -51,3 +51,4 @@ Thumbs.db
 /projects/lib-jessica/src/assets/jessica-web.wasm.map
 /cypress/screenshots
 /cypress/videos
+/cypress.xml
