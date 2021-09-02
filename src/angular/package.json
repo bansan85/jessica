@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "preprocess": "python projects/preprocess/preprocess.py",
     "start": "npx http-server ./dist/app-main -c-1 -p 4200",
     "build": "ng build lib-jessica --configuration production && ng build app-main --configuration production",
     "build-dev": "ng build lib-jessica --configuration development && ng build app-main --configuration development",

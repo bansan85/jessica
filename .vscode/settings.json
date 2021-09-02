@@ -93,5 +93,7 @@
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "python.formatting.provider": "black",
+  "python.linting.pylintEnabled": true
 }

@@ -4,3 +4,5 @@ doc/highlight/highlight.min.js
 doc/highlight/styles/github.min.css
 src/angular/dist
 src/angular/projects/lib-jessica/src/assets/jessica-web.js
+.mypy_cache/
+venv/

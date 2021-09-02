@@ -18,6 +18,7 @@
     "module": "esnext",
     "lib": ["esnext", "dom"],
     "allowJs": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true
   },
   "angularCompilerOptions": {

@@ -1,0 +1,12 @@
+---
+strictness: veryhigh
+
+pylint:
+  disable:
+    - too-many-locals
+    - too-few-public-methods
+    - fixme
+
+pep8:
+  disable:
+    - W503

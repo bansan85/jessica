@@ -49,6 +49,9 @@ Thumbs.db
 /projects/lib-jessica/src/assets/jessica-web.js.symbols
 /projects/lib-jessica/src/assets/jessica-web.wasm
 /projects/lib-jessica/src/assets/jessica-web.wasm.map
+
 /cypress/screenshots
 /cypress/videos
 /cypress.xml
+
+/projects/app-main/src/app/util/translate/all-lang.json
