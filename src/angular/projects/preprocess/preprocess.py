@@ -12,7 +12,7 @@ def find_translations() -> None:
     all_translations: List[str] = sorted(
         set(
             translation.find_translation(
-                __p + "/../lib-jessica/src/assets/i18n",
+                __p + "/../jessica/src/assets/i18n",
                 "jessica-",
                 ".json",
             )

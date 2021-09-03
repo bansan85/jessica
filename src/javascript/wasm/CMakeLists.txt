@@ -29,12 +29,12 @@ set_target_properties(jessica_node_js PROPERTIES OUTPUT_NAME "jessica-node")
 add_custom_target(
   jessica_web_js2 ALL
   COMMAND ${CMAKE_COMMAND} -E make_directory
-          "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets"
+          "${CMAKE_SOURCE_DIR}/src/angular/projects/jessica/src/assets"
   COMMAND
     sed -i
     "s#[\\'\\\"]jessica-web.wasm[\\'\\\"]#\\'assets/jessica-web.wasm\\'#g"
     "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.*"
-          "${CMAKE_SOURCE_DIR}/src/angular/projects/lib-jessica/src/assets/")
+          "${CMAKE_SOURCE_DIR}/src/angular/projects/jessica/src/assets/")
 
 add_dependencies(jessica_web_js2 jessica_web_js)

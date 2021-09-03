@@ -5,7 +5,7 @@
     "outDir": "../../out-tsc/spec",
     "types": ["jasmine"],
     "paths": {
-      "lib-jessica": ["dist/lib-jessica"]
+      "jessica": ["dist/jessica"]
     }
   },
   "files": ["src/test.ts", "src/polyfills.ts"],

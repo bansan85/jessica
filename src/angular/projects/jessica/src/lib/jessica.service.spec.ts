@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LibJessicaService } from './lib-jessica.service';
+import { LibJessicaService } from './jessica.service';
 
 describe('LibJessicaService', () => {
   let service: LibJessicaService;

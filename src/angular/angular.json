@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "lib-jessica": {
+    "jessica": {
       "projectType": "library",
-      "root": "projects/lib-jessica",
-      "sourceRoot": "projects/lib-jessica/src",
+      "root": "projects/jessica",
+      "sourceRoot": "projects/jessica/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/lib-jessica/ng-package.json"
+            "project": "projects/jessica/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/lib-jessica/tsconfig.lib.prod.json"
+              "tsConfig": "projects/jessica/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/lib-jessica/tsconfig.lib.json"
+              "tsConfig": "projects/jessica/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,9 +27,9 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/lib-jessica/src/test.ts",
-            "tsConfig": "projects/lib-jessica/tsconfig.spec.json",
-            "karmaConfig": "projects/lib-jessica/karma.conf.js"
+            "main": "projects/jessica/src/test.ts",
+            "tsConfig": "projects/jessica/tsconfig.spec.json",
+            "karmaConfig": "projects/jessica/karma.conf.js"
           }
         }
       }
@@ -58,7 +58,7 @@
               "projects/app-main/src/assets",
               {
                 "glob": "**/*",
-                "input": "projects/lib-jessica/src/assets/",
+                "input": "projects/jessica/src/assets/",
                 "output": "./assets/"
               }
             ],

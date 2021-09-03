@@ -45,10 +45,10 @@ testem.log
 Thumbs.db
 
 # Auto-generated files
-/projects/lib-jessica/src/assets/jessica-web.js
-/projects/lib-jessica/src/assets/jessica-web.js.symbols
-/projects/lib-jessica/src/assets/jessica-web.wasm
-/projects/lib-jessica/src/assets/jessica-web.wasm.map
+/projects/jessica/src/assets/jessica-web.js
+/projects/jessica/src/assets/jessica-web.js.symbols
+/projects/jessica/src/assets/jessica-web.wasm
+/projects/jessica/src/assets/jessica-web.wasm.map
 
 /cypress/screenshots
 /cypress/videos

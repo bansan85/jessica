@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './ui/main/main.component';
 
-import { LibJessicaModule } from 'lib-jessica';
+import { LibJessicaModule } from 'jessica';
 import { MultiTranslateHttpLoader } from './util/translate/multi-translate-http-loader';
 /* eslint-enable max-len */
 

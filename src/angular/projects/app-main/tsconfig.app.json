@@ -5,7 +5,7 @@
     "outDir": "../../out-tsc/app",
     "types": [],
     "paths": {
-      "lib-jessica": ["dist/lib-jessica"]
+      "jessica": ["dist/jessica"]
     }
   },
   "files": ["src/main.ts", "src/polyfills.ts"],

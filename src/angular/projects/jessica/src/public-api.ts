@@ -1,10 +1,10 @@
 /*
- * Public API Surface of lib-jessica
+ * Public API Surface of jessica
  */
 
 /* eslint-disable max-len */
-export * from './lib/lib-jessica.service';
-export * from './lib/lib-jessica.module';
+export * from './lib/jessica.service';
+export * from './lib/jessica.module';
 export * from './lib/calc/geotechnical/meyerhof-calc/meyerhof-calc.component';
 export * from './lib/calc/geotechnical/meyerhof-calc/meyerhof-calc.service';
 export * from './lib/data/geotechnical/meyerhof/meyerhof-form.component';
