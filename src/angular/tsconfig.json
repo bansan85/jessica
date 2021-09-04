@@ -19,7 +19,11 @@
     "lib": ["esnext", "dom"],
     "allowJs": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "jessica": ["dist/jessica"],
+      "toolbox": ["dist/toolbox/toolbox", "dist/toolbox"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
