@@ -24,9 +24,11 @@
   },
   "plugins": ["html", "security"],
   "ignorePatterns": [
-    "**/node_modules/*",
+    "**/node_modules",
     "**/doc/highlight/highlight.min.js",
-    "**/vcpkg/*",
+    "**/vcpkg",
+    "**/venv",
+    "**/build",
     "**/src/angular/dist",
     "**/src/angular/projects/jessica/src/assets/jessica-web.js"
   ],

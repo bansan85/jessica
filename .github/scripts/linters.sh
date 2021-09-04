@@ -5,7 +5,7 @@ shopt -s globstar dotglob
 
 retval=0
 
-npx eslint --ext .js,.js.in,.html,.html.in . || retval=1
+npx eslint --ext .js,.js.in,.html,.html.in,.ts . || retval=1
 
 for i in **/*.yml
 do
