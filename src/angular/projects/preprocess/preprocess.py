@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 from typing import List
 
 import translation
@@ -9,6 +10,9 @@ __p: str = os.path.dirname(os.path.realpath(__file__))
 
 
 def find_translations() -> None:
+    Path(__p + "/../app-main/src/app/util/translate").mkdir(
+        parents=True, exist_ok=True
+    )
     all_translations: List[str] = sorted(
         set(
             translation.find_translation(

@@ -11,7 +11,9 @@ import {
   Validator
 } from '@angular/forms';
 import { PartialObserver } from 'rxjs';
-import { validNumber } from '../../../util/validator/valid-number.validator';
+
+import { validNumber } from 'toolbox';
+
 import { FoundationStrip } from './foundation-strip';
 /* eslint-enable max-len */
 

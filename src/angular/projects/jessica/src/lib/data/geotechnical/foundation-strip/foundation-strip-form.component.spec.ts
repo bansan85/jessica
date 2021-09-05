@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslateMockPipe } from '../../../util/translation/translate-mock.pipe';
+
+import { TranslateMockPipe } from 'toolbox';
 
 import { FoundationStripFormComponent } from './foundation-strip-form.component';
 /* eslint-enable max-len */

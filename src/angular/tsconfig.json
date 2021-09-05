@@ -16,10 +16,13 @@
     "importHelpers": true,
     "target": "esnext",
     "module": "esnext",
-    "lib": ["esnext", "dom"],
     "allowJs": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "jessica": ["dist/jessica"],
+      "toolbox": ["dist/toolbox"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

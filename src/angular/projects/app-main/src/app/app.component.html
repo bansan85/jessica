@@ -4,7 +4,7 @@
   <select
     id="language"
     #langSelect
-    (change)="translate.use(extractLanguage(langSelect.value))"
+    (change)="translate.use(translateEx.extractLanguage(langSelect.value))"
   >
     <option
       *ngFor="let lang of translate.getLangs()"

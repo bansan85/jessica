@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TranslateMockPipe } from 'jessica';
+import { TranslateMockPipe } from 'toolbox';
 
 import { MainComponent } from './main.component';
 
