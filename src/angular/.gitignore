@@ -54,4 +54,6 @@ Thumbs.db
 /cypress/videos
 /cypress.xml
 
+/.lighthouseci
+
 /projects/app-main/src/app/util/translate/all-lang.json
