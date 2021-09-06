@@ -115,6 +115,10 @@ jobs:
           cp build/test-result.xml jessica-ci
           cp src/angular/cypress.xml jessica-ci
           cp -R src/angular/.lighthouseci jessica-ci/lighthouseci
+          if [ "${{ matrix.config == 'Debug' }}" == "true" ]; \
+          then \
+            cp -R src/angular/dist/app-main jessica-ci/ ; \
+          fi
           apt list --installed > jessica-ci/apt-installed.txt
           ssh-add ~/.ssh/id_rsa
           gpg --version
