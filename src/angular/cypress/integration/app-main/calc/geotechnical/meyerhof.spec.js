@@ -18,12 +18,15 @@ describe('My First Test', () => {
     cy.get('#load').type('100000');
     cy.get('#eccentric').type('0.25');
 
-    cy.contains('"qref": 200000');
-    cy.contains('"b_": 0.5');
+    cy.contains('qref: 200,000');
+    cy.contains('b\': 0.5');
 
     cy.get('#language').should('have.value', 'en');
     cy.get('#language').select('fr');
     cy.get('#language').should('have.value', 'fr');
+
+    cy.get('div').should('include.text', 'qref: 200\u202f000');
+    cy.contains('b\': 0,5');
 
     cy.contains('Largeur');
   });
@@ -49,12 +52,15 @@ describe('Auto French translation', () => {
     cy.get('#load').type('100000');
     cy.get('#eccentric').type('0.25');
 
-    cy.contains('"qref": 200000');
-    cy.contains('"b_": 0.5');
+    cy.get('div').should('include.text', 'qref: 200\u202f000');
+    cy.contains('b\': 0,5');
 
     cy.get('#language').should('have.value', 'fr');
     cy.get('#language').select('en');
     cy.get('#language').should('have.value', 'en');
+
+    cy.contains('qref: 200,000');
+    cy.contains('b\': 0.5');
 
     cy.contains('Width');
   });

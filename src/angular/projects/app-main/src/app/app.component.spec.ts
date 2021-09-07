@@ -34,4 +34,10 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app.title).toEqual('app-main');
   });
+
+  it(`should change language`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    app.changeLanguage('en-US');
+  });
 });

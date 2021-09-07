@@ -6,4 +6,8 @@
   ></lib-meyerhof-form>
 </form>
 
-<div>Form Values: {{ result | json }}</div>
+<div>
+  Form Values: qref:
+  {{ result?.qref | number: undefined:translateEx.language }}, b':
+  {{ result?.b_ | number: undefined:translateEx.language }}
+</div>

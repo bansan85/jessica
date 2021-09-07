@@ -1,11 +1,7 @@
 <main>
   <router-outlet></router-outlet>
   <label for="language">{{ 'ROOT.LANGUAGE' | translate }}</label>
-  <select
-    id="language"
-    #langSelect
-    (change)="translate.use(translateEx.extractLanguage(langSelect.value))"
-  >
+  <select id="language" #langSelect (change)="changeLanguage(langSelect.value)">
     <option
       *ngFor="let lang of translate.getLangs()"
       [value]="lang"

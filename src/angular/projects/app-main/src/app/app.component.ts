@@ -1,3 +1,4 @@
+import { registerLocaleData } from '@angular/common';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -20,6 +21,18 @@ export class AppComponent {
   ) {
     translate.addLangs(allLang);
     translate.setDefaultLang('en');
-    translate.use(this.translateEx.extractLanguage(navigator.language));
+    this.changeLanguage(navigator.language);
+  }
+
+  changeLanguage(language: string): void {
+    const selectedLang = this.translateEx.extractLanguage(language);
+    import(
+      /* webpackInclude: /(en|fr)\.js$/ */
+      '@angular/common/locales/' + selectedLang
+    ).then((locale) => {
+      registerLocaleData(locale.default, selectedLang);
+      this.translate.use(selectedLang);
+      this.translateEx.language = selectedLang;
+    });
   }
 }

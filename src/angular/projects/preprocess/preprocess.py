@@ -1,6 +1,8 @@
+import fileinput
 import json
 import os
 from pathlib import Path
+import re
 from typing import List
 
 import translation
@@ -31,6 +33,15 @@ def find_translations() -> None:
         encoding="utf8",
     ) as file:
         json.dump(all_translations, file)
+    replace_translations = (
+        "webpackInclude: /(" + "|".join(all_translations) + r")\.js$/ */"
+    )
+    regex = re.compile("webpackInclude.*$", re.IGNORECASE)
+    for line in fileinput.input(
+        __p + "/../app-main/src/app/app.component.ts", inplace=True
+    ):
+        line = re.sub(regex, replace_translations, line)
+        print(line, end="")
 
 
 find_translations()

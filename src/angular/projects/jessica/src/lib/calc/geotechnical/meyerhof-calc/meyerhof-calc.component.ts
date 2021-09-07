@@ -3,6 +3,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+
+import { TranslateExService } from 'toolbox';
+
 import { MeyerhofForm } from '../../../data/geotechnical/meyerhof/meyerhof-form';
 import { MeyerhofCalc } from './meyerhof-calc';
 import { MeyerhofCalcService } from './meyerhof-calc.service';
@@ -20,7 +23,8 @@ export class MeyerhofCalcComponent implements OnInit, OnDestroy {
   private obs$!: Subscription;
   constructor(
     private calc: MeyerhofCalcService,
-    private fromBuilder: FormBuilder
+    private fromBuilder: FormBuilder,
+    public translateEx: TranslateExService
   ) {
     this.form = this.fromBuilder.group({
       meyerhof: ['']

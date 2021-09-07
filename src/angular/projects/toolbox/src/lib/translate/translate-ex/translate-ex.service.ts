@@ -4,7 +4,11 @@ import { Inject, Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class TranslateExService {
-  constructor(@Inject('languages') public languages: string[]) {}
+  private _language: string;
+
+  constructor(@Inject('languages') public languages: string[]) {
+    this._language = 'en';
+  }
 
   extractLanguage(language: string): string {
     if (this.languages.indexOf(language) != -1) {
@@ -19,5 +23,13 @@ export class TranslateExService {
     }
 
     return 'en';
+  }
+
+  get language(): string {
+    return this._language;
+  }
+
+  set language(language: string) {
+    this._language = language;
   }
 }
