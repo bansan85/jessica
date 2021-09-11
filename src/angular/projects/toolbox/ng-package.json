@@ -2,6 +2,11 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/toolbox",
   "lib": {
-    "entryFile": "src/public-api.ts"
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "cldr-data/supplemental/likelySubtags.json": "i1",
+      "cldr-data/supplemental/numberingSystems.json": "i2",
+      "globalize": "i3"
+    }
   }
 }

@@ -31,8 +31,19 @@ export class AppComponent {
       '@angular/common/locales/' + selectedLang
     ).then((locale) => {
       registerLocaleData(locale.default, selectedLang);
-      this.translate.use(selectedLang);
-      this.translateEx.language = selectedLang;
+      import(
+        /* webpackInclude: /main.(en|fr).numbers.json/ */
+        'cldr-data/main/' + selectedLang + '/numbers.json'
+      ).then((cldrLocale) => {
+        this.translateEx.Globalize.load(cldrLocale.default);
+        this.translate.use(selectedLang);
+        this.translateEx.language = selectedLang;
+        this.translateEx.Globalize.locale(selectedLang);
+        const parser = this.translateEx.Globalize.numberParser();
+        console.log(parser('12,345.678'));
+        console.log(parser('12 345,678'));
+        console.log(parser('12345,678'));
+      });
     });
   }
 }
