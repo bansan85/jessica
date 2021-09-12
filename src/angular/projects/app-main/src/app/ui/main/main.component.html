@@ -1,2 +1,8 @@
 {{ 'HOME.TITLE' | translate }}
-<lib-meyerhof-calc></lib-meyerhof-calc>
+<lib-meyerhof-calc (changeEvent)="compute($event)"></lib-meyerhof-calc>
+
+<div>
+  Form Values: qref:
+  {{ result?.qref | number: undefined:translateEx.language }}, b':
+  {{ result?.b_ | number: undefined:translateEx.language }}
+</div>
