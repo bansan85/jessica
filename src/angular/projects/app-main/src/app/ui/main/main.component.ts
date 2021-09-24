@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
 
-import { MeyerhofCalcService, MeyerhofCalc, MeyerhofResult } from 'jessica';
+import { cloneDeep } from 'lodash-es';
+
+import {
+  MeyerhofCalcService,
+  MeyerhofCalc,
+  MeyerhofCalcI18n,
+  MeyerhofResult
+} from 'jessica';
 import { TranslateExService } from 'toolbox';
 
 @Component({
@@ -16,7 +23,17 @@ export class MainComponent {
     public translateEx: TranslateExService
   ) {}
 
-  compute(newItem: MeyerhofCalc): void {
-    this.result = this.calc.compute(newItem.meyerhof);
+  compute(newItem: MeyerhofCalc<string>): void {
+    const tt: MeyerhofCalc<string | number> = cloneDeep(newItem);
+
+    this.translateEx.i18nStringToNumber(
+      tt as unknown as Record<string, unknown>,
+      new MeyerhofCalcI18n(),
+      this.translateEx.numberParser
+    );
+
+    const ttt: MeyerhofCalc<number> = tt as MeyerhofCalc<number>;
+    console.log(JSON.stringify(ttt));
+    this.result = this.calc.compute(ttt.meyerhof);
   }
 }

@@ -48,7 +48,7 @@ export class MeyerhofFormComponent
     this.obs$ = this.form.valueChanges
       .pipe(filter(() => this.form.valid))
       .pipe(debounceTime(200))
-      .subscribe((a: MeyerhofForm) => {
+      .subscribe((a: MeyerhofForm<string>) => {
         this.writeValue(a);
       });
   }
@@ -60,7 +60,7 @@ export class MeyerhofFormComponent
   // ControlValueAccessor
   public onTouched!: () => void;
 
-  writeValue(val: MeyerhofForm): void {
+  writeValue(val: MeyerhofForm<string>): void {
     val && this.form.setValue(val, { emitEvent: false });
   }
   registerOnChange(

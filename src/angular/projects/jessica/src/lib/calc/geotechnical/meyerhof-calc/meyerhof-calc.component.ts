@@ -20,7 +20,7 @@ import { MeyerhofCalc } from './meyerhof-calc';
 })
 export class MeyerhofCalcComponent implements OnInit, OnDestroy {
   form: FormGroup;
-  @Output() changeEvent = new EventEmitter<MeyerhofCalc>();
+  @Output() changeEvent = new EventEmitter<MeyerhofCalc<string>>();
   private obs$!: Subscription;
   constructor(private fromBuilder: FormBuilder) {
     this.form = this.fromBuilder.group({
@@ -31,7 +31,7 @@ export class MeyerhofCalcComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.obs$ = this.form.valueChanges
       .pipe(filter(() => this.form.valid))
-      .subscribe((a: MeyerhofCalc) => {
+      .subscribe((a: MeyerhofCalc<string>) => {
         this.changeEvent.emit(a);
       });
   }

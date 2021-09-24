@@ -12,8 +12,6 @@ import {
 } from '@angular/forms';
 import { PartialObserver } from 'rxjs';
 
-import { validNumber } from 'toolbox';
-
 import { VerticalEccentric } from './vertical-eccentric';
 /* eslint-enable max-len */
 
@@ -41,15 +39,15 @@ export class VerticalEccentricFormComponent
 
   constructor(private fromBuilder: FormBuilder) {
     this.load = this.fromBuilder.group({
-      load: [null, [Validators.required, validNumber]],
-      eccentric: [null, [Validators.required, validNumber]]
+      load: [null, [Validators.required]],
+      eccentric: [null, [Validators.required]]
     });
   }
 
   // ControlValueAccessor
   public onTouched!: () => void;
 
-  writeValue(val: VerticalEccentric): void {
+  writeValue(val: VerticalEccentric<string>): void {
     val && this.load.setValue(val, { emitEvent: false });
   }
   registerOnChange(

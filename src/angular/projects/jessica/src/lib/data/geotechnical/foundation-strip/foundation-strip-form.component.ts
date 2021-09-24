@@ -12,8 +12,6 @@ import {
 } from '@angular/forms';
 import { PartialObserver } from 'rxjs';
 
-import { validNumber } from 'toolbox';
-
 import { FoundationStrip } from './foundation-strip';
 /* eslint-enable max-len */
 
@@ -41,14 +39,14 @@ export class FoundationStripFormComponent
 
   constructor(private fromBuilder: FormBuilder) {
     this.foundation = this.fromBuilder.group({
-      width: [null, [Validators.required, validNumber]]
+      width: [null, [Validators.required]]
     });
   }
 
   // ControlValueAccessor
   public onTouched!: () => void;
 
-  writeValue(val: FoundationStrip): void {
+  writeValue(val: FoundationStrip<string>): void {
     val && this.foundation.setValue(val, { emitEvent: false });
   }
   registerOnChange(

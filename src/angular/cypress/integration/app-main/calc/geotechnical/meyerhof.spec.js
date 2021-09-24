@@ -50,7 +50,7 @@ describe('Auto French translation', () => {
 
     cy.get('#width').type('1');
     cy.get('#load').type('100000');
-    cy.get('#eccentric').type('0.25');
+    cy.get('#eccentric').type('0,25');
 
     cy.get('div').should('include.text', 'qref: 200\u202f000');
     cy.contains('b\': 0,5');
