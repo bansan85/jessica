@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 
@@ -33,7 +34,8 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
         deps: [HttpClient]
       },
       defaultLanguage: 'en'
-    })
+    }),
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

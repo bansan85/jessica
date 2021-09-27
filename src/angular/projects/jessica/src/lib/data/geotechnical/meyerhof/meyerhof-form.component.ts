@@ -59,7 +59,6 @@ export class MeyerhofFormComponent
 
   // ControlValueAccessor
   public onTouched!: () => void;
-
   writeValue(val: MeyerhofForm<string>): void {
     val && this.form.setValue(val, { emitEvent: false });
   }

@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule
+} from '@ngx-translate/core';
 import { MeyerhofCalcService } from 'jessica';
 
 import { TranslateExService, TranslateMockPipe } from 'toolbox';
@@ -15,6 +21,15 @@ describe('MainComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useClass: TranslateFakeLoader
+          }
+        }),
+        ReactiveFormsModule
+      ],
       declarations: [
         MainComponent,
         MeyerhofCalcStubComponent,

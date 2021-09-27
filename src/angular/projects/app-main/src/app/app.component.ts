@@ -37,6 +37,8 @@ export class AppComponent {
       ).then((cldrLocale) => {
         this.translateEx.Globalize.load(cldrLocale.default);
         this.translate.use(selectedLang);
+        // Subscribers to onLangChange may be called before or after the next
+        // line.
         this.translateEx.language = selectedLang;
       });
     });

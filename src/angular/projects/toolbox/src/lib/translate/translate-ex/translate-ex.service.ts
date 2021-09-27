@@ -90,4 +90,35 @@ export class TranslateExService {
     }
     /* eslint-enable security/detect-object-injection, guard-for-in */
   }
+
+  i18nStringChangeLocale(
+    obj: Record<string, unknown>,
+    i18n: I18nForm,
+    from: string,
+    to: string
+  ): void {
+    /* eslint-disable security/detect-object-injection, guard-for-in */
+    if (i18n.child !== undefined) {
+      for (const ch in i18n.child) {
+        this.i18nStringChangeLocale(
+          obj[i18n.child[ch]] as Record<string, unknown>,
+          (i18n as Record<string, I18nForm>)[i18n.child[ch]],
+          from,
+          to
+        );
+      }
+    }
+    if (i18n.number !== undefined) {
+      this.Globalize.locale(from);
+      const fromParser = this.Globalize.numberParser();
+      this.Globalize.locale(to);
+      const toParser = this.Globalize.numberFormatter();
+      for (const nb in i18n.number) {
+        obj[i18n.number[nb]] = toParser(
+          fromParser(obj[i18n.number[nb]] as string)
+        );
+      }
+    }
+    /* eslint-enable security/detect-object-injection, guard-for-in */
+  }
 }

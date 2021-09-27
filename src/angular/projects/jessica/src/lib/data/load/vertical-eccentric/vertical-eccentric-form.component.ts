@@ -46,7 +46,6 @@ export class VerticalEccentricFormComponent
 
   // ControlValueAccessor
   public onTouched!: () => void;
-
   writeValue(val: VerticalEccentric<string>): void {
     val && this.load.setValue(val, { emitEvent: false });
   }

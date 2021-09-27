@@ -45,7 +45,6 @@ export class FoundationStripFormComponent
 
   // ControlValueAccessor
   public onTouched!: () => void;
-
   writeValue(val: FoundationStrip<string>): void {
     val && this.foundation.setValue(val, { emitEvent: false });
   }

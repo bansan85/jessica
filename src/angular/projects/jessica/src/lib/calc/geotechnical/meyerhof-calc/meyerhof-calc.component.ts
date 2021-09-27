@@ -2,12 +2,18 @@
 import {
   Component,
   EventEmitter,
+  forwardRef,
   OnDestroy,
   OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {
+  ControlValueAccessor,
+  FormBuilder,
+  FormGroup,
+  NG_VALUE_ACCESSOR
+} from '@angular/forms';
+import { PartialObserver, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { MeyerhofCalc } from './meyerhof-calc';
@@ -16,9 +22,18 @@ import { MeyerhofCalc } from './meyerhof-calc';
 @Component({
   selector: 'lib-meyerhof-calc',
   templateUrl: './meyerhof-calc.component.html',
-  styleUrls: ['./meyerhof-calc.component.css']
+  styleUrls: ['./meyerhof-calc.component.css'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MeyerhofCalcComponent),
+      multi: true
+    }
+  ]
 })
-export class MeyerhofCalcComponent implements OnInit, OnDestroy {
+export class MeyerhofCalcComponent
+  implements ControlValueAccessor, OnInit, OnDestroy
+{
   form: FormGroup;
   @Output() changeEvent = new EventEmitter<MeyerhofCalc<string>>();
   private obs$!: Subscription;
@@ -40,6 +55,19 @@ export class MeyerhofCalcComponent implements OnInit, OnDestroy {
     this.obs$?.unsubscribe();
   }
 
+  // ControlValueAccessor
+  public onTouched!: () => void;
+  writeValue(val: MeyerhofCalc<string>): void {
+    val && this.form.setValue(val, { emitEvent: false });
+  }
+  registerOnChange(
+    fn?: PartialObserver<{ [key: string]: string | undefined }>
+  ): void {
+    this.form.valueChanges.subscribe(fn);
+  }
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
   setDisabledState?(isDisabled: boolean): void {
     isDisabled ? this.form.disable() : this.form.enable();
   }

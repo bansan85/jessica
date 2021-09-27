@@ -25,6 +25,7 @@ describe('My First Test', () => {
     cy.get('#language').select('fr');
     cy.get('#language').should('have.value', 'fr');
 
+    cy.get('#eccentric').should('have.value', '0,25');
     cy.get('div').should('include.text', 'qref: 200\u202f000');
     cy.contains('b\': 0,5');
 
@@ -59,6 +60,7 @@ describe('Auto French translation', () => {
     cy.get('#language').select('en');
     cy.get('#language').should('have.value', 'en');
 
+    cy.get('#eccentric').should('have.value', '0.25');
     cy.contains('qref: 200,000');
     cy.contains('b\': 0.5');
 

@@ -1,6 +1,11 @@
 {{ 'HOME.TITLE' | translate }}
-<lib-meyerhof-calc (changeEvent)="compute($event)"></lib-meyerhof-calc>
-
+<form [formGroup]="form">
+  <lib-meyerhof-calc
+    ngDefaultControl
+    formControlName="child"
+    (changeEvent)="compute($event)"
+  ></lib-meyerhof-calc>
+</form>
 <div>
   Form Values: qref:
   {{ result?.qref | number: undefined:translateEx.language }}, b':
