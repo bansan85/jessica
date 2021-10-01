@@ -24,23 +24,21 @@ export class AppComponent {
     this.changeLanguage(navigator.language);
   }
 
-  changeLanguage(language: string): void {
+  async changeLanguage(language: string): Promise<void> {
     const selectedLang = this.translateEx.extractLanguage(language);
-    import(
+    const locale = await import(
       /* webpackInclude: /(en|fr)\.js$/ */
       '@angular/common/locales/' + selectedLang
-    ).then((locale) => {
-      registerLocaleData(locale.default, selectedLang);
-      import(
-        /* webpackInclude: /main.(en|fr).numbers.json/ */
-        'cldr-data/main/' + selectedLang + '/numbers.json'
-      ).then((cldrLocale) => {
-        this.translateEx.Globalize.load(cldrLocale.default);
-        this.translate.use(selectedLang);
-        // Subscribers to onLangChange may be called before or after the next
-        // line.
-        this.translateEx.language = selectedLang;
-      });
-    });
+    );
+    registerLocaleData(locale.default, selectedLang);
+    const cldrLocale = await import(
+      /* webpackInclude: /main.(en|fr).numbers.json/ */
+      'cldr-data/main/' + selectedLang + '/numbers.json'
+    );
+    this.translateEx.Globalize.load(cldrLocale.default);
+    this.translate.use(selectedLang);
+    // Subscribers to onLangChange may be called before or after the next
+    // line.
+    this.translateEx.language = selectedLang;
   }
 }

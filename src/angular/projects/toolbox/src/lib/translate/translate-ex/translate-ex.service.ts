@@ -73,52 +73,60 @@ export class TranslateExService {
     i18n: I18nForm,
     nbParse: (value: string) => number
   ): void {
-    /* eslint-disable security/detect-object-injection, guard-for-in */
-    if (i18n.child !== undefined) {
-      for (const ch in i18n.child) {
-        this.i18nStringToNumber(
-          obj[i18n.child[ch]] as Record<string, unknown>,
-          (i18n as Record<string, I18nForm>)[i18n.child[ch]],
-          nbParse
-        );
-      }
-    }
-    if (i18n.number !== undefined) {
-      for (const nb in i18n.number) {
-        obj[i18n.number[nb]] = nbParse(obj[i18n.number[nb]] as string);
-      }
-    }
-    /* eslint-enable security/detect-object-injection, guard-for-in */
+    /* eslint-disable security/detect-object-injection */
+    i18n.child?.map((ch: string) =>
+      this.i18nStringToNumber(
+        obj[ch] as Record<string, unknown>,
+        (i18n as Record<string, I18nForm>)[ch],
+        nbParse
+      )
+    );
+
+    i18n.number?.map((nb: string) => (obj[nb] = nbParse(obj[nb] as string)));
+    /* eslint-enable security/detect-object-injection */
   }
 
   i18nStringChangeLocale(
     obj: Record<string, unknown>,
     i18n: I18nForm,
-    from: string,
-    to: string
+    from: string | ((value: string) => number),
+    to: string | ((value: number) => string)
   ): void {
-    /* eslint-disable security/detect-object-injection, guard-for-in */
-    if (i18n.child !== undefined) {
-      for (const ch in i18n.child) {
-        this.i18nStringChangeLocale(
-          obj[i18n.child[ch]] as Record<string, unknown>,
-          (i18n as Record<string, I18nForm>)[i18n.child[ch]],
-          from,
-          to
-        );
-      }
-    }
-    if (i18n.number !== undefined) {
+    let parserFrom: (value: string) => number;
+    if (typeof from === 'string') {
       this.Globalize.locale(from);
-      const fromParser = this.Globalize.numberParser();
-      this.Globalize.locale(to);
-      const toParser = this.Globalize.numberFormatter();
-      for (const nb in i18n.number) {
-        obj[i18n.number[nb]] = toParser(
-          fromParser(obj[i18n.number[nb]] as string)
-        );
-      }
+      parserFrom = this.Globalize.numberParser();
+    } else {
+      parserFrom = from;
     }
-    /* eslint-enable security/detect-object-injection, guard-for-in */
+    let parserTo: (value: number) => string;
+    if (typeof to === 'string') {
+      this.Globalize.locale(to);
+      parserTo = this.Globalize.numberFormatter();
+    } else {
+      parserTo = to;
+    }
+
+    /* eslint-disable security/detect-object-injection */
+    i18n.child
+      ?.filter((ch: string) => obj[ch] !== '')
+      .map((ch: string) =>
+        this.i18nStringChangeLocale(
+          obj[ch] as Record<string, unknown>,
+          (i18n as Record<string, I18nForm>)[ch],
+          parserFrom,
+          parserTo
+        )
+      );
+
+    i18n.number
+      ?.filter(
+        (nb: string) =>
+          obj[nb] !== null &&
+          obj[nb] !== '' &&
+          !Number.isNaN(parserFrom(obj[nb] as string))
+      )
+      .map((nb: string) => (obj[nb] = parserTo(parserFrom(obj[nb] as string))));
+    /* eslint-enable security/detect-object-injection */
   }
 }
