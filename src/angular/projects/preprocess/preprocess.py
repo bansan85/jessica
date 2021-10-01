@@ -33,14 +33,14 @@ def find_translations() -> None:
         encoding="utf8",
     ) as file:
         json.dump(all_translations, file)
-    replace_translations = (
-        "webpackInclude: /(" + "|".join(all_translations) + r")\.js$/ */"
-    )
-    regex = re.compile("webpackInclude.*$", re.IGNORECASE)
+    replace_translations = "(" + "|".join(all_translations) + ")"
+    regex = re.compile("(.*webpackInclude.*)(\\(.*\\))(.*)$", re.IGNORECASE)
     for line in fileinput.input(
         __p + "/../app-main/src/app/app.component.ts", inplace=True
     ):
-        line = re.sub(regex, replace_translations, line)
+        if regex.match(line):
+            line = re.sub(regex, "\\1" + replace_translations + "\\3", line)
+
         print(line, end="")
 
 

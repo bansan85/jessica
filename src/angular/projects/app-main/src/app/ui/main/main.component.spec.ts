@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule
+} from '@ngx-translate/core';
+import { MeyerhofCalcService } from 'jessica';
 
-import { TranslateMockPipe } from 'toolbox';
+import { TranslateExService, TranslateMockPipe } from 'toolbox';
 
 import { MainComponent } from './main.component';
 
@@ -14,6 +21,15 @@ describe('MainComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useClass: TranslateFakeLoader
+          }
+        }),
+        ReactiveFormsModule
+      ],
       declarations: [
         MainComponent,
         MeyerhofCalcStubComponent,
@@ -23,7 +39,23 @@ describe('MainComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MainComponent);
+    const spyTranslateEx = jasmine.createSpyObj(
+      'TranslateExService',
+      ['extractLanguage'],
+      ['language']
+    );
+    const spyMeyerhofCalcService = jasmine.createSpyObj('MeyerhofCalcService', [
+      'compute'
+    ]);
+
+    fixture = TestBed.overrideComponent(MainComponent, {
+      set: {
+        providers: [
+          { provide: TranslateExService, useValue: spyTranslateEx },
+          { provide: MeyerhofCalcService, useValue: spyMeyerhofCalcService }
+        ]
+      }
+    }).createComponent(MainComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -11,14 +11,14 @@ import { MeyerhofResult } from './meyerhof-result';
 export class MeyerhofCalcService {
   constructor(private wasm: JessicaWasmService) {}
 
-  compute(newItem: MeyerhofForm): MeyerhofResult {
+  compute(newItem: MeyerhofForm<number>): MeyerhofResult {
     const ttt: any = this.wasm.wasm();
     const foundation: any = new ttt.FoundationStrip().setB(
-      Number(newItem.foundation.width)
+      newItem.foundation.width
     );
     const load: any = new ttt.VerticalEccentric()
-      .setV(Number(newItem.load.load))
-      .setE(Number(newItem.load.eccentric));
+      .setV(newItem.load.load)
+      .setE(newItem.load.eccentric);
     const calc: any = new ttt.MeyerhofShallowFoundation(load, foundation);
 
     return { qref: calc.getQref(), b_: calc.getB_() };

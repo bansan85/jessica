@@ -5,5 +5,6 @@
   "reporterOptions": {
     "mochaFile": "cypress.xml",
     "toConsole": "true"
-  }
+  },
+  "videoCompression": 15
 }
