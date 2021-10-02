@@ -23,7 +23,6 @@
     "@angular/platform-browser-dynamic": "~12.2.8",
     "@angular/router": "~12.2.8",
     "@ngx-translate/core": "^13.0.0",
-    "@ngx-translate/http-loader": "^6.0.0",
     "cldr-data": "^36.0.0",
     "globalize": "^1.7.0",
     "http-server": "^13.0.2",
