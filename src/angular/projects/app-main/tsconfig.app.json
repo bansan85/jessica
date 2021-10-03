@@ -2,13 +2,24 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../out-tsc/app",
-    "types": []
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "paths": {
+      "@angular/*": ["./projects/app-main/node_modules/@angular/*"],
+      "@ngx-translate/*": ["./projects/app-main/node_modules/@ngx-translate/*"],
+      "cldr": ["./projects/app-main/node_modules/cldrjs/dist/cldr"],
+      "cldr/*": ["./projects/app-main/node_modules/cldrjs/dist/cldr/*"],
+      "globalize/*": [
+        "./projects/app-main/node_modules/globalize/dist/globalize/*"
+      ],
+      "jessica": ["./projects/jessica/dist"],
+      "toolbox": ["./projects/toolbox/dist"]
+    }
   },
   "files": ["src/main.ts", "src/polyfills.ts"],
   "include": [
     "src/**/*.d.ts",
-    "../../node_modules/@angular/common/locales/*.d.ts",
-    "../../node_modules/@angular/common/locales/extra/*.d.ts"
+    "./projects/app-main/node_modules/@angular/common/locales/*.d.ts",
+    "./projects/app-main/node_modules/@angular/common/locales/extra/*.d.ts"
   ]
 }

@@ -3,7 +3,9 @@ vcpkg
 doc/highlight/highlight.min.js
 doc/highlight/styles/github.min.css
 src/angular/.lighthouseci
-src/angular/dist
+src/angular/projects/toolbox/dist
+src/angular/projects/jessica/dist
+src/angular/projects/app-main/dist
 src/angular/projects/app-main/src/app/util/translate/all-lang.json
 src/angular/projects/jessica/src/assets/jessica-web.js
 .mypy_cache/

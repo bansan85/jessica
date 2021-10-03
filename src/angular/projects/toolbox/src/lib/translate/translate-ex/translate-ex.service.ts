@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import likelySubtags from 'cldr-data/supplemental/likelySubtags.json';
 import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 
-import globalize from 'globalize';
+import * as globalize from 'globalize';
 import 'globalize/number';
 import { I18nForm } from '../i18n-form';
 

@@ -1,12 +1,12 @@
 {
-  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/toolbox",
+  "$schema": "node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "dist",
   "lib": {
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
-      "cldr-data/supplemental/likelySubtags.json": "i1",
-      "cldr-data/supplemental/numberingSystems.json": "i2",
-      "globalize": "i3"
+      "cldr-data/supplemental/likelySubtags.json": "j0",
+      "cldr-data/supplemental/numberingSystems.json": "j1",
+      "globalize": "j2"
     }
   }
 }

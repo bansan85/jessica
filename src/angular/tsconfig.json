@@ -18,15 +18,7 @@
     "module": "esnext",
     "allowJs": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "paths": {
-      "jessica": ["dist/jessica"],
-      "toolbox": ["dist/toolbox"],
-      "globalize": ["node_modules/globalize/dist/globalize"],
-      "globalize/*": ["node_modules/globalize/dist/globalize/*"],
-      "cldr": ["node_modules/cldrjs/dist/cldr"],
-      "cldr/*": ["node_modules/cldrjs/dist/cldr/*"]
-    }
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

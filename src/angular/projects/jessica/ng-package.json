@@ -1,12 +1,11 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/jessica",
+  "dest": "dist",
   "assets": ["src/assets"],
   "lib": {
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
-      "toolbox": "i2",
-      "@ngx-translate/core": "i3"
+      "@ngx-translate/core": "j3"
     }
   }
 }

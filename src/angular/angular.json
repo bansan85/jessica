@@ -79,7 +79,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/app-main",
+            "outputPath": "projects/app-main/dist",
             "index": "projects/app-main/src/index.html",
             "main": "projects/app-main/src/main.ts",
             "polyfills": "projects/app-main/src/polyfills.ts",
@@ -94,7 +94,8 @@
               }
             ],
             "styles": ["projects/app-main/src/styles.css"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": ["globalize"]
           },
           "configurations": {
             "production": {

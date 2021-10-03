@@ -33,8 +33,21 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             src/angular/package-lock.json
-      - name: Globally update npm
-        run: npm install -g npm
+            src/angular/projects/toolbox/package-lock.json
+            src/angular/projects/jessica/package-lock.json
+            src/angular/projects/app-main/package-lock.json
+      - name: Globally install npm
+        run: |
+          npm install -g npm
+          cd '${{ github.workspace }}/src/angular'
+          npm install
+          cd '${{ github.workspace }}/src/angular/projects/toolbox'
+          npm install
+          cd '${{ github.workspace }}/src/angular/projects/jessica'
+          npm install
+          cd '${{ github.workspace }}/src/angular/projects/app-main'
+          npm install
+          cd '${{ github.workspace }}'
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
@@ -117,7 +130,7 @@ jobs:
           cp -R src/angular/.lighthouseci jessica-ci/lighthouseci
           if [ "${{ matrix.config == 'Debug' }}" == "true" ]; \
           then \
-            cp -R src/angular/dist/app-main jessica-ci/ ; \
+            cp -R src/angular/projects/app-main/dist jessica-ci/app-main ; \
           fi
           apt list --installed > jessica-ci/apt-installed.txt
           ssh-add ~/.ssh/id_rsa
@@ -140,5 +153,5 @@ jobs:
           SSHPASS: ${{ secrets.SFTP_PASSWORD }}
         run: |
           ssh-keyscan -t rsa ${{ secrets.SFTP_URL }} >> ~/.ssh/known_hosts
-          cd src/angular/dist/app-main || exit 1
+          cd src/angular/projects/app-main/dist || exit 1
           sshpass -e sftp ${{ secrets.SFTP_USER }}@${{ secrets.SFTP_URL }}:${{ secrets.SFTP_ROOT_FOLDER }}/jessica${{ matrix.config-angular }}/ <<< $'put -r .'

@@ -29,7 +29,9 @@
     "**/vcpkg",
     "**/venv",
     "**/build",
-    "**/src/angular/dist",
+    "**/src/angular/projects/toolbox/dist",
+    "**/src/angular/projects/jessica/dist",
+    "**/src/angular/projects/app-main/dist",
     "**/src/angular/projects/jessica/src/assets/jessica-web.js"
   ],
   "overrides": [

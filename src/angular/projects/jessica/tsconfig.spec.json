@@ -3,7 +3,16 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
-    "types": ["jasmine"]
+    "types": ["jasmine"],
+    "paths": {
+      "toolbox": ["./projects/toolbox/dist"],
+      "cldr": ["./projects/jessica/node_modules/cldrjs/dist/cldr"],
+      "cldr/*": ["./projects/jessica/node_modules/cldrjs/dist/cldr/*"],
+      "globalize/*": [
+        "./projects/jessica/node_modules/globalize/dist/globalize/*"
+      ]
+    },
+    "esModuleInterop": true
   },
   "files": ["src/test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]

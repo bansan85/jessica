@@ -2,11 +2,16 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../out-tsc/lib",
+    "outDir": "./out-tsc/lib-jessica",
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "rxjs": ["./projects/jessica/node_modules/rxjs"],
+      "toolbox": ["./projects/toolbox/dist"]
+    },
+    "esModuleInterop": true
   },
   "exclude": ["src/test.ts", "**/*.spec.ts"]
 }
