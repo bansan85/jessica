@@ -2,7 +2,7 @@
 :source-highlighter: highlight.js
 :highlightjsdir: highlight
 
-= Architecture
+= Backend in C++
 
 == Library
 

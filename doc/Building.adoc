@@ -86,7 +86,7 @@ Build it with:
 
 [source,sh]
 ----
-node tools/build.js -t browser bash cpp xml javascript yaml
+node tools/build.js -t browser bash cpp xml javascript yaml typescript
 ----
 
 == Continuous integration

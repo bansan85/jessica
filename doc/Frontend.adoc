@@ -1,0 +1,150 @@
+:last-update-label!:
+:source-highlighter: highlight.js
+:highlightjsdir: highlight
+
+= Frontend with Angular
+
+== Toolbox
+
+=== Presentation
+
+Various features that can be reused by other libraries / projects.
+
+=== Dependencies
+
+The toolbox library must not depend on other library of the project.
+
+=== i18n
+
+==== I18nForm
+
+===== Description
+
+This nested interface describes :
+
+  - which field (`number`) may contains number that must be locale converted when changing language,
+  - which field (`child`) may contains children field that contains nested I18nForm interface.
+
+===== Example
+
+Example with a nested form.
+
+[source,TypeScript]
+----
+interface VerticalEccentric<T extends number | string> {
+  load: T;
+  eccentric: T;
+}
+
+class VerticalEccentricI18n implements I18nForm {
+  public number: string[] = ['load', 'eccentric'];
+}
+
+interface FoundationStrip<T extends number | string> {
+  width: T;
+}
+
+class FoundationStripI18n implements I18nForm {
+  public number: string[] = ['width'];
+}
+
+interface MeyerhofForm<T extends number | string> {
+  foundation: FoundationStrip<T>;
+  load: VerticalEccentric<T>;
+}
+
+class MeyerhofFormI18n implements I18nForm {
+  public foundation: FoundationStripI18n = new FoundationStripI18n();
+  public load: VerticalEccentricI18n = new VerticalEccentricI18n();
+  public child: string[] = ['foundation', 'load'];
+}
+----
+
+When you change the current language, you may convert the form with the following code:
+
+Note: field `translateEx` is an injection of TranslateEx service in Toolbox library.
+
+[source,TypeScript]
+----
+const formCalcStr: MeyerhofCalc<string | number> = cloneDeep(
+  this.form.controls.child.value
+);
+this.translateEx.i18nStringChangeLocale(
+  formCalcStr as unknown as Record<string, unknown>,
+  new MeyerhofCalcI18n(),
+  this._lang,
+  event.lang
+);
+const formCalcNum: MeyerhofCalc<number> =
+  formCalcStr as MeyerhofCalc<number>;
+this.form.controls.child.setValue(formCalcNum);
+----
+
+And if you want, you may just convert string from current locale to number.
+
+[source,TypeScript]
+----
+this.translateEx.i18nStringToNumber(
+  formCalcStr as unknown as Record<string, unknown>,
+  new MeyerhofCalcI18n(),
+  this.translateEx.numberParser
+);
+----
+
+==== MultiTranslateHttpLoader
+
+`MultiTranslateHttpLoader` may be used by `ngx-translate` to support multiple files for translation.
+
+In the following case, translation file may be in `./assets/i18n/en_US.json` or `./assets/i18n/jessica-en_US.json` for the `en-US` locale.
+
+[source,TypeScript]
+----
+export function createTranslateLoader(http: HttpClient): TranslateLoader {
+  return new MultiTranslateHttpLoader(http, [
+    { prefix: './assets/i18n/', suffix: '.json' },
+    { prefix: './assets/i18n/jessica-', suffix: '.json' }
+  ]);
+}
+
+@NgModule({
+  imports: [
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      },
+      defaultLanguage: 'en'
+    }),
+    ...
+  ],
+  ...
+})
+export class AppModule {}
+----
+
+== Jessica
+
+=== Presentation
+
+Jessica is the library that have the Angular components / services to entry the data and to show results.
+
+=== Dependencies
+
+It depends only on the Toolbox library.
+
+=== Entries
+
+Entries are get with forms.
+
+Some form are finals, like foundation strip that does only have the width as parameter.
+
+Some form are nested, like Meyerhof that have:
+
+  - a foundation trip form,
+  - an eccentric load form.
+
+
+== Main application
+
+
