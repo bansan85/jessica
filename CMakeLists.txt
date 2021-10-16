@@ -85,7 +85,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd5026
     /wd5027
     /wd5039
-    /wd5045)
+    /wd5045
+    /EHsc)
 else()
   message(WARNING "${CMAKE_CXX_COMPILER_ID} is unknown")
 endif()

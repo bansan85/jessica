@@ -4,61 +4,6 @@
 
 = Building
 
-== How to
-
-=== Linux
-
-[source,sh]
-----
-mkdir build
-cmake -S . -B build
-cmake --build build/ --target all
-cd build
-ctest --output-on-failure
-cd ..
-----
-
-=== Windows
-
-[source,sh]
-----
-.\vcpkg\bootstrap-vcpkg.bat
-.\vcpkg\vcpkg install "@.\config\cmake\vcpkg_x64-windows.txt"
-mkdir build
-cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
-cmake --build build --target ALL_BUILD --config Debug
-cd build
-ctest -C Debug --output-on-failure
-cd ..
-----
-
-=== Web Assembly
-
-You need to install https://emscripten.org/docs/getting_started/downloads.html[Emscripten].
-
-Run once:
-
-[source,sh]
-----
-git clone --depth=1 https://github.com/emscripten-core/emsdk.git
-cd emsdk
-./emsdk install latest
-./emsdk activate latest
-----
-
-Run everytime:
-
-[source,sh]
-----
-source ./emsdk/emsdk_env.sh
-mkdir build
-emcmake cmake -S . -B build
-emcmake cmake --build build/ --target all
-cd build
-ctest --output-on-failure
-cd ..
-----
-
 == Dependencies
 
 === Building
@@ -87,6 +32,104 @@ Build it with:
 [source,sh]
 ----
 node tools/build.js -t browser bash cpp xml javascript yaml typescript
+----
+
+== How to
+
+=== Requirements
+
+  * cmake
+
+To custom C++ flags, add to the first call of cmake ''-DCMAKE_CXX_FLAGS=...''.
+
+=== Linux
+
+[source,sh]
+----
+mkdir -p build/gcc
+cmake -S . -B build/gcc
+cmake --build build/gcc --target all -j9
+cd build/gcc
+ctest --output-on-failure
+cd ..
+----
+
+To build for a specific version of GCC:
+
+[source,sh]
+----
+cmake -S . -B build/gcc -DCMAKE_C_COMPILER="/usr/bin/gcc-11" -DCMAKE_CXX_COMPILER="/usr/bin/g++-11" -DCMAKE_AR="/usr/bin/ar" -DCMAKE_RANLIB="/usr/bin/ranlib"
+----
+
+and for Clang:
+
+[source,sh]
+----
+cmake -S . -B build/clang -DCMAKE_C_COMPILER="/usr/bin/clang-12" -DCMAKE_CXX_COMPILER="/usr/bin/clang++-12" -DCMAKE_AR="/usr/bin/llvm-ar-12" -DCMAKE_RANLIB="/usr/bin/llvm-ranlib-12"
+----
+
+=== Windows
+
+From PowerShell:
+
+[source,sh]
+----
+.\vcpkg\bootstrap-vcpkg.bat
+.\vcpkg\vcpkg.exe install "@.\config\cmake\vcpkg_windows.txt" --triplet=x64-windows
+.\vcpkg\vcpkg.exe integrate install
+mkdir -p build\windows
+cmake -S . -B build\windows -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake
+cmake --build build\windows --target ALL_BUILD --config Debug -j9
+cd build\windows
+ctest -C Debug --output-on-failure
+cd ..
+----
+
+=== Web Assembly
+
+You need to install https://emscripten.org/docs/getting_started/downloads.html[Emscripten].
+
+Run once:
+
+[source,sh]
+----
+git clone --depth=1 https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+----
+
+To update emsdk, run:
+[source,sh]
+----
+cd emsdk
+git pull
+./emsdk install latest
+./emsdk activate latest
+----
+
+Run everytime to build the project:
+
+[source,sh]
+----
+source ./emsdk/emsdk_env.sh
+./vcpkg/bootstrap-vcpkg.sh
+./vcpkg/vcpkg install "@./config/cmake/vcpkg_emscripten.txt" --triplet=wasm32-emscripten
+./vcpkg/vcpkg integrate install
+
+mkdir build/angular_debug
+emcmake cmake -S . -B build/angular_debug/ -DCMAKE_BUILD_TYPE=Debug -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=/root/prog/emscripten/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=/mnt/c/j/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build build/angular_debug/ --target all --config Debug -j9
+cd build
+ctest --output-on-failure
+cd ..
+
+mkdir build/angular_release
+emcmake cmake -S . -B build/angular_release/ -DCMAKE_BUILD_TYPE=Release -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=/root/prog/emscripten/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=/mnt/c/j/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build build/angular_release/ --target all --config Release -j9
+cd build
+ctest --output-on-failure
+cd ..
 ----
 
 == Continuous integration

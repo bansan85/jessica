@@ -23,6 +23,7 @@ jobs:
             cc: /usr/bin/clang-12
             cxx: /usr/bin/clang++-12
             ranlib: /usr/bin/llvm-ranlib-12
+            cxx_flags: -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY
             os: ubuntu-latest
     steps:
       - name: Stop if format failed
