@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 
@@ -20,22 +21,22 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
 
   ~FoundationStrip() = default;
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
   [[nodiscard]] std::shared_ptr<FoundationStrip> f() const
   {
     return std::make_shared<FoundationStrip>(*this);
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Get"_f> && EqualUL<T, "B"_f>
   [[nodiscard]] double f() const { return b_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "B"_f>
   [[nodiscard]] std::shared_ptr<FoundationStrip> f(const double b) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = f<Action, "Clone"_f>();
     retval->b_ = b;
     return retval;
   }

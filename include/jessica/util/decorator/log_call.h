@@ -1,12 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <string>
 
 #include <spdlog/spdlog.h>
-
-#include <jessica/helper/accessor.h>
 
 namespace jessica
 {
@@ -29,7 +28,7 @@ class JESSICA_DLL_PUBLIC LogCall
 
   ~LogCall() = default;
 
-  template <F Action, F... U, typename... Args>
+  template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     log_->info("DecoratorLogger " + std::string{typeid(T).name()});

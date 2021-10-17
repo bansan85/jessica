@@ -1,10 +1,9 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <iostream>
 #include <memory>
-
-#include <jessica/helper/accessor.h>
 
 namespace jessica
 {
@@ -26,7 +25,7 @@ class JESSICA_DLL_PUBLIC DecoratorEnd
 
   ~DecoratorEnd() = default;
 
-  template <F Action, F... U, typename... Args>
+  template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const T& classe, const Args&&... args) const
   {
     return classe.template f<Action, U...>(std::forward<const Args>(args)...);

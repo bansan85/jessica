@@ -1,11 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 
 #include <spdlog/spdlog.h>
 
-#include <jessica/helper/accessor.h>
 #include <jessica/helper/cfi.h>
 
 namespace jessica
@@ -29,7 +29,7 @@ class JESSICA_DLL_PUBLIC LogDuration
 
   ~LogDuration() = default;
 
-  template <F Action, F... U, typename... Args>
+  template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();

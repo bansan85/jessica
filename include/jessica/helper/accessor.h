@@ -1,18 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
+#include <jessica/util/math/hash.h>
+
 namespace jessica
 {
-enum class F
+constexpr uint64_t operator""_f(const char* accessor, size_t /*size*/)
 {
-  B,
-  B_,
-  Clone,
-  E,
-  Foundation,
-  Get,
-  Load,
-  Qref,
-  Set,
-  V
-};
+  return djb2(accessor);
+}
+
 }  // namespace jessica

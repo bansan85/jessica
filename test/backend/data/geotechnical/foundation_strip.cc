@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include <jessica/data/geotechnical/foundation_strip.h>
+#include <jessica/helper/accessor.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
@@ -16,12 +17,13 @@ using namespace jessica;
 JTEST_NAME(data, FoundationStrip)  // NOLINT
 {
   const auto foundation = std::make_shared<FoundationStrip>();
-  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
-  const auto foundation2 = foundation->f<F::Set, F::B>(1.);
-  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
-  JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
-  const auto foundation3 = foundation2->f<F::Set, F::Clone>();
-  JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
+  JTEST_TRUE(std::isnan(foundation->f<"Get"_f, "B"_f>()));
+  const auto foundation2 = foundation->f<"Set"_f, "B"_f>(1.);
+  JTEST_TRUE(std::isnan(foundation->f<"Get"_f, "B"_f>()));
+  JTEST_EQ((foundation2->f<"Get"_f, "B"_f>()), 1.);
+  const auto foundation3 = foundation2->f<"Set"_f, "Clone"_f>();
+  JTEST_EQ((foundation2->f<"Get"_f, "B"_f>()),
+           (foundation3->f<"Get"_f, "B"_f>()));
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
@@ -32,12 +34,13 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
   auto log = spdlog::get("log");
 
   const auto foundation = std::make_shared<Decorator>(log, log);
-  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
-  const auto foundation2 = foundation->f<F::Set, F::B>(1.);
-  JTEST_TRUE(std::isnan(foundation->f<F::Get, F::B>()));
-  JTEST_EQ((foundation2->f<F::Get, F::B>()), 1.);
-  const auto foundation3 = foundation2->f<F::Set, F::Clone>();
-  JTEST_EQ((foundation2->f<F::Get, F::B>()), (foundation3->f<F::Get, F::B>()));
+  JTEST_TRUE(std::isnan(foundation->f<"Get"_f, "B"_f>()));
+  const auto foundation2 = foundation->f<"Set"_f, "B"_f>(1.);
+  JTEST_TRUE(std::isnan(foundation->f<"Get"_f, "B"_f>()));
+  JTEST_EQ((foundation2->f<"Get"_f, "B"_f>()), 1.);
+  const auto foundation3 = foundation2->f<"Set"_f, "Clone"_f>();
+  JTEST_EQ((foundation2->f<"Get"_f, "B"_f>()),
+           (foundation3->f<"Get"_f, "B"_f>()));
 }
 
 // NOLINTNEXTLINE(bugprone-exception-escape)

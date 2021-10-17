@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 
@@ -20,35 +21,35 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
 
   ~VerticalEccentric() = default;
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
   [[nodiscard]] std::shared_ptr<VerticalEccentric> f() const
   {
     return std::make_shared<VerticalEccentric>(*this);
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::V>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Get"_f> && EqualUL<T, "V"_f>
   [[nodiscard]] double f() const { return v_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::V>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "V"_f>
   [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double v) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = f<Action, "Clone"_f>();
     retval->v_ = v;
     return retval;
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::E>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Get"_f> && EqualUL<T, "E"_f>
   [[nodiscard]] double f() const { return e_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::E>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "E"_f>
   [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double e) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = f<Action, "Clone"_f>();
     retval->e_ = e;
     return retval;
   }

@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <limits>
 #include <memory>
 
@@ -21,22 +22,22 @@ class DecoratorTest final
 
   ~DecoratorTest() = default;
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
   [[nodiscard]] std::shared_ptr<DecoratorTest> f() const
   {
     return std::make_shared<DecoratorTest>(*this);
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Get"_f> && EqualUL<T, "B"_f>
   [[nodiscard]] double f() const { return b_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
+  template <uint64_t Action, uint64_t T>
+  requires EqualUL<Action, "Set"_f> && EqualUL<T, "B"_f>
   [[nodiscard]] std::shared_ptr<DecoratorTest> f(const double b) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = f<Action, "Clone"_f>();
     retval->b_ = b;
     return retval;
   }
@@ -64,7 +65,7 @@ class DecoratorMiddle
 
   ~DecoratorMiddle() = default;
 
-  template <F Action, F... U, typename... Args>
+  template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
@@ -72,8 +73,8 @@ class DecoratorMiddle
                                       std::forward<const Args>(args)...);
   }
 
-  template <F Action, F V>
-  requires Equals<F, Action, F::Set> && Equals<F, V, F::B>
+  template <uint64_t Action, uint64_t V>
+  requires EqualUL<Action, "Set"_f> && EqualUL<V, "B"_f>
   [[nodiscard]] std::shared_ptr<RootType> f(const RootType& classe,
                                             const double b) const
   {
@@ -92,6 +93,6 @@ JTEST_NAME(decorator, Test)  // NOLINT
       DecoratorStart<DecoratorMiddle<DecoratorEnd<DecoratorTest>>>;
 
   const auto classe = std::make_shared<Decorator>();
-  const auto classe2 = classe->f<F::Set, F::B>(10.);
-  JTEST_EQ((classe2->f<F::Get, F::B>()), 11.);
+  const auto classe2 = classe->f<"Set"_f, "B"_f>(10.);
+  JTEST_EQ((classe2->f<"Get"_f, "B"_f>()), 11.);
 }
