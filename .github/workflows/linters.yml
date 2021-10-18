@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-11 clang-12
+        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-12 clang-12
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
         run: |
@@ -83,11 +83,10 @@ jobs:
           CXX: /usr/bin/clang++-12
           RANLIB: /usr/bin/llvm-ranlib-12
         run: |
-          sudo bash -c "patch -d/ -p1 < ${{ github.workspace }}/.github/patches/run-clang-tidy.patch"
           mkdir build
           cmake -S . -B build
           cd build || exit 1
-          run-clang-tidy-11
+          run-clang-tidy-12
           cd .. || exit 1
       - name: Lint
         run: |
