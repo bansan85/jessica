@@ -21,22 +21,16 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
 
   ~FoundationStrip() = default;
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f() const
+  [[nodiscard]] std::shared_ptr<FoundationStrip> Clone() const
   {
     return std::make_shared<FoundationStrip>(*this);
   }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "B"_f>
-  [[nodiscard]] double f() const { return b_; }
+  [[nodiscard]] double B() const { return b_; }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "B"_f>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f(const double b) const
+  [[nodiscard]] std::shared_ptr<FoundationStrip> SetB(const double b) const
   {
-    auto retval = f<Action, "Clone"_f>();
+    auto retval = Clone();
     retval->b_ = b;
     return retval;
   }

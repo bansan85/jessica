@@ -11,6 +11,9 @@
 
 namespace jessica
 {
+template <class Type>
+struct S;
+
 template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
@@ -28,62 +31,45 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 
   ~MeyerhofShallowFoundation() = default;
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> f() const
+  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> Clone() const
   {
     return std::make_shared<MeyerhofShallowFoundation>(*this);
   }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "B_"_f>
-  [[nodiscard]] double f() const
+  [[nodiscard]] double B_() const { return foundation_->B() - 2. * load_->E(); }
+
+  [[nodiscard]] double Qref() const { return load_->V() / B_(); }
+
+  template <typename Fct, typename... Args>
+  [[nodiscard]] auto Foundation(const Fct fct, Args&&... args) const
   {
-    return foundation_->template f<Action, "B"_f>() -
-           2. * load_->template f<Action, "E"_f>();
+    return (foundation_.get()->*fct)(std::forward<Args>(args)...);
   }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "Qref"_f>
-  [[nodiscard]] double f() const
-  {
-    return load_->template f<Action, "V"_f>() / f<Action, "B_"_f>();
-  }
-
-  template <uint64_t Action, uint64_t T, uint64_t... U, typename... Args>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "Load"_f>
-  [[nodiscard]] double f(const Args&&... args) const
-  {
-    return load_->template f<Action, U...>(std::forward<const Args>(args)...);
-  }
-
-  template <uint64_t Action, uint64_t T, uint64_t... U, typename... Args>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Load"_f>
+  template <typename Fct, typename... Args>
   [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
+      SetFoundation(const Fct fct, Args&&... args) const
   {
-    auto retval = f<Action, "Clone"_f>();
-    retval->load_ = retval->load_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
+    auto retval = Clone();
+    // cppcheck-suppress redundantAssignment
+    retval->foundation_ =
+        (retval->foundation_.get()->*fct)(std::forward<Args>(args)...);
     return retval;
   }
 
-  template <uint64_t Action, uint64_t T, uint64_t... U, typename... Args>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "_foundation"_f>
-  [[nodiscard]] double f(const Args&&... args) const
+  template <typename Fct, typename... Args>
+  [[nodiscard]] auto Load(const Fct fct, Args&&... args) const
   {
-    return foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
+    return (load_.get()->*fct)(std::forward<Args>(args)...);
   }
 
-  template <uint64_t Action, uint64_t T, uint64_t... U, typename... Args>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "_foundation"_f>
+  template <typename Fct, typename... Args>
   [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
+      SetLoad(const Fct fct, Args&&... args) const
   {
-    auto retval = f<Action, "Clone"_f>();
-    retval->foundation_ = retval->foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
+    auto retval = Clone();
+    // cppcheck-suppress redundantAssignment
+    retval->load_ = (retval->load_.get()->*fct)(std::forward<Args>(args)...);
     return retval;
   }
 

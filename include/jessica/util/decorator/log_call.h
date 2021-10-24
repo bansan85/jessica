@@ -29,11 +29,10 @@ class JESSICA_DLL_PUBLIC LogCall
   ~LogCall() = default;
 
   template <uint64_t Action, uint64_t... U, typename... Args>
-  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
+  [[nodiscard]] auto f(const RootType& classe, Args&&... args) const
   {
     log_->info("DecoratorLogger " + std::string{typeid(T).name()});
-    return t.template f<Action, U...>(classe,
-                                      std::forward<const Args>(args)...);
+    return t.template f<Action, U...>(classe, std::forward<Args>(args)...);
   }
 
  private:

@@ -22,22 +22,16 @@ class DecoratorTest final
 
   ~DecoratorTest() = default;
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "Clone"_f>
-  [[nodiscard]] std::shared_ptr<DecoratorTest> f() const
+  [[nodiscard]] std::shared_ptr<DecoratorTest> Clone() const
   {
     return std::make_shared<DecoratorTest>(*this);
   }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Get"_f> && EqualUL<T, "B"_f>
-  [[nodiscard]] double f() const { return b_; }
+  [[nodiscard]] double B() const { return b_; }
 
-  template <uint64_t Action, uint64_t T>
-  requires EqualUL<Action, "Set"_f> && EqualUL<T, "B"_f>
-  [[nodiscard]] std::shared_ptr<DecoratorTest> f(const double b) const
+  [[nodiscard]] std::shared_ptr<DecoratorTest> SetB(const double b) const
   {
-    auto retval = f<Action, "Clone"_f>();
+    auto retval = Clone();
     retval->b_ = b;
     return retval;
   }
@@ -87,12 +81,74 @@ class DecoratorMiddle
   T t;
 };
 
+template <typename T>
+class JESSICA_DLL_PUBLIC DecoratorStartTest
+    : public DecoratorStart<T, DecoratorStartTest<T>>
+{
+ public:
+  template <typename... Args>
+  explicit DecoratorStartTest(Args&&... args)
+      : DecoratorStart<T, DecoratorStartTest<T>>(std::forward<Args>(args)...)
+  {
+  }
+  DecoratorStartTest(const DecoratorStartTest&) = default;
+  DecoratorStartTest(DecoratorStartTest&&) = delete;
+  DecoratorStartTest& operator=(const DecoratorStartTest&) = delete;
+  DecoratorStartTest& operator=(DecoratorStartTest&&) = delete;
+
+  ~DecoratorStartTest() override = default;
+
+  [[nodiscard]] std::shared_ptr<DecoratorStartTest<T>> Clone() const override
+  {
+    return std::make_shared<DecoratorStartTest<T>>(*this);
+  }
+
+  [[nodiscard]] double B() const { return this->template f<"Get"_f, "B"_f>(); }
+
+  [[nodiscard]] auto SetB(double b) const
+  {
+    return std::static_pointer_cast<DecoratorStartTest<T>>(
+        this->template f<"Set"_f, "B"_f>(b));
+  }
+};
+
+template <typename T>
+class JESSICA_DLL_PUBLIC DecoratorEndTest : public DecoratorEnd<T>
+{
+ public:
+  using RootType = T;
+
+  template <typename... Args>
+  // cppcheck-suppress constParameter
+  explicit DecoratorEndTest(std::shared_ptr<T>& impl, Args&&... args)
+      : DecoratorEnd<T>(impl, std::forward<Args>(args)...)
+  {
+  }
+  DecoratorEndTest(const DecoratorEndTest&) = default;
+  DecoratorEndTest(DecoratorEndTest&&) = delete;
+  DecoratorEndTest& operator=(const DecoratorEndTest&) = delete;
+  DecoratorEndTest& operator=(DecoratorEndTest&&) = delete;
+
+  ~DecoratorEndTest() override = default;
+
+  template <uint64_t Action, uint64_t U>
+  requires EqualUL<Action, "Get"_f> && EqualUL<U, "B"_f>
+  [[nodiscard]] auto f(const T& classe) const { return classe.B(); }
+
+  template <uint64_t Action, uint64_t U>
+  requires EqualUL<Action, "Set"_f> && EqualUL<U, "B"_f>
+  [[nodiscard]] auto f(const T& classe, const double b) const
+  {
+    return classe.SetB(b);
+  }
+};
+
 JTEST_NAME(decorator, Test)  // NOLINT
 {
   using Decorator =
-      DecoratorStart<DecoratorMiddle<DecoratorEnd<DecoratorTest>>>;
+      DecoratorStartTest<DecoratorMiddle<DecoratorEndTest<DecoratorTest>>>;
 
   const auto classe = std::make_shared<Decorator>();
-  const auto classe2 = classe->f<"Set"_f, "B"_f>(10.);
-  JTEST_EQ((classe2->f<"Get"_f, "B"_f>()), 11.);
+  const auto classe2 = classe->SetB(10.);
+  JTEST_EQ(classe2->B(), 11.);
 }

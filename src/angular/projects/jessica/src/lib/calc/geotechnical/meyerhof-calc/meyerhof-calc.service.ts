@@ -21,6 +21,6 @@ export class MeyerhofCalcService {
       .setE(newItem.load.eccentric);
     const calc: any = new ttt.MeyerhofShallowFoundation(load, foundation);
 
-    return { qref: calc.getQref(), b_: calc.getB_() };
+    return { qref: calc.qref(), b_: calc.b_() };
   }
 }

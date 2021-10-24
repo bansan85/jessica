@@ -5,6 +5,7 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
+#include <jessica/calc/geotechnical/decorator_meyerhof.h>
 #include <jessica/calc/geotechnical/meyerhof.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
@@ -30,53 +31,32 @@ EMSCRIPTEN_BINDINGS(jessica)
   class_<FoundationStrip>("FoundationStrip")
       .constructor<>()
       .smart_ptr<std::shared_ptr<FoundationStrip>>("FoundationStrip")
-      .function("clone", &FoundationStrip::f<"Set"_f, "Clone"_f>)
-      .function("getB", static_cast<double (FoundationStrip::*)() const>(
-                            &FoundationStrip::f<"Get"_f, "B"_f>))
-      .function("setB", static_cast<std::shared_ptr<FoundationStrip> (
-                            FoundationStrip::*)(const double) const>(
-                            &FoundationStrip::f<"Set"_f, "B"_f>));
+      .function("clone", &FoundationStrip::Clone)
+      .function("getB", &FoundationStrip::B)
+      .function("setB", &FoundationStrip::SetB);
 
   class_<VerticalEccentric>("VerticalEccentric")
       .constructor<>()
       .smart_ptr<std::shared_ptr<VerticalEccentric>>("VerticalEccentric")
-      .function("clone", &VerticalEccentric::f<"Set"_f, "Clone"_f>)
-      .function("getE", static_cast<double (VerticalEccentric::*)() const>(
-                            &VerticalEccentric::f<"Get"_f, "E"_f>))
-      .function("setE", static_cast<std::shared_ptr<VerticalEccentric> (
-                            VerticalEccentric::*)(const double) const>(
-                            &VerticalEccentric::f<"Set"_f, "E"_f>))
-      .function("getV", static_cast<double (VerticalEccentric::*)() const>(
-                            &VerticalEccentric::f<"Get"_f, "V"_f>))
-      .function("setV", static_cast<std::shared_ptr<VerticalEccentric> (
-                            VerticalEccentric::*)(const double) const>(
-                            &VerticalEccentric::f<"Set"_f, "V"_f>));
+      .function("clone", &VerticalEccentric::Clone)
+      .function("getE", &VerticalEccentric::E)
+      .function("setE", &VerticalEccentric::SetE)
+      .function("getV", &VerticalEccentric::V)
+      .function("setV", &VerticalEccentric::SetV);
 
-  class_<DecoratorStart<LogCall<LogDuration<DecoratorEnd<
+  class_<DecoratorStartMeyerhof<LogCall<LogDuration<DecoratorEndMeyerhof<
       MeyerhofShallowFoundation<VerticalEccentric, FoundationStrip>>>>>>(
       "MeyerhofShallowFoundation")
       .constructor<std::shared_ptr<spdlog::logger>,
                    std::shared_ptr<spdlog::logger>,
                    const std::shared_ptr<VerticalEccentric>,
                    const std::shared_ptr<FoundationStrip>>()
-      .function(
-          "getQref",
-          static_cast<double (
-              DecoratorStart<
-                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
-                      VerticalEccentric, FoundationStrip>>>>>::*)() const>(
-              &DecoratorStart<
-                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
-                      VerticalEccentric, FoundationStrip>>>>>::f<"Get"_f,
-                                                                 "Qref"_f>))
-      .function(
-          "getB_",
-          static_cast<double (
-              DecoratorStart<
-                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
-                      VerticalEccentric, FoundationStrip>>>>>::*)() const>(
-              &DecoratorStart<
-                  LogCall<LogDuration<DecoratorEnd<MeyerhofShallowFoundation<
-                      VerticalEccentric, FoundationStrip>>>>>::f<"Get"_f,
-                                                                 "B_"_f>));
+      .function("qref",
+                &DecoratorStartMeyerhof<
+                    LogCall<LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
+                        VerticalEccentric, FoundationStrip>>>>>::Qref)
+      .function("b_",
+                &DecoratorStartMeyerhof<
+                    LogCall<LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
+                        VerticalEccentric, FoundationStrip>>>>>::B_);
 }

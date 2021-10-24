@@ -90,7 +90,9 @@
     "format": "cpp",
     "cstdarg": "cpp",
     "string_view": "cpp",
-    "complex": "cpp"
+    "complex": "cpp",
+    "coroutine": "cpp",
+    "resumable": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,

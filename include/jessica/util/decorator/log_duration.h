@@ -30,11 +30,12 @@ class JESSICA_DLL_PUBLIC LogDuration
   ~LogDuration() = default;
 
   template <uint64_t Action, uint64_t... U, typename... Args>
-  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
+  [[nodiscard]] auto f(const RootType& classe, Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
+    // cppcheck-suppress redundantInitialization
     auto retval =
-        t.template f<Action, U...>(classe, std::forward<const Args>(args)...);
+        t.template f<Action, U...>(classe, std::forward<Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();
