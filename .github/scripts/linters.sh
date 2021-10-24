@@ -39,7 +39,7 @@ then
   retval=1
   echo "Failure iwyu_tool"
 fi
-cppcheck --enable=all --project=compile_commands.json --error-exitcode=1 --inline-suppr --template="{file},{line},{severity},{id},{message}" --suppressions-list=../.cppcheck-suppressions || { retval=1 && echo "Failure cppcheck"; }
+cppcheck --enable=all --project=compile_commands.json --error-exitcode=1 --inline-suppr --template="{file},{line},{severity},{id},{message}" --suppressions-list=../.cppcheck-suppressions --suppress=unusedFunction:*/decorator.cc --suppress=missingIncludeSystem --suppress=unmatchedSuppression || { retval=1 && echo "Failure cppcheck"; }
 cd .. || exit 1
 
 exit $retval
