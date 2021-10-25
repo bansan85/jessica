@@ -4,9 +4,11 @@
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/poo.h>
 #include <jessica/helper/template.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
+#include <jessica/util/decorator/macro.h>
 #include <jessica/util/decorator/start.h>
 
 using namespace jessica;
@@ -15,17 +17,7 @@ class DecoratorTest final
 {
  public:
   DecoratorTest() = default;
-  DecoratorTest(const DecoratorTest&) = default;
-  DecoratorTest(DecoratorTest&&) = delete;
-  DecoratorTest& operator=(const DecoratorTest&) = delete;
-  DecoratorTest& operator=(DecoratorTest&&) = delete;
-
-  ~DecoratorTest() = default;
-
-  [[nodiscard]] std::shared_ptr<DecoratorTest> Clone() const
-  {
-    return std::make_shared<DecoratorTest>(*this);
-  }
+  RULE_OF_FIVE_COPY_AND_CLONE(DecoratorTest)
 
   [[nodiscard]] double B() const { return b_; }
 
@@ -52,12 +44,7 @@ class DecoratorMiddle
       : t(impl, std::forward<Args>(args)...)
   {
   }
-  DecoratorMiddle(const DecoratorMiddle&) = default;
-  DecoratorMiddle(DecoratorMiddle&&) = delete;
-  DecoratorMiddle& operator=(const DecoratorMiddle&) = delete;
-  DecoratorMiddle& operator=(DecoratorMiddle&&) = delete;
-
-  ~DecoratorMiddle() = default;
+  RULE_OF_FIVE_COPY(DecoratorMiddle)
 
   template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
@@ -82,65 +69,28 @@ class DecoratorMiddle
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorStartTest
-    : public DecoratorStart<T, DecoratorStartTest<T>>
+class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Test)
 {
  public:
-  template <typename... Args>
-  explicit DecoratorStartTest(Args&&... args)
-      : DecoratorStart<T, DecoratorStartTest<T>>(std::forward<Args>(args)...)
-  {
-  }
-  DecoratorStartTest(const DecoratorStartTest&) = default;
-  DecoratorStartTest(DecoratorStartTest&&) = delete;
-  DecoratorStartTest& operator=(const DecoratorStartTest&) = delete;
-  DecoratorStartTest& operator=(DecoratorStartTest&&) = delete;
+  DECORATOR_START_RULE_OF_FIVE(Test);
 
-  ~DecoratorStartTest() override = default;
+  DECORATOR_CLONE(Test)
 
-  [[nodiscard]] std::shared_ptr<DecoratorStartTest<T>> Clone() const override
-  {
-    return std::make_shared<DecoratorStartTest<T>>(*this);
-  }
-
-  [[nodiscard]] double B() const { return this->template f<"Get"_f, "B"_f>(); }
-
-  [[nodiscard]] auto SetB(double b) const
-  {
-    return std::static_pointer_cast<DecoratorStartTest<T>>(
-        this->template f<"Set"_f, "B"_f>(b));
-  }
+  DECORATOR_START_GET(B)
+  DECORATOR_START_SET(Test, B)
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorEndTest : public DecoratorEnd<T>
+class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(Test)
 {
  public:
   using RootType = T;
 
-  template <typename... Args>
   // cppcheck-suppress constParameter
-  explicit DecoratorEndTest(std::shared_ptr<T>& impl, Args&&... args)
-      : DecoratorEnd<T>(impl, std::forward<Args>(args)...)
-  {
-  }
-  DecoratorEndTest(const DecoratorEndTest&) = default;
-  DecoratorEndTest(DecoratorEndTest&&) = delete;
-  DecoratorEndTest& operator=(const DecoratorEndTest&) = delete;
-  DecoratorEndTest& operator=(DecoratorEndTest&&) = delete;
+  DECORATOR_END_RULE_OF_FIVE(Test);
 
-  ~DecoratorEndTest() override = default;
-
-  template <uint64_t Action, uint64_t U>
-  requires EqualUL<Action, "Get"_f> && EqualUL<U, "B"_f>
-  [[nodiscard]] auto f(const T& classe) const { return classe.B(); }
-
-  template <uint64_t Action, uint64_t U>
-  requires EqualUL<Action, "Set"_f> && EqualUL<U, "B"_f>
-  [[nodiscard]] auto f(const T& classe, const double b) const
-  {
-    return classe.SetB(b);
-  }
+  DECORATOR_END_GET(B)
+  DECORATOR_END_SET(B)
 };
 
 JTEST_NAME(decorator, Test)  // NOLINT

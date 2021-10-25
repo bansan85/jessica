@@ -7,6 +7,7 @@
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
@@ -14,17 +15,7 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
 {
  public:
   VerticalEccentric() = default;
-  VerticalEccentric(const VerticalEccentric&) = default;
-  VerticalEccentric(VerticalEccentric&&) = delete;
-  VerticalEccentric& operator=(const VerticalEccentric&) = delete;
-  VerticalEccentric& operator=(VerticalEccentric&&) = delete;
-
-  ~VerticalEccentric() = default;
-
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> Clone() const
-  {
-    return std::make_shared<VerticalEccentric>(*this);
-  }
+  RULE_OF_FIVE_COPY_AND_CLONE(VerticalEccentric)
 
   [[nodiscard]] double V() const { return v_; }
 

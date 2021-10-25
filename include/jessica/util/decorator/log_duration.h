@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 
 #include <jessica/helper/cfi.h>
+#include <jessica/helper/poo.h>
 
 namespace jessica
 {
@@ -22,12 +23,7 @@ class JESSICA_DLL_PUBLIC LogDuration
       : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
-  LogDuration(const LogDuration&) = default;
-  LogDuration(LogDuration&&) = delete;
-  LogDuration& operator=(const LogDuration&) = delete;
-  LogDuration& operator=(LogDuration&&) = delete;
-
-  ~LogDuration() = default;
+  RULE_OF_FIVE_COPY(LogDuration)
 
   template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, Args&&... args) const

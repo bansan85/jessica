@@ -5,6 +5,7 @@
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/poo.h>
 #include <jessica/helper/template.h>
 
 namespace jessica
@@ -18,12 +19,7 @@ class JESSICA_DLL_PUBLIC DecoratorStart
       : deco_(std::make_shared<T>(impl_, std::forward<Args>(args)...))
   {
   }
-  DecoratorStart(const DecoratorStart&) = default;
-  DecoratorStart(DecoratorStart&&) = delete;
-  DecoratorStart& operator=(const DecoratorStart&) = delete;
-  DecoratorStart& operator=(DecoratorStart&&) = delete;
-
-  virtual ~DecoratorStart() = default;
+  RULE_OF_FIVE_COPY_VIRTUAL(DecoratorStart)
 
   template <uint64_t Action, uint64_t... U, typename... Args>
   requires EqualUL<Action, "Get"_f>

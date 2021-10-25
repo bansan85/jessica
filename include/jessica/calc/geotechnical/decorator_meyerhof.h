@@ -7,120 +7,44 @@
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
 #include <jessica/util/decorator/end.h>
+#include <jessica/util/decorator/macro.h>
 #include <jessica/util/decorator/start.h>
 
 namespace jessica
 {
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorStartMeyerhof
-    : public DecoratorStart<T, DecoratorStartMeyerhof<T>>
+class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Meyerhof)
 {
  public:
-  template <typename... Args>
-  explicit DecoratorStartMeyerhof(Args&&... args)
-      : DecoratorStart<T, DecoratorStartMeyerhof<T>>(
-            std::forward<Args>(args)...)
-  {
-  }
-  DecoratorStartMeyerhof(const DecoratorStartMeyerhof&) = default;
-  DecoratorStartMeyerhof(DecoratorStartMeyerhof&&) = delete;
-  DecoratorStartMeyerhof& operator=(const DecoratorStartMeyerhof&) = delete;
-  DecoratorStartMeyerhof& operator=(DecoratorStartMeyerhof&&) = delete;
+  DECORATOR_START_RULE_OF_FIVE(Meyerhof);
 
-  ~DecoratorStartMeyerhof() override = default;
+  DECORATOR_CLONE(Meyerhof)
 
-  [[nodiscard]] std::shared_ptr<DecoratorStartMeyerhof<T>>
-      Clone() const override
-  {
-    return std::make_shared<DecoratorStartMeyerhof<T>>(*this);
-  }
+  DECORATOR_START_GET(B_)
+  DECORATOR_START_GET(Qref)
 
-  [[nodiscard]] auto B_() const { return this->template f<"Get"_f, "B_"_f>(); }
+  DECORATOR_START_GET(Foundation)
+  DECORATOR_START_SET(Meyerhof, Foundation)
 
-  [[nodiscard]] auto Qref() const
-  {
-    return this->template f<"Get"_f, "Qref"_f>();
-  }
-
-  template <typename... Args>
-  [[nodiscard]] auto Foundation(Args&&... args) const
-  {
-    return this->template f<"Get"_f, "Foundation"_f>(
-        std::forward<Args>(args)...);
-  }
-
-  template <typename... Args>
-  [[nodiscard]] auto SetFoundation(Args&&... args) const
-  {
-    return this->template f<"Set"_f, "Foundation"_f>(
-        std::forward<Args>(args)...);
-  }
-
-  template <typename... Args>
-  [[nodiscard]] auto Load(Args&&... args) const
-  {
-    return this->template f<"Get"_f, "Load"_f>(std::forward<Args>(args)...);
-  }
-
-  template <typename... Args>
-  [[nodiscard]] auto SetLoad(Args&&... args) const
-  {
-    return this->template f<"Set"_f, "Load"_f>(std::forward<Args>(args)...);
-  }
+  DECORATOR_START_GET(Load)
+  DECORATOR_START_SET(Meyerhof, Load)
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorEndMeyerhof : public DecoratorEnd<T>
+class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(Meyerhof)
 {
  public:
   using RootType = T;
 
-  template <typename... Args>
-  explicit DecoratorEndMeyerhof(std::shared_ptr<T>& impl, Args&&... args)
-      : DecoratorEnd<T>(impl, std::forward<Args>(args)...)
-  {
-  }
-  DecoratorEndMeyerhof(const DecoratorEndMeyerhof&) = default;
-  DecoratorEndMeyerhof(DecoratorEndMeyerhof&&) = delete;
-  DecoratorEndMeyerhof& operator=(const DecoratorEndMeyerhof&) = delete;
-  DecoratorEndMeyerhof& operator=(DecoratorEndMeyerhof&&) = delete;
+  DECORATOR_END_RULE_OF_FIVE(Meyerhof);
 
-  ~DecoratorEndMeyerhof() override = default;
+  DECORATOR_END_GET(B_)
+  DECORATOR_END_GET(Qref)
 
-  template <uint64_t Action, uint64_t U>
-  requires EqualUL<Action, "Get"_f> && EqualUL<U, "B_"_f>
-  [[nodiscard]] auto f(const T& classe) const { return classe.B_(); }
+  DECORATOR_END_GET(Foundation)
+  DECORATOR_END_SET(Foundation)
 
-  template <uint64_t Action, uint64_t U>
-  requires EqualUL<Action, "Get"_f> && EqualUL<U, "Qref"_f>
-  [[nodiscard]] auto f(const T& classe) const { return classe.Qref(); }
-
-  template <uint64_t Action, uint64_t U, typename... Args>
-  requires EqualUL<Action, "Get"_f> && EqualUL<U, "Foundation"_f>
-  [[nodiscard]] auto f(const T& classe, Args&&... args) const
-  {
-    return classe.Foundation(std::forward<Args>(args)...);
-  }
-
-  template <uint64_t Action, uint64_t U, typename... Args>
-  requires EqualUL<Action, "Set"_f> && EqualUL<U, "Foundation"_f>
-  [[nodiscard]] auto f(const T& classe, Args&&... args) const
-  {
-    return classe.SetFoundation(std::forward<Args>(args)...);
-  }
-
-  template <uint64_t Action, uint64_t U, typename... Args>
-  requires EqualUL<Action, "Get"_f> && EqualUL<U, "Load"_f>
-  [[nodiscard]] auto f(const T& classe, Args&&... args) const
-  {
-    return classe.Load(std::forward<Args>(args)...);
-  }
-
-  template <uint64_t Action, uint64_t U, typename... Args>
-  requires EqualUL<Action, "Set"_f> && EqualUL<U, "Load"_f>
-  [[nodiscard]] auto f(const T& classe, Args&&... args) const
-  {
-    return classe.SetLoad(std::forward<Args>(args)...);
-  }
+  DECORATOR_END_GET(Load)
+  DECORATOR_END_SET(Load)
 };
 }  // namespace jessica

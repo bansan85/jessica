@@ -7,6 +7,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include <jessica/helper/poo.h>
+
 namespace jessica
 {
 template <typename T>
@@ -21,12 +23,7 @@ class JESSICA_DLL_PUBLIC LogCall
       : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
-  LogCall(const LogCall&) = default;
-  LogCall(LogCall&&) = delete;
-  LogCall& operator=(const LogCall&) = delete;
-  LogCall& operator=(LogCall&&) = delete;
-
-  ~LogCall() = default;
+  RULE_OF_FIVE_COPY(LogCall)
 
   template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, Args&&... args) const

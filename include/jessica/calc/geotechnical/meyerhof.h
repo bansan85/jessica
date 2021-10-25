@@ -8,12 +8,10 @@
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
-template <class Type>
-struct S;
-
 template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
@@ -23,55 +21,19 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
       : load_(std::move(load)), foundation_(std::move(foundation))
   {
   }
-  MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
-  MeyerhofShallowFoundation(MeyerhofShallowFoundation&&) = delete;
-  MeyerhofShallowFoundation&
-      operator=(const MeyerhofShallowFoundation&) = delete;
-  MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
-
-  ~MeyerhofShallowFoundation() = default;
-
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> Clone() const
-  {
-    return std::make_shared<MeyerhofShallowFoundation>(*this);
-  }
+  RULE_OF_FIVE_COPY_AND_CLONE(MeyerhofShallowFoundation)
 
   [[nodiscard]] double B_() const { return foundation_->B() - 2. * load_->E(); }
 
   [[nodiscard]] double Qref() const { return load_->V() / B_(); }
 
-  template <typename Fct, typename... Args>
-  [[nodiscard]] auto Foundation(const Fct fct, Args&&... args) const
-  {
-    return (foundation_.get()->*fct)(std::forward<Args>(args)...);
-  }
+  POCO_GET_FUNCTION(Foundation, foundation_)
+  // cppcheck-suppress redundantAssignment
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Foundation, foundation_)
 
-  template <typename Fct, typename... Args>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      SetFoundation(const Fct fct, Args&&... args) const
-  {
-    auto retval = Clone();
-    // cppcheck-suppress redundantAssignment
-    retval->foundation_ =
-        (retval->foundation_.get()->*fct)(std::forward<Args>(args)...);
-    return retval;
-  }
-
-  template <typename Fct, typename... Args>
-  [[nodiscard]] auto Load(const Fct fct, Args&&... args) const
-  {
-    return (load_.get()->*fct)(std::forward<Args>(args)...);
-  }
-
-  template <typename Fct, typename... Args>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      SetLoad(const Fct fct, Args&&... args) const
-  {
-    auto retval = Clone();
-    // cppcheck-suppress redundantAssignment
-    retval->load_ = (retval->load_.get()->*fct)(std::forward<Args>(args)...);
-    return retval;
-  }
+  POCO_GET_FUNCTION(Load, load_)
+  // cppcheck-suppress redundantAssignment
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Load, load_)
 
  private:
   std::shared_ptr<T0> load_;

@@ -52,11 +52,11 @@ EMSCRIPTEN_BINDINGS(jessica)
                    const std::shared_ptr<VerticalEccentric>,
                    const std::shared_ptr<FoundationStrip>>()
       .function("qref",
-                &DecoratorStartMeyerhof<
-                    LogCall<LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
-                        VerticalEccentric, FoundationStrip>>>>>::Qref)
+                &DecoratorStartMeyerhof<LogCall<
+                    LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
+                        VerticalEccentric, FoundationStrip>>>>>::Qref<>)
       .function("b_",
-                &DecoratorStartMeyerhof<
-                    LogCall<LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
-                        VerticalEccentric, FoundationStrip>>>>>::B_);
+                &DecoratorStartMeyerhof<LogCall<
+                    LogDuration<DecoratorEndMeyerhof<MeyerhofShallowFoundation<
+                        VerticalEccentric, FoundationStrip>>>>>::B_<>);
 }

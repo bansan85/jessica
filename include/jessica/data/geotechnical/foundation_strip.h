@@ -7,6 +7,7 @@
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
@@ -14,17 +15,7 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
 {
  public:
   FoundationStrip() = default;
-  FoundationStrip(const FoundationStrip&) = default;
-  FoundationStrip(FoundationStrip&&) = delete;
-  FoundationStrip& operator=(const FoundationStrip&) = delete;
-  FoundationStrip& operator=(FoundationStrip&&) = delete;
-
-  ~FoundationStrip() = default;
-
-  [[nodiscard]] std::shared_ptr<FoundationStrip> Clone() const
-  {
-    return std::make_shared<FoundationStrip>(*this);
-  }
+  RULE_OF_FIVE_COPY_AND_CLONE(FoundationStrip)
 
   [[nodiscard]] double B() const { return b_; }
 
