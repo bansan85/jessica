@@ -1,11 +1,14 @@
+#include <cstdint>
 #include <limits>
 #include <memory>
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/poo.h>
 #include <jessica/helper/template.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
+#include <jessica/util/decorator/macro.h>
 #include <jessica/util/decorator/start.h>
 
 using namespace jessica;
@@ -14,29 +17,13 @@ class DecoratorTest final
 {
  public:
   DecoratorTest() = default;
-  DecoratorTest(const DecoratorTest&) = default;
-  DecoratorTest(DecoratorTest&&) = delete;
-  DecoratorTest& operator=(const DecoratorTest&) = delete;
-  DecoratorTest& operator=(DecoratorTest&&) = delete;
+  RULE_OF_FIVE_COPY_AND_CLONE(DecoratorTest)
 
-  ~DecoratorTest() = default;
+  [[nodiscard]] double B() const { return b_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<DecoratorTest> f() const
+  [[nodiscard]] std::shared_ptr<DecoratorTest> SetB(const double b) const
   {
-    return std::make_shared<DecoratorTest>(*this);
-  }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
-  [[nodiscard]] double f() const { return b_; }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
-  [[nodiscard]] std::shared_ptr<DecoratorTest> f(const double b) const
-  {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = Clone();
     retval->b_ = b;
     return retval;
   }
@@ -57,14 +44,9 @@ class DecoratorMiddle
       : t(impl, std::forward<Args>(args)...)
   {
   }
-  DecoratorMiddle(const DecoratorMiddle&) = default;
-  DecoratorMiddle(DecoratorMiddle&&) = delete;
-  DecoratorMiddle& operator=(const DecoratorMiddle&) = delete;
-  DecoratorMiddle& operator=(DecoratorMiddle&&) = delete;
+  RULE_OF_FIVE_COPY(DecoratorMiddle)
 
-  ~DecoratorMiddle() = default;
-
-  template <F Action, F... U, typename... Args>
+  template <uint64_t Action, uint64_t... U, typename... Args>
   [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
   {
     std::cout << "DecoratorLogger " << typeid(T).name() << std::endl;
@@ -72,8 +54,8 @@ class DecoratorMiddle
                                       std::forward<const Args>(args)...);
   }
 
-  template <F Action, F V>
-  requires Equals<F, Action, F::Set> && Equals<F, V, F::B>
+  template <uint64_t Action, uint64_t V>
+  requires EqualUL<Action, "Set"_f> && EqualUL<V, "B"_f>
   [[nodiscard]] std::shared_ptr<RootType> f(const RootType& classe,
                                             const double b) const
   {
@@ -86,12 +68,37 @@ class DecoratorMiddle
   T t;
 };
 
+template <typename T>
+class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Test)
+{
+ public:
+  DECORATOR_START_RULE_OF_FIVE(Test);
+
+  DECORATOR_CLONE(Test)
+
+  DECORATOR_START_GET(B)
+  DECORATOR_START_SET(Test, B)
+};
+
+template <typename T>
+class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(Test)
+{
+ public:
+  using RootType = T;
+
+  // cppcheck-suppress constParameter
+  DECORATOR_END_RULE_OF_FIVE(Test);
+
+  DECORATOR_END_GET(B)
+  DECORATOR_END_SET(B)
+};
+
 JTEST_NAME(decorator, Test)  // NOLINT
 {
   using Decorator =
-      DecoratorStart<DecoratorMiddle<DecoratorEnd<DecoratorTest>>>;
+      DecoratorStartTest<DecoratorMiddle<DecoratorEndTest<DecoratorTest>>>;
 
   const auto classe = std::make_shared<Decorator>();
-  const auto classe2 = classe->f<F::Set, F::B>(10.);
-  JTEST_EQ((classe2->f<F::Get, F::B>()), 11.);
+  const auto classe2 = classe->SetB(10.);
+  JTEST_EQ(classe2->B(), 11.);
 }

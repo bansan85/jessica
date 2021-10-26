@@ -1,10 +1,12 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <iostream>
 #include <memory>
 
-#include <jessica/helper/accessor.h>
+#include <jessica/compat.h>
+#include <jessica/helper/poo.h>
 
 namespace jessica
 {
@@ -15,21 +17,17 @@ class JESSICA_DLL_PUBLIC DecoratorEnd
   using RootType = T;
 
   template <typename... Args>
+  // cppcheck-suppress constParameter
   explicit DecoratorEnd(std::shared_ptr<T>& impl, Args&&... args)
   {
     impl = std::make_shared<T>(std::forward<Args>(args)...);
   }
-  DecoratorEnd(const DecoratorEnd&) = default;
-  DecoratorEnd(DecoratorEnd&&) = delete;
-  DecoratorEnd& operator=(const DecoratorEnd&) = delete;
-  DecoratorEnd& operator=(DecoratorEnd&&) = delete;
+  RULE_OF_FIVE_COPY_VIRTUAL(DecoratorEnd)
 
-  ~DecoratorEnd() = default;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const T& classe, const Args&&... args) const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  [[nodiscard]] auto f(const T& classe, Args&&... args) const
   {
-    return classe.template f<Action, U...>(std::forward<const Args>(args)...);
+    return classe.template f<Action, U...>(std::forward<Args>(args)...);
   }
 };
 }  // namespace jessica

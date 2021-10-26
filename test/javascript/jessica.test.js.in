@@ -44,7 +44,7 @@ test('CalcMeyehof', async () => {
 
     const calc = new instance.MeyerhofShallowFoundation(
         logger, logger, vert5, foundation4);
-    expect(calc.getQref()).toBe(200000.);
-    expect(calc.getB_()).toBe(0.5);
+    expect(calc.qref()).toBe(200000.);
+    expect(calc.b_()).toBe(0.5);
   });
 });

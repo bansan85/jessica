@@ -1,13 +1,17 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 
+#include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/poo.h>
+#include <jessica/helper/template.h>
 
 namespace jessica
 {
-template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorStart final
+template <typename T, typename ShrT>
+class JESSICA_DLL_PUBLIC DecoratorStart
 {
  public:
   template <typename... Args>
@@ -15,36 +19,26 @@ class JESSICA_DLL_PUBLIC DecoratorStart final
       : deco_(std::make_shared<T>(impl_, std::forward<Args>(args)...))
   {
   }
-  DecoratorStart(const DecoratorStart&) = default;
-  DecoratorStart(DecoratorStart&&) = delete;
-  DecoratorStart& operator=(const DecoratorStart&) = delete;
-  DecoratorStart& operator=(DecoratorStart&&) = delete;
+  RULE_OF_FIVE_COPY_VIRTUAL(DecoratorStart)
 
-  ~DecoratorStart() = default;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const Args&&... args) const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  requires EqualUL<Action, "Get"_f>
+  [[nodiscard]] auto f(Args&&... args) const
   {
-    if constexpr (Action == F::Set)
-    {
-      auto retval = f<F::Set, F::Clone>();
-      retval->impl_ = deco_->template f<Action, U...>(
-          *impl_, std::forward<const Args>(args)...);
-      return retval;
-    }
-    else
-    {
-      return deco_->template f<Action, U...>(*impl_,
-                                             std::forward<const Args>(args)...);
-    }
+    return deco_->template f<Action, U...>(*impl_, std::forward<Args>(args)...);
   }
 
-  template <F Action, F U>
-  requires Equals<F, Action, F::Set> && Equals<F, U, F::Clone>
-  [[nodiscard]] std::shared_ptr<DecoratorStart<T>> f() const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  requires EqualUL<Action, "Set"_f>
+  [[nodiscard]] auto f(Args&&... args) const
   {
-    return std::make_shared<DecoratorStart<T>>(*this);
+    auto retval = Clone();
+    retval->impl_ =
+        deco_->template f<Action, U...>(*impl_, std::forward<Args>(args)...);
+    return retval;
   }
+
+  [[nodiscard]] virtual std::shared_ptr<ShrT> Clone() const = 0;
 
  private:
   std::shared_ptr<typename T::RootType> impl_;

@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <string>
 
 #include <spdlog/spdlog.h>
 
-#include <jessica/helper/accessor.h>
+#include <jessica/helper/poo.h>
 
 namespace jessica
 {
@@ -22,19 +23,13 @@ class JESSICA_DLL_PUBLIC LogCall
       : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
-  LogCall(const LogCall&) = default;
-  LogCall(LogCall&&) = delete;
-  LogCall& operator=(const LogCall&) = delete;
-  LogCall& operator=(LogCall&&) = delete;
+  RULE_OF_FIVE_COPY(LogCall)
 
-  ~LogCall() = default;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  [[nodiscard]] auto f(const RootType& classe, Args&&... args) const
   {
     log_->info("DecoratorLogger " + std::string{typeid(T).name()});
-    return t.template f<Action, U...>(classe,
-                                      std::forward<const Args>(args)...);
+    return t.template f<Action, U...>(classe, std::forward<Args>(args)...);
   }
 
  private:

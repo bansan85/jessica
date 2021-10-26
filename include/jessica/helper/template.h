@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <type_traits>
+
 namespace jessica
 {
 // Extract the type inside nested container.
@@ -77,7 +80,7 @@ struct LazyLoadExtractNthType
 // template<bool T>
 // requires Equals<bool, true, T>
 // void f(){}
-template <typename T, T V1, T V2>
-concept Equals = std::is_same_v<std::integral_constant<T, V1>,
-                                std::integral_constant<T, V2>>;
+template <uint64_t V1, uint64_t V2>
+concept EqualUL = std::is_same_v<std::integral_constant<uint64_t, V1>,
+                                 std::integral_constant<uint64_t, V2>>;
 }  // namespace jessica

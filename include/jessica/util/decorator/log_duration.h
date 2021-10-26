@@ -1,12 +1,13 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 
 #include <spdlog/spdlog.h>
 
-#include <jessica/helper/accessor.h>
 #include <jessica/helper/cfi.h>
+#include <jessica/helper/poo.h>
 
 namespace jessica
 {
@@ -22,19 +23,15 @@ class JESSICA_DLL_PUBLIC LogDuration
       : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
-  LogDuration(const LogDuration&) = default;
-  LogDuration(LogDuration&&) = delete;
-  LogDuration& operator=(const LogDuration&) = delete;
-  LogDuration& operator=(LogDuration&&) = delete;
+  RULE_OF_FIVE_COPY(LogDuration)
 
-  ~LogDuration() = default;
-
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  [[nodiscard]] auto f(const RootType& classe, Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
+    // cppcheck-suppress redundantInitialization
     auto retval =
-        t.template f<Action, U...>(classe, std::forward<const Args>(args)...);
+        t.template f<Action, U...>(classe, std::forward<Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 
 #include <jessica/compat.h>
@@ -7,6 +8,7 @@
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
@@ -19,72 +21,19 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
       : load_(std::move(load)), foundation_(std::move(foundation))
   {
   }
-  MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
-  MeyerhofShallowFoundation(MeyerhofShallowFoundation&&) = delete;
-  MeyerhofShallowFoundation&
-      operator=(const MeyerhofShallowFoundation&) = delete;
-  MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
+  RULE_OF_FIVE_COPY_AND_CLONE(MeyerhofShallowFoundation)
 
-  ~MeyerhofShallowFoundation() = default;
+  [[nodiscard]] double B_() const { return foundation_->B() - 2. * load_->E(); }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> f() const
-  {
-    return std::make_shared<MeyerhofShallowFoundation>(*this);
-  }
+  [[nodiscard]] double Qref() const { return load_->V() / B_(); }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B_>
-  [[nodiscard]] double f() const
-  {
-    return foundation_->template f<F::Get, F::B>() -
-           2. * load_->template f<F::Get, F::E>();
-  }
+  POCO_GET_FUNCTION(Foundation, foundation_)
+  // cppcheck-suppress redundantAssignment
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Foundation, foundation_)
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Qref>
-  [[nodiscard]] double f() const
-  {
-    return load_->template f<F::Get, F::V>() / f<F::Get, F::B_>();
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Load>
-  [[nodiscard]] double f(const Args&&... args) const
-  {
-    return load_->template f<Action, U...>(std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Load>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
-  {
-    auto retval = f<F::Set, F::Clone>();
-    retval->load_ = retval->load_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Foundation>
-  [[nodiscard]] double f(const Args&&... args) const
-  {
-    return foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Foundation>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
-  {
-    auto retval = f<F::Set, F::Clone>();
-    retval->foundation_ = retval->foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
+  POCO_GET_FUNCTION(Load, load_)
+  // cppcheck-suppress redundantAssignment
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Load, load_)
 
  private:
   std::shared_ptr<T0> load_;

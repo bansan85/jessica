@@ -1,11 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
@@ -13,42 +15,22 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
 {
  public:
   VerticalEccentric() = default;
-  VerticalEccentric(const VerticalEccentric&) = default;
-  VerticalEccentric(VerticalEccentric&&) = delete;
-  VerticalEccentric& operator=(const VerticalEccentric&) = delete;
-  VerticalEccentric& operator=(VerticalEccentric&&) = delete;
+  RULE_OF_FIVE_COPY_AND_CLONE(VerticalEccentric)
 
-  ~VerticalEccentric() = default;
+  [[nodiscard]] double V() const { return v_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> f() const
+  [[nodiscard]] std::shared_ptr<VerticalEccentric> SetV(const double v) const
   {
-    return std::make_shared<VerticalEccentric>(*this);
-  }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::V>
-  [[nodiscard]] double f() const { return v_; }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::V>
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double v) const
-  {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = Clone();
     retval->v_ = v;
     return retval;
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::E>
-  [[nodiscard]] double f() const { return e_; }
+  [[nodiscard]] double E() const { return e_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::E>
-  [[nodiscard]] std::shared_ptr<VerticalEccentric> f(const double e) const
+  [[nodiscard]] std::shared_ptr<VerticalEccentric> SetE(const double e) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = Clone();
     retval->e_ = e;
     return retval;
   }

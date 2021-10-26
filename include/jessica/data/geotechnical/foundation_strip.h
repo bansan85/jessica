@@ -1,11 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/template.h>
+#include <jessica/util/decorator/macro.h>
 
 namespace jessica
 {
@@ -13,29 +15,13 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
 {
  public:
   FoundationStrip() = default;
-  FoundationStrip(const FoundationStrip&) = default;
-  FoundationStrip(FoundationStrip&&) = delete;
-  FoundationStrip& operator=(const FoundationStrip&) = delete;
-  FoundationStrip& operator=(FoundationStrip&&) = delete;
+  RULE_OF_FIVE_COPY_AND_CLONE(FoundationStrip)
 
-  ~FoundationStrip() = default;
+  [[nodiscard]] double B() const { return b_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f() const
+  [[nodiscard]] std::shared_ptr<FoundationStrip> SetB(const double b) const
   {
-    return std::make_shared<FoundationStrip>(*this);
-  }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
-  [[nodiscard]] double f() const { return b_; }
-
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f(const double b) const
-  {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = Clone();
     retval->b_ = b;
     return retval;
   }
