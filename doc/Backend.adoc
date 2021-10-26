@@ -32,46 +32,29 @@ At first, each adapter inherited from a https://github.com/bansan85/jessica/blob
 
 Then adapter needed to be templated to support decorator, I decided to use https://github.com/bansan85/jessica/blob/4e7884bb98f24c3a1146a1ef0119f20ab84023c1/include/jessica/data/load/vertical_eccentric_concept.h[concept] with accessor.
 
-Finally I needed to have a very generic getter and setter to reduce the need of boilerplate to access multiple levels of data. There is only one primary template function `f` for accessor. Specialization when needed is done with `requires` keyword instead of template specialization or use of `std::enable_if<>`. I removed concept interface because it can not force specialization of primary template.
+I needed to have a very generic getter and setter to reduce the need of boilerplate to access multiple levels of data. There is only https://github.com/bansan85/jessica/blob/4e7884bb98f24c3a1146a1ef0119f20ab84023c1/include/jessica/calc/geotechnical/meyerhof.h[one primary template function `f` for accessor]. Specialization when needed is done with `requires` keyword (`C++20`) instead of template specialization or use of `std::enable_if<>`. I removed concept interface because it can not force specialization of primary template.
+
+The use of `f` is inconventional. I hide it inside the decorator class. To simplify the use of a generic decorator, I created macro to avoid copy / paste and ease maintainability.
 
 GoogleTest supports mocking with template.
 
-=== Adapter
+=== Class
 
-All accessors use the same template function `f`.
+Getters have bare name. Setter have `Set` has prefix name.
 
-You will need two explicit symbol. The first tells if it's a getter or a setter. The second tells which information you want. This second part may be multiple if you need to go in nested accessor.
+Data are immutable so setters return a copy of the object. The copy is done by `Clone` function.
 
-If you want to get a value, the first explicit typename is `false`: `f<F::Get, F::Data>()`.
+The `Rule of five` is applied. Copy constructor must be public to use `std::make_shared`.
 
-If you want to set a value, the first explicit typename is `true`: `f<F::Set, F::Data>(value)`. The type of the value returned is a `std::shared_ptr<...>` of the current object.
-
-  * Coding style
-
-Copy constructor must be public to use `std::make_shared`.
-
-Ownership of a return value of a setter must be able to be shared. Use a `std::shared_ptr<>`. Pass them by const reference in function and store them by copy in class.
-
-  * Example of declaration
-
-If you do not need decorator, just use `FoundationStrip`.
-
-If you need decorator, you have to put `DecoratorStart` and `DecoratorEnd` around decorator(s).
-
-Use `DecoratorStart<LogCall<DecoratorEnd<FoundationStrip>>>`.
-
-=== Implementation behind the adapter
-
-Example of class `FoundationStrip`.
+Example of a simple class:
 
 [source,cpp]
 ----
-#include <jessica/compat.h>
-#include <jessica/helper/accessor.h>
-#include <jessica/helper/template.h>
+#include <limits>
+#include <memory>
 
-namespace jessica
-{
+#include <jessica/compat.h>
+
 class JESSICA_DLL_PUBLIC FoundationStrip final
 {
  public:
@@ -81,22 +64,18 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
   FoundationStrip& operator=(const FoundationStrip&) = delete;
   FoundationStrip& operator=(FoundationStrip&&) = delete;
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f() const
+  ~FoundationStrip() = default;
+
+  [[nodiscard]] std::shared_ptr<FoundationStrip> Clone() const
   {
     return std::make_shared<FoundationStrip>(*this);
   }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B>
-  [[nodiscard]] double f() const { return b_; }
+  [[nodiscard]] double B() const { return b_; }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::B>
-  [[nodiscard]] std::shared_ptr<FoundationStrip> f(const double b) const
+  [[nodiscard]] std::shared_ptr<FoundationStrip> SetB(const double b) const
   {
-    auto retval = f<F::Set, F::Clone>();
+    auto retval = Clone();
     retval->b_ = b;
     return retval;
   }
@@ -104,14 +83,72 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };
-}  // namespace jessica
+----
+
+=== Adapters
+
+All decorators use the same template function `f`. The goal is to be able to implement only one generic function that may be applied to all functions.
+
+You will need two adapters. One at the beginning to convert getters and setters to the `f` template function. The second at the end to convert `t` template function to getters and setters.
+
+  * Coding style
+
+Ownership of a return value of a setter must be able to be shared. Use a `std::shared_ptr<>`. Pass them by const reference in function and store them by copy in class.
+
+  * Example of declaration
+
+If you do not need decorator, just use `FoundationStrip`.
+
+If you need decorator, you have to create `DecoratorStartFoundationStrip` and `DecoratorEndFoundationStrip` around decorator(s).
+
+Use `DecoratorStartFoundationStrip<LogCall<DecoratorEndFoundationStrip<FoundationStrip>>>`.
+
+  * Implementation of `DecoratorStartFoundationStrip`:
+
+The goal of DecoratorStartFoundationStrip is to convert getter `B` and setter `SetB` to `f` template functions.
+
+This code heavily uses macro.
+
+[source,cpp]
+----
+#include <memory>
+
+#include <jessica/util/decorator/end.h>
+#include <jessica/util/decorator/macro.h>
+#include <jessica/util/decorator/start.h>
+
+template <typename T>
+class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(FoundationStrip)
+{
+ public:
+  DECORATOR_START_RULE_OF_FIVE(FoundationStrip);
+
+  DECORATOR_CLONE(FoundationStrip)
+
+  DECORATOR_START_GET(B)
+  DECORATOR_START_SET(FoundationStrip, B)
+};
+
+template <typename T>
+class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(FoundationStrip)
+{
+ public:
+  using RootType = T;
+
+  DECORATOR_END_RULE_OF_FIVE(FoundationStrip);
+
+  DECORATOR_END_GET(B)
+  DECORATOR_END_SET(B)
+};
 ----
 
 === Decorator
 
-Decorators may be add between the adapter and the implementation.
+Decorators is added between between `DecoratorStart` and DecoratorEnd`.
 
 They implement the same `f` functions. If needed, you can specialize some of them.
+
+You need to pass `impl` to all constructor of decorator. Only `DecoratorEnd` knows the type of the final template type. And `impl` is stored in `DecoratorStart` to ease clone due to functional style.
 
 [source,cpp]
 ----
@@ -125,8 +162,8 @@ class JESSICA_DLL_PUBLIC LogDuration
 
   template <typename... Args>
   LogDuration(std::shared_ptr<RootType>& impl,
-              const std::shared_ptr<spdlog::logger>& log, Args&&... args)
-      : t(impl, std::forward<Args>(args)...), log_(log)
+              std::shared_ptr<spdlog::logger> log, Args&&... args)
+      : t(impl, std::forward<Args>(args)...), log_(std::move(log))
   {
   }
   LogDuration(const LogDuration&) = default;
@@ -134,14 +171,14 @@ class JESSICA_DLL_PUBLIC LogDuration
   LogDuration& operator=(const LogDuration&) = delete;
   LogDuration& operator=(LogDuration&&) = delete;
 
-  ~LogDuration() {}
+  ~LogDuration() = default;
 
-  template <F Action, F... U, typename... Args>
-  [[nodiscard]] auto f(const RootType& classe, const Args&&... args) const
+  template <uint64_t Action, uint64_t... U, typename... Args>
+  [[nodiscard]] auto f(const RootType& classe, Args&&... args) const
   {
     const auto t_start = std::chrono::high_resolution_clock::now();
-    const auto retval =
-        t.template f<Action, U...>(classe, std::forward<const Args>(args)...);
+    auto retval =
+        t.template f<Action, U...>(classe, std::forward<Args>(args)...);
     const auto t_end = std::chrono::high_resolution_clock::now();
     const double elapsed_time_ms =
         std::chrono::duration<double, std::milli>(t_end - t_start).count();
@@ -171,7 +208,7 @@ or with decorator.
 [source,cpp]
 ----
   using Decorator =
-      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
+      DecoratorStartFoundationStrip<LogCall<LogDuration<DecoratorEndFoundationStrip<FoundationStrip>>>>;
 
   const auto foundation = std::make_shared<Decorator>();
 ----
@@ -180,20 +217,21 @@ After, use the instance like that:
 
 [source,cpp]
 ----
-  // Getter
-  foundation->f<F::Get, F::B>();
-  // Setter
-  const auto foundation2 = foundation->f<F::Set, F::B>(1.);
+  const auto foundation = std::make_shared<DecoratorFoundation>(log, log);
+  const auto foundation2 = foundation->SetB(1.);
+  assert(foundation->B() == 1.);
 ----
 
 === Data inside data
 
-Some class will need to store data from other class.
-In this case, you need to specific coding to allow decorator around the main class and if needed decorator around children class.
+Some classes need to store data from other class.
+
+In this case, you may, or not, allow children classes to be decorated.
+
+To access children data, you need to pass the pointer of the function then after the arguments.
+It will may change in the future but it's the best I found for the current time.
 
   * Adapter
-
-The adapter still have one template but the template will have inside the type of the data stored.
 
 For example, Meyerhof have two data stored.
 
@@ -206,8 +244,9 @@ An example with only decorator to the main class:
   // Data 2 without decorator
   using DecoratorLoad = VerticalEccentric;
   // Main data with 2 data stored inside.
-  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
-      MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
+  using DecoratorCalc =
+      DecoratorStartMeyerhof<LogCall<LogDuration<DecoratorEndMeyerhof<
+          MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
   const auto calc = std::make_shared<DecoratorCalc>(load, foundation);
 ----
@@ -217,14 +256,15 @@ And the same with a decorator for every data:
 [source,cpp]
 ----
   // Data 1 with decorator
-  using DecoratorFoundation =
-      DecoratorStart<LogCall<LogDuration<DecoratorEnd<FoundationStrip>>>>;
+  using DecoratorFoundation = DecoratorStartFoundationStrip<
+      LogCall<LogDuration<DecoratorEndFoundationStrip<FoundationStrip>>>>;
   // Data 2 with decorator
-  using DecoratorLoad =
-      DecoratorStart<LogCall<LogDuration<DecoratorEnd<VerticalEccentric>>>>;
+  using DecoratorLoad = DecoratorStartVerticalEccentric<
+      LogCall<LogDuration<DecoratorEndVerticalEccentric<VerticalEccentric>>>>;
   // Main data with 2 data stored inside.
-  using DecoratorCalc = DecoratorStart<LogCall<LogDuration<DecoratorEnd<
-      MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
+  using DecoratorCalc =
+      DecoratorStartMeyerhof<LogCall<LogDuration<DecoratorEndMeyerhof<
+          MeyerhofShallowFoundation<DecoratorLoad, DecoratorFoundation>>>>>;
 
   const auto calc = std::make_shared<DecoratorCalc>(load, foundation);
 ----
@@ -241,75 +281,22 @@ template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
  public:
-  MeyerhofShallowFoundation(const std::shared_ptr<T0>& load,
-                            const std::shared_ptr<T1>& foundation)
-      : load_(load), foundation_(foundation)
+  MeyerhofShallowFoundation(std::shared_ptr<T0> load,
+                            std::shared_ptr<T1> foundation)
+      : load_(std::move(load)), foundation_(std::move(foundation))
   {
   }
-  MeyerhofShallowFoundation(const MeyerhofShallowFoundation&) = default;
-  MeyerhofShallowFoundation(MeyerhofShallowFoundation&&) = delete;
-  MeyerhofShallowFoundation&
-      operator=(const MeyerhofShallowFoundation&) = delete;
-  MeyerhofShallowFoundation& operator=(MeyerhofShallowFoundation&&) = delete;
+  RULE_OF_FIVE_COPY_AND_CLONE(MeyerhofShallowFoundation)
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Clone>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation> f() const
-  {
-    return std::make_shared<MeyerhofShallowFoundation>(*this);
-  }
+  [[nodiscard]] double B_() const { return foundation_->B() - 2. * load_->E(); }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::B_>
-  [[nodiscard]] double f() const
-  {
-    return foundation_->template f<F::Get, F::B>() -
-           2. * load_->template f<F::Get, F::E>();
-  }
+  [[nodiscard]] double Qref() const { return load_->V() / B_(); }
 
-  template <F Action, F T>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Qref>
-  [[nodiscard]] double f() const
-  {
-    return load_->template f<F::Get, F::V>() / f<F::Get, F::B_>();
-  }
+  POCO_GET_FUNCTION(Foundation, foundation_)
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Foundation, foundation_)
 
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Load>
-  [[nodiscard]] double f(const Args&&... args) const
-  {
-    return load_->template f<Action, U...>(std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Load>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
-  {
-    auto retval = f<F::Set, F::Clone>();
-    retval->load_ = retval->load_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Get> && Equals<F, T, F::Foundation>
-  [[nodiscard]] double f(const Args&&... args) const
-  {
-    return foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-  }
-
-  template <F Action, F T, F... U, typename... Args>
-  requires Equals<F, Action, F::Set> && Equals<F, T, F::Foundation>
-  [[nodiscard]] std::shared_ptr<MeyerhofShallowFoundation>
-      f(const Args&&... args) const
-  {
-    auto retval = f<F::Set, F::Clone>();
-    retval->foundation_ = retval->foundation_->template f<Action, U...>(
-        std::forward<const Args>(args)...);
-    return retval;
-  }
+  POCO_GET_FUNCTION(Load, load_)
+  POCO_SET_FUNCTION(MeyerhofShallowFoundation, Load, load_)
 
  private:
   std::shared_ptr<T0> load_;
