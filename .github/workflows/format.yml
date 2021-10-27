@@ -86,25 +86,22 @@ jobs:
         shell: bash
         run: |
           bash ./.github/scripts/format.sh
-      - name: Fix formatting with token
-        if: ${{ github.event_name == 'push' }}
+      - name: Fix formatting
         shell: bash
         run: |
           git add .
           if [ -n "$(git diff-index --name-only HEAD --)" ]; \
           then \
-            git commit -S${{ secrets.GPG_KEY_ID }} -m "Fix formatting $GITHUB_SHA" ; \
-            git push || { echo "Failure git push" && exit 1; }; \
+            echo "Please, fix formatting with uploaded patch."
+            git diff --cached > format.diff ; \
             exit 1; \
           fi
-      - name: Fix formatting without token
-        if: ${{ github.event_name != 'push' }}
+      - uses: actions/upload-artifact@v2
+        if: failure() && hashFiles('format.diff') != ''
+        with:
+          name: format.diff
+          path: format.diff
+      - name: Check various rules
         shell: bash
         run: |
-          git add .
-          if [ -n "$(git diff-index --name-only HEAD --)" ]; \
-          then \
-            echo "Please, fix formatting with following patch."
-            git diff --cached ; \
-            exit 1; \
-          fi
+          [[ $(find . \( -path ./build -o -path ./vcpkg \) -prune -type f -o -name "*.cpp" -o -name "*.hpp" | wc -l) == 0 ]] || exit 1

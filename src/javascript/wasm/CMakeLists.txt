@@ -1,7 +1,7 @@
 set(EMSCRIPTEN_FLAGS "-s EXPORT_NAME=jessica -s MODULARIZE=1 --bind \
 --no-entry -flto -s INVOKE_RUN=0 -s MALLOC='emmalloc'")
 
-add_executable(jessica_web_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-web.cpp)
+add_executable(jessica_web_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-web.cc)
 target_link_libraries(
   jessica_web_js
   PRIVATE
@@ -13,7 +13,7 @@ ${EMSCRIPTEN_FLAGS} -s ENVIRONMENT=web,worker"
     jessica)
 set_target_properties(jessica_web_js PROPERTIES OUTPUT_NAME "jessica-web")
 
-add_executable(jessica_node_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-test.cpp)
+add_executable(jessica_node_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-test.cc)
 target_link_libraries(
   jessica_node_js
   PRIVATE

@@ -26,7 +26,7 @@ EMSCRIPTEN_BINDINGS(jessica)
       .smart_ptr<std::shared_ptr<VerticalEccentric>>("VerticalEccentric")
       .function("clone", &VerticalEccentric::Clone)
       .function("getE", &VerticalEccentric::E)
-      .function("setE", &VerticalEccentric::SetE)
+      .function("setE", &VerticalEccentric ::SetE)
       .function("getV", &VerticalEccentric::V)
       .function("setV", &VerticalEccentric::SetV);
 

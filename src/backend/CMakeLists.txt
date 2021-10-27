@@ -1,4 +1,4 @@
-add_library(jessica STATIC dummy.cpp)
+add_library(jessica STATIC dummy.cc)
 target_include_directories(jessica PUBLIC ${Jessica_SOURCE_DIR}/include)
 
 # Define to build Jessica as a library and not as a header only.
