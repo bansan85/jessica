@@ -74,9 +74,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(
     /Wall
     /WX
+    /wd2220
     /wd4251
     /wd4275
     /wd4514
+    /wd4582
+    /wd4623
     /wd4625
     /wd4626
     /wd4668
