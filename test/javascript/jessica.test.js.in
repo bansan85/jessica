@@ -16,7 +16,7 @@ test('VerticalEccentric', async () => {
     const vert2 = vert1.setE(0.2);
     expect(vert2.getE()).toBe(0.2);
     expect(vert2.getV()).toBeNaN();
-    const vert3 = vert2.setV(100.);
+    const vert3 = vert2.setV(100);
     expect(vert3.getE()).toBe(0.2);
     expect(vert3.getV()).toBe(100);
     const vert4 = vert3.clone();
@@ -40,11 +40,11 @@ test('CalcMeyehof', async () => {
   return jessica().then(async (instance) => {
     const logger = new instance.SpdlogStdoutMt('log');
     const foundation4 = new instance.FoundationStrip().setB(1.0);
-    const vert5 = new instance.VerticalEccentric().setV(100000.).setE(0.25);
+    const vert5 = new instance.VerticalEccentric().setV(100000).setE(0.25);
 
     const calc = new instance.MeyerhofShallowFoundation(
         logger, logger, vert5, foundation4);
-    expect(calc.qref()).toBe(200000.);
+    expect(calc.qref()).toBe(200000);
     expect(calc.b_()).toBe(0.5);
   });
 });
