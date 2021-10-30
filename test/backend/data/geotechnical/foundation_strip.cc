@@ -1,4 +1,5 @@
 #include <cmath>
+#include <fstream>
 #include <memory>
 #include <utility>
 
@@ -8,6 +9,7 @@
 #include <jessica/data/geotechnical/decorator_foundation_strip.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/cereal/json.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
@@ -25,6 +27,20 @@ JTEST_NAME(data, FoundationStrip)  // NOLINT
   JTEST_EQ(foundation2->B(), 1.);
   const auto foundation3 = foundation2->Clone();
   JTEST_EQ(foundation2->B(), foundation3->B());
+
+  {
+    std::ofstream os("FoundationStrip1.cereal.json", std::ios::binary);
+    cereal::JSONOutputArchive oarchive(os);
+    oarchive(*foundation3);
+  }
+  {
+    std::ifstream os("FoundationStrip1.cereal.json", std::ios::binary);
+    cereal::JSONInputArchive iarchive(os);
+
+    FoundationStrip foundation4;
+    iarchive(foundation4);
+    JTEST_EQ(foundation4.B(), foundation3->B());
+  }
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
@@ -41,6 +57,20 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
   JTEST_EQ(foundation2->B(), 1.);
   const auto foundation3 = foundation2->Clone();
   JTEST_EQ(foundation2->B(), foundation3->B());
+
+  {
+    std::ofstream os("FoundationStrip2.cereal.json", std::ios::binary);
+    cereal::JSONOutputArchive oarchive(os);
+    oarchive(*foundation3);
+  }
+  {
+    std::ifstream os("FoundationStrip2.cereal.json", std::ios::binary);
+    cereal::JSONInputArchive iarchive(os);
+
+    Decorator foundation4(log, log);
+    iarchive(foundation4);
+    JTEST_EQ(foundation4.B(), foundation3->B());
+  }
 }
 
 // NOLINTNEXTLINE(bugprone-exception-escape)

@@ -46,6 +46,8 @@ Data are immutable so setters return a copy of the object. The copy is done by `
 
 The `Rule of five` is applied. Copy constructor must be public to use `std::make_shared`.
 
+Data must be serializable to be able to save it on a file or to send data to a web service.
+
 Example of a simple class:
 
 [source,cpp]
@@ -54,22 +56,13 @@ Example of a simple class:
 #include <memory>
 
 #include <jessica/compat.h>
+#include <jessica/util/decorator/macro.h>
 
 class JESSICA_DLL_PUBLIC FoundationStrip final
 {
  public:
   FoundationStrip() = default;
-  FoundationStrip(const FoundationStrip&) = default;
-  FoundationStrip(FoundationStrip&&) = delete;
-  FoundationStrip& operator=(const FoundationStrip&) = delete;
-  FoundationStrip& operator=(FoundationStrip&&) = delete;
-
-  ~FoundationStrip() = default;
-
-  [[nodiscard]] std::shared_ptr<FoundationStrip> Clone() const
-  {
-    return std::make_shared<FoundationStrip>(*this);
-  }
+  RULE_OF_FIVE_COPY_AND_CLONE(FoundationStrip)
 
   [[nodiscard]] double B() const { return b_; }
 
@@ -78,6 +71,12 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
     auto retval = Clone();
     retval->b_ = b;
     return retval;
+  }
+
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("b", b_));
   }
 
  private:
@@ -231,6 +230,8 @@ In this case, you may, or not, allow children classes to be decorated.
 To access children data, you need to pass the pointer of the function then after the arguments.
 It will may change in the future but it's the best I found for the current time.
 
+To be able to deserialize nested data, they all need to have default constructor (including nested decorator).
+
   * Adapter
 
 For example, Meyerhof have two data stored.
@@ -297,6 +298,13 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 
   POCO_GET_FUNCTION(Load, load_)
   POCO_SET_FUNCTION(MeyerhofShallowFoundation, Load, load_)
+
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("load", load_),
+       cereal::make_nvp("foundation", foundation_));
+  }
 
  private:
   std::shared_ptr<T0> load_;

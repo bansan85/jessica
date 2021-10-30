@@ -26,6 +26,12 @@ class JESSICA_DLL_PUBLIC FoundationStrip final
     return retval;
   }
 
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("b", b_));
+  }
+
  private:
   double b_ = std::numeric_limits<double>::quiet_NaN();
 };

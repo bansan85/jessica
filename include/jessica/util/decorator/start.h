@@ -5,6 +5,7 @@
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/cereal/memory.h>
 #include <jessica/helper/poo.h>
 #include <jessica/helper/template.h>
 
@@ -39,6 +40,12 @@ class JESSICA_DLL_PUBLIC DecoratorStart
   }
 
   [[nodiscard]] virtual std::shared_ptr<ShrT> Clone() const = 0;
+
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("data", impl_));
+  }
 
  private:
   std::shared_ptr<typename T::RootType> impl_;

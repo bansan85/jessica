@@ -9,11 +9,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(CheckCXXCompilerFlag)
+include(CheckIncludeFileCXX)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 find_package(spdlog REQUIRED)
+
+# Ubuntu/gcc don't have the cereal-config.cmake but emscripten needs it.
+check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
+if(NOT HAVE_CEREAL)
+  find_package(cereal REQUIRED)
+endif()
 
 option(BUILD_COVERAGE "Enable coverage")
 
@@ -74,7 +81,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(
     /Wall
     /WX
-    /wd2220
     /wd4251
     /wd4275
     /wd4514

@@ -35,6 +35,12 @@ class JESSICA_DLL_PUBLIC VerticalEccentric final
     return retval;
   }
 
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("v", v_), cereal::make_nvp("e", e_));
+  }
+
  private:
   double v_ = std::numeric_limits<double>::quiet_NaN();
   double e_ = std::numeric_limits<double>::quiet_NaN();

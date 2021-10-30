@@ -76,13 +76,13 @@ ForEachMacros:
   - BOOST_FOREACH
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^<ext/.*\.h>'
-    Priority: 2
-    SortPriority: 0
   - Regex: '^<jessica/.*\.h>'
     Priority: 4
     SortPriority: 0
   - Regex: '^<.*\.h>'
+    Priority: 2
+    SortPriority: 0
+  - Regex: '^<.*\.hpp>'
     Priority: 2
     SortPriority: 0
   - Regex: '^<.*'
