@@ -92,7 +92,8 @@
     "string_view": "cpp",
     "complex": "cpp",
     "coroutine": "cpp",
-    "resumable": "cpp"
+    "resumable": "cpp",
+    "typeindex": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,

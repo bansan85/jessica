@@ -16,6 +16,12 @@ Tools needed:
 === Backend
 
   * logger: https://github.com/gabime/spdlog[spdlog]
+  * serialization (data storage / send data to web services): https://uscilab.github.io/cereal/[cereal]
+
+=== Frontend
+
+  * https://nodejs.org/en/[Node.js] 14
+  * https://angular.io/[Angular] 12
 
 === Tests
 
@@ -40,7 +46,7 @@ node tools/build.js -t browser bash cpp xml javascript yaml typescript
 
   * cmake
 
-To custom C++ flags, add to the first call of cmake ''-DCMAKE_CXX_FLAGS=...''.
+To custom C++ flags, add to the first call of cmake `-DCMAKE_CXX_FLAGS=...`.
 
 === Linux
 
@@ -58,14 +64,14 @@ To build for a specific version of GCC:
 
 [source,sh]
 ----
-cmake -S . -B build/gcc -DCMAKE_C_COMPILER="/usr/bin/gcc-11" -DCMAKE_CXX_COMPILER="/usr/bin/g++-11" -DCMAKE_AR="/usr/bin/ar" -DCMAKE_RANLIB="/usr/bin/ranlib"
+cmake -S . -B build/gcc -DCMAKE_C_COMPILER="/usr/bin/gcc-11" -DCMAKE_CXX_COMPILER="/usr/bin/g++-11" -DCMAKE_AR="/usr/bin/ar" -DCMAKE_RANLIB="/usr/bin/ranlib" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
 ----
 
 and for Clang:
 
 [source,sh]
 ----
-cmake -S . -B build/clang -DCMAKE_C_COMPILER="/usr/bin/clang-12" -DCMAKE_CXX_COMPILER="/usr/bin/clang++-12" -DCMAKE_AR="/usr/bin/llvm-ar-12" -DCMAKE_RANLIB="/usr/bin/llvm-ranlib-12"
+cmake -S . -B build/clang -DCMAKE_C_COMPILER="/usr/bin/clang-12" -DCMAKE_CXX_COMPILER="/usr/bin/clang++-12" -DCMAKE_AR="/usr/bin/llvm-ar-12" -DCMAKE_RANLIB="/usr/bin/llvm-ranlib-12" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
 ----
 
 === Windows
@@ -78,7 +84,7 @@ From PowerShell:
 .\vcpkg\vcpkg.exe install "@.\config\cmake\vcpkg_windows.txt" --triplet=x64-windows
 .\vcpkg\vcpkg.exe integrate install
 mkdir -p build\windows
-cmake -S . -B build\windows -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake
+cmake -S . -B build\windows -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
 cmake --build build\windows --target ALL_BUILD --config Debug -j9
 cd build\windows
 ctest -C Debug --output-on-failure
@@ -142,19 +148,22 @@ The build is tested with Ubuntu-LTS with gcc and clang and Windows with Visual S
 
 Compilers tested: gcc-11 and clang-12.
 
-Packages are installed with ''apt-get''.
+Packages are installed with `apt-get`.
 
   * Windows
 
-Compilers tested: ''Visual Studio 2019'' with ''Desktop development with C++''.
+Compilers tested: `Visual Studio 2019` with `Desktop development with C++`.
 
-Packages are installed with ''vcpkg''.
+Packages are installed with `vcpkg`.
 
 === Auto formatting
 
-Don't spend to much time about formatting. Continuous integration will automatically create commit to fix them with https://github.com/cheshirekow/cmake_format[cmake-format] and https://clang.llvm.org/docs/ClangFormat.html[clang-format].
+This is done in the `format` workflow. If a file needs to be formatted, an artifact is added with a fix and the current build and next workflows will fail.
 
-This is done in the `format` workflow. If a file need to be formatted, a new commit is added with a fix and the current build and next workflows will fail.
+Formatters use:
+
+  * backend: https://github.com/cheshirekow/cmake_format[cmake-format], https://clang.llvm.org/docs/ClangFormat.html[clang-format],
+  * frontend: https://prettier.io/[prettier], https://eslint.org/[eslint]
 
 GitHub does not support two things:
 
@@ -178,7 +187,8 @@ Lots (maybe too much) of linters are used:
   * c++: https://include-what-you-use.org/[iwyu], http://cppcheck.sourceforge.net/[cppcheck], https://clang.llvm.org/extra/clang-tidy/[clang-tidy].
   * javascript: https://eslint.org/[ESLint],
   * css: https://stylelint.io/[stylelint],
-  * html: https://prettier.io[prettier]
+  * html: https://prettier.io[prettier],
+  * python: https://pylint.org/[pylint], https://flake8.pycqa.org/en/latest/[flake8], http://prospector.landscape.io/en/master/[prospector], http://mypy-lang.org/[mypy]
 
 === Sanitizers
 

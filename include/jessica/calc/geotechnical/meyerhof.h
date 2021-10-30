@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <memory>
 
+#include <cereal/types/memory.hpp>
+
 #include <jessica/compat.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
@@ -16,6 +18,7 @@ template <typename T0, typename T1>
 class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
 {
  public:
+  MeyerhofShallowFoundation() = default;
   MeyerhofShallowFoundation(std::shared_ptr<T0> load,
                             std::shared_ptr<T1> foundation)
       : load_(std::move(load)), foundation_(std::move(foundation))
@@ -34,6 +37,13 @@ class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
   POCO_GET_FUNCTION(Load, load_)
   // cppcheck-suppress redundantAssignment
   POCO_SET_FUNCTION(MeyerhofShallowFoundation, Load, load_)
+
+  template <class Archive>
+  void serialize(Archive& ar)
+  {
+    ar(cereal::make_nvp("load", load_),
+       cereal::make_nvp("foundation", foundation_));
+  }
 
  private:
   std::shared_ptr<T0> load_;

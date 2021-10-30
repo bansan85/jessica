@@ -1,4 +1,5 @@
 #include <cmath>
+#include <fstream>
 #include <memory>
 #include <utility>
 
@@ -8,6 +9,7 @@
 #include <jessica/data/load/decorator_vertical_eccentric.h>
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/cereal/json.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/log_call.h>
@@ -30,6 +32,21 @@ JTEST_NAME(data, VerticalEccentric)  // NOLINT
   const auto load4 = load3->Clone();
   JTEST_EQ(load3->E(), load4->E());
   JTEST_EQ(load3->V(), load4->V());
+
+  {
+    std::ofstream os("VerticalEccentric.cereal.json", std::ios::binary);
+    cereal::JSONOutputArchive oarchive(os);
+    oarchive(*load4);
+  }
+  {
+    std::ifstream os("VerticalEccentric.cereal.json", std::ios::binary);
+    cereal::JSONInputArchive iarchive(os);
+
+    VerticalEccentric load5;
+    iarchive(load5);
+    JTEST_EQ(load5.E(), load4->E());
+    JTEST_EQ(load5.V(), load4->V());
+  }
 }
 
 JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
@@ -51,6 +68,21 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   const auto load4 = load3->Clone();
   JTEST_EQ(load3->E(), load4->E());
   JTEST_EQ(load3->V(), load4->V());
+
+  {
+    std::ofstream os("VerticalEccentric2.cereal", std::ios::binary);
+    cereal::JSONOutputArchive oarchive(os);
+    oarchive(*load4);
+  }
+  {
+    std::ifstream os("VerticalEccentric2.cereal", std::ios::binary);
+    cereal::JSONInputArchive iarchive(os);
+
+    Decorator load5(log, log);
+    iarchive(load5);
+    JTEST_EQ(load5.E(), load4->E());
+    JTEST_EQ(load5.V(), load4->V());
+  }
 }
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
