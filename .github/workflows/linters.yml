@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-12 clang-12
+        run: sudo apt-get update && sudo apt-get install -yq libcereal-dev libfmt-dev libgmock-dev libgtest-dev libspdlog-dev cppcheck iwyu shellcheck clang-tidy-12 clang-12
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
         run: |

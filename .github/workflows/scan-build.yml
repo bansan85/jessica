@@ -26,7 +26,7 @@ jobs:
       - name: Install clang
         run: sudo apt-get update && sudo apt-get install -yq clang-12 clang-tools-11
       - name: Install 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libgtest-dev libspdlog-dev
+        run: sudo apt-get update && sudo apt-get install -yq libcereal-dev libfmt-dev libgmock-dev libgtest-dev libspdlog-dev
       - name: cmake
         run: |
           mkdir build scan-build-output

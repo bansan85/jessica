@@ -16,7 +16,7 @@ jobs:
             cc: /usr/bin/gcc-11
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
-            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY -Wno-analyzer-possible-null-dereference
+            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY -Wno-analyzer-possible-null-dereference -Wno-analyzer-possible-null-argument
             os: ubuntu-latest
           - name: ubuntu-clang
             ar: /usr/bin/llvm-ar-12
@@ -51,7 +51,7 @@ jobs:
       - name: Install 3rdparty
         run: |
           sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && sudo apt-get install -yq libgtest-dev libgmock-dev libspdlog-dev libfmt-dev
+          sudo apt-get update && sudo apt-get install -yq libcereal-dev libfmt-dev libgmock-dev libgtest-dev libspdlog-dev
       - name: cmake
         run: |
           mkdir build
