@@ -1,5 +1,13 @@
 #pragma once
 
+#include <memory>
+#include <utility>
+
+#include <jessica/helper/accessor.h>
+#include <jessica/helper/template.h>
+#include <jessica/util/decorator/end.h>
+#include <jessica/util/decorator/start.h>
+
 #define DECORATOR_START_HEADER(CLASS) \
   DecoratorStart##CLASS : public DecoratorStart<T, DecoratorStart##CLASS<T>>
 

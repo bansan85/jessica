@@ -1,15 +1,17 @@
+// IWYU pragma: no_include <typeinfo>
+// IWYU pragma: no_include "jessica/util/math/hash.h"
+
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <memory>
+#include <utility>
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/poo.h>
-#include <jessica/helper/template.h>
 #include <jessica/test/test.h>
-#include <jessica/util/decorator/end.h>
 #include <jessica/util/decorator/macro.h>
-#include <jessica/util/decorator/start.h>
 
 using namespace jessica;
 

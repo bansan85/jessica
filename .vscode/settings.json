@@ -93,7 +93,15 @@
     "complex": "cpp",
     "coroutine": "cpp",
     "resumable": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "bitset": "cpp",
+    "cinttypes": "cpp",
+    "csignal": "cpp",
+    "queue": "cpp",
+    "shared_mutex": "cpp",
+    "source_location": "cpp",
+    "strstream": "cpp",
+    "valarray": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,

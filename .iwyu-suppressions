@@ -1,4 +1,7 @@
 [
     { include: ["@\"gtest/.*\"", "private", "<jessica/test/test.h>", "public"] },
-    { include: ["@<gtest/.*>", "private", "<jessica/test/test.h>", "public"] }
+    { include: ["@<gtest/.*>", "private", "<jessica/test/test.h>", "public"] },
+    { include: ["@<cereal/archives/json.hpp>", "private", "<jessica/helper/cereal/json.h>", "public"] },
+    { include: ["@<spdlog/sinks/stdout_sinks-inl.h>", "private", "<spdlog/sinks/stdout_sinks.h>", "public"] },
+    { include: ["@<spdlog/spdlog-inl.h>", "private", "<spdlog/spdlog.h>", "public"] }
 ]

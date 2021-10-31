@@ -32,8 +32,11 @@ jobs:
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install 3rdparty
         run: sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
-      - name: Install linkters
-        run: sudo apt-get install -yq cppcheck iwyu shellcheck clang-tidy-12 clang-12
+      - name: Install linters
+        # Need update for iwyu with c++20 support
+        run: |
+          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
+          sudo apt-get update && sudo apt-get install -yq cppcheck shellcheck clang-tidy-12 clang-12 iwyu
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
         run: |
