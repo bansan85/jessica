@@ -59,10 +59,10 @@ jobs:
         uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgArguments: '@${{ github.workspace }}/config/cmake/vcpkg_emscripten.txt'
+          vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_emscripten.txt'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgTriplet: 'wasm32-emscripten'
-          appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_emscripten.txt', github.workspace) ) }}
+          appendedCacheKey: ${{ hashFiles( format('{0}/config/vcpkg_emscripten.txt', github.workspace) ) }}
       - name: cmake
         run: |
           source ./emsdk/emsdk_env.sh

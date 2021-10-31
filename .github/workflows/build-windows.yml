@@ -36,10 +36,10 @@ jobs:
         uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgArguments: '@${{ github.workspace }}/config/cmake/vcpkg_windows.txt'
+          vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_windows.txt'
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgTriplet: 'x64-windows'
-          appendedCacheKey: ${{ hashFiles( format('{0}/config/cmake/vcpkg_windows.txt', github.workspace) ) }}
+          appendedCacheKey: ${{ hashFiles( format('{0}/config/vcpkg_windows.txt', github.workspace) ) }}
       - name: CMake
         run: |
           mkdir "${{ github.workspace }}/build"

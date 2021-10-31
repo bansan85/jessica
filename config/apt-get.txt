@@ -1,0 +1,5 @@
+libcereal-dev
+libfmt-dev
+libgmock-dev
+libgtest-dev
+libspdlog-dev

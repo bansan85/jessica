@@ -47,11 +47,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get update && sudo apt-get install -yq clang-12
+        run: sudo apt-get install -yq clang-12
       - name: Install 3rdparty
         run: |
           sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && sudo apt-get install -yq libcereal-dev libfmt-dev libgmock-dev libgtest-dev libspdlog-dev
+          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: cmake
         run: |
           mkdir build

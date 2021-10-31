@@ -38,13 +38,13 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq libcereal-dev libfmt-dev libgmock-dev libgtest-dev libspdlog-dev
+        run: sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl
+        run: sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get update && sudo apt-get install -yq clang-12 tidy
+        run: sudo apt-get install -yq clang-12 tidy
       - name: cmake
         run: |
           mkdir build
