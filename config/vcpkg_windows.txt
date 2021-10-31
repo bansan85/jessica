@@ -1,3 +1,4 @@
 cereal
 gtest
+restbed
 spdlog
