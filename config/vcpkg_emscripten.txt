@@ -1,3 +1,5 @@
 cereal
+nlohmann-json
 restbed
+simdjson
 spdlog

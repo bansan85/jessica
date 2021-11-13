@@ -38,7 +38,9 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install 3rdparty
-        run: sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+        run: |
+          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
+          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
         run: sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl

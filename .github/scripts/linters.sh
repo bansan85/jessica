@@ -32,7 +32,11 @@ prospector $var || { retval=1 && echo "Failure prospector"; }
 # shellcheck disable=SC2086
 mypy $var || { retval=1 && echo "Failure mypy"; }
 
+mkdir build
+cmake -S . -B build
 cd build || exit 1
+run-clang-tidy-12 '^((?!_deps).)*$' || { retval=1 && echo "Failure clang-tidy"; }
+
 echo "Start Iwyu"
 iwyu_tool -p . -- -Xiwyu --mapping_file="$(pwd)/../.iwyu-suppressions" -Xiwyu --no_fwd_decls > iwyu_tool.log
 echo "End Iwyu"

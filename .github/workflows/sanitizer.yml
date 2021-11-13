@@ -76,7 +76,9 @@ jobs:
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get install -yq clang-12
       - name: Install 3rdparty
-        run: xargs -a config/apt-get.txt sudo apt-get install -yq
+        run: |
+          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
+          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Fix cfi
         if: ${{ matrix.sanitizer == 'cfi' }}
         run: sudo sed -i 's/_M_ptr() .*/\0 __attribute__((__no_sanitize__("cfi"))) /g' /usr/include/c++/*/ext/aligned_buffer.h

@@ -1,4 +1,6 @@
 cereal
 gtest
+nlohmann-json
 restbed
+simdjson
 spdlog

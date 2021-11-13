@@ -31,11 +31,11 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install 3rdparty
-        run: sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
-      - name: Install linters
-        # Need update for iwyu with c++20 support
         run: |
           sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
+          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+      - name: Install linters
+        run: |
           sudo apt-get update && sudo apt-get install -yq cppcheck shellcheck clang-tidy-12 clang-12 iwyu
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
@@ -81,18 +81,11 @@ jobs:
         if: ${{ github.event.workflow_run.head_branch != 'master' }}
         run: |
           npx eslint --ext .js,.js.in,.html,.html.in . --fix || exit 0
-      - name: run-clang-tidy
+      - name: Run linters
         env:
           AR: /usr/bin/llvm-ar-12
           CC: /usr/bin/clang-12
           CXX: /usr/bin/clang++-12
           RANLIB: /usr/bin/llvm-ranlib-12
-        run: |
-          mkdir build
-          cmake -S . -B build
-          cd build || exit 1
-          run-clang-tidy-12
-          cd .. || exit 1
-      - name: Lint
         run: |
           bash ./.github/scripts/linters.sh
