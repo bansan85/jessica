@@ -44,7 +44,7 @@ class JESSICA_DLL_PUBLIC DecoratorStart
   template <class Archive>
   void serialize(Archive& ar)
   {
-    ar(cereal::make_nvp("data", impl_));
+    ar(cereal::make_nvp("decorator", impl_));
   }
 
  private:

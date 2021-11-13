@@ -7,19 +7,48 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR EMSCRIPTEN)
+  set(USE_VCPKG ON)
+endif()
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
+include(FetchContent)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 find_package(spdlog REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
-# Ubuntu/gcc don't have the cereal-config.cmake but emscripten needs it.
-check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
-if(NOT HAVE_CEREAL)
+# Ubuntu/gcc don't have some xxx-config.cmake but vcpkg needs it.
+if(USE_VCPKG)
   find_package(cereal REQUIRED)
+  find_package(simdjson REQUIRED)
+else()
+  check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
+  if(NOT HAVE_CEREAL)
+    message(FATAL_ERROR "Cereal library is needed")
+  endif()
+
+  if(DEFINED ENV{CI} AND CMAKE_CXX_FLAGS MATCHES "^.*-fanalyzer.*$")
+    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-analyzer")
+  endif()
+
+  FetchContent_Declare(
+    simdjson
+    GIT_REPOSITORY https://github.com/simdjson/simdjson.git
+    GIT_SHALLOW TRUE
+    GIT_TAG tags/v1.0.2)
+
+  FetchContent_MakeAvailable(simdjson)
+
+  if(DEFINED ENV{CI} AND CMAKE_CXX_FLAGS MATCHES "^.*-fanalyzer.*$")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+  endif()
 endif()
 
 option(BUILD_COVERAGE "Enable coverage")

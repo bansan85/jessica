@@ -1,8 +1,11 @@
 // IWYU pragma: no_include "jessica/util/math/hash.h"
 
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <cereal/cereal.hpp>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -10,6 +13,8 @@
 
 #include <jessica/data/geotechnical/decorator_foundation_strip.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
+#include <jessica/helper/adapter/json_parser/json_nlohmann.h>
+#include <jessica/helper/adapter/json_parser/json_simdjson.h>
 #include <jessica/helper/cereal/json.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/log_call.h>
@@ -40,6 +45,27 @@ JTEST_NAME(data, FoundationStrip)  // NOLINT
     iarchive(foundation4);
     JTEST_EQ(foundation4.B(), foundation3->B());
   }
+
+  {
+    JsonNlohmann parser;
+    parser.ReadFile("FoundationStrip1.cereal.json");
+    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+                    nullptr),
+             1.);
+    JsonNlohmann parser2 =
+        parser.Set(std::vector<std::string>{"value0", "b"}, "2.0"_json);
+    JTEST_EQ(
+        strtod(parser2.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+               nullptr),
+        2.);
+  }
+  {
+    JsonSimdjson parser;
+    parser.ReadFile("FoundationStrip1.cereal.json");
+    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+                    nullptr),
+             1.);
+  }
 }
 
 JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
@@ -69,6 +95,27 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
     Decorator foundation4(log, log);
     iarchive(foundation4);
     JTEST_EQ(foundation4.B(), foundation3->B());
+  }
+
+  {
+    JsonNlohmann parser;
+    parser.ReadFile("FoundationStrip2.cereal.json");
+    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+                    nullptr),
+             1.);
+    JsonNlohmann parser2 =
+        parser.Set(std::vector<std::string>{"value0", "b"}, "2.0"_json);
+    JTEST_EQ(
+        strtod(parser2.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+               nullptr),
+        2.);
+  }
+  {
+    JsonSimdjson parser;
+    parser.ReadFile("FoundationStrip2.cereal.json");
+    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "b"}).c_str(),
+                    nullptr),
+             1.);
   }
 }
 
