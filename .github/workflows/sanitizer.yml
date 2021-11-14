@@ -86,7 +86,7 @@ jobs:
         run: |
           mkdir build
           cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -fno-omit-frame-pointer -g -O0 ${{ matrix.cxx_flags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.ld_flags }} -Wl,-O0" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
-          cmake --build build/ --target all
+          cmake --build build/ --target all --config Release
       - name: ctest
         shell: bash
         run: |

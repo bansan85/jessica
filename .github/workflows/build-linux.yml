@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir build
           cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}" -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
-          cmake --build build/ --target all
+          cmake --build build/ --target all --config Release
       - name: ctest
         shell: bash
         run: |

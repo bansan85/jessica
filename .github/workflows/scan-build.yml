@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir build scan-build-output
           scan-build-12 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-12 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-12 -DCMAKE_AR=/usr/bin/llvm-ar-12 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-12
-          scan-build-12 -o scan-build-output cmake --build build/ --target all
+          scan-build-12 -o scan-build-output cmake --build build/ --target all --config Release
       - name: Publish result
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:

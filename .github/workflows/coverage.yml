@@ -51,7 +51,7 @@ jobs:
         run: |
           mkdir build
           cmake -S . -B build -DBUILD_COVERAGE:BOOL=ON -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}"
-          cmake --build build/ --target all
+          cmake --build build/ --target all --config Debug
       - name: ctest
         run: |
           cd build || exit 1
