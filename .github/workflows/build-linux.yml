@@ -16,14 +16,12 @@ jobs:
             cc: /usr/bin/gcc-11
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
-            cxx_flags: -fanalyzer -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY -Wno-analyzer-possible-null-dereference -Wno-analyzer-possible-null-argument
             os: ubuntu-latest
           - name: ubuntu-clang
             ar: /usr/bin/llvm-ar-12
             cc: /usr/bin/clang-12
             cxx: /usr/bin/clang++-12
             ranlib: /usr/bin/llvm-ranlib-12
-            cxx_flags: -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY
             os: ubuntu-latest
     steps:
       - name: Stop if format failed
@@ -55,7 +53,7 @@ jobs:
       - name: cmake
         run: |
           mkdir build
-          cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}" -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
+          cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
           cmake --build build/ --target all --config Release
       - name: ctest
         shell: bash
