@@ -64,14 +64,14 @@ To build for a specific version of GCC:
 
 [source,sh]
 ----
-cmake -S . -B build/gcc -DCMAKE_C_COMPILER="/usr/bin/gcc-11" -DCMAKE_CXX_COMPILER="/usr/bin/g++-11" -DCMAKE_AR="/usr/bin/ar" -DCMAKE_RANLIB="/usr/bin/ranlib" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
+cmake -S . -B build/gcc -DCMAKE_C_COMPILER="/usr/bin/gcc-11" -DCMAKE_CXX_COMPILER="/usr/bin/g++-11" -DCMAKE_AR="/usr/bin/ar" -DCMAKE_RANLIB="/usr/bin/ranlib" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL"
 ----
 
 and for Clang:
 
 [source,sh]
 ----
-cmake -S . -B build/clang -DCMAKE_C_COMPILER="/usr/bin/clang-12" -DCMAKE_CXX_COMPILER="/usr/bin/clang++-12" -DCMAKE_AR="/usr/bin/llvm-ar-12" -DCMAKE_RANLIB="/usr/bin/llvm-ranlib-12" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
+cmake -S . -B build/clang -DCMAKE_C_COMPILER="/usr/bin/clang-12" -DCMAKE_CXX_COMPILER="/usr/bin/clang++-12" -DCMAKE_AR="/usr/bin/llvm-ar-12" -DCMAKE_RANLIB="/usr/bin/llvm-ranlib-12" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL"
 ----
 
 === Windows
@@ -84,7 +84,7 @@ From PowerShell:
 .\vcpkg\vcpkg.exe install "@.\config\cmake\vcpkg_windows.txt" --triplet=x64-windows
 .\vcpkg\vcpkg.exe integrate install
 mkdir -p build\windows
-cmake -S . -B build\windows -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
+cmake -S . -B build\windows -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE=.\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL"
 cmake --build build\windows --target ALL_BUILD --config Debug -j9
 cd build\windows
 ctest -C Debug --output-on-failure
