@@ -23,17 +23,19 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
-      - name: Install clang
-        run: sudo apt-get update && sudo apt-get install -yq clang-12 clang-tools-12
-      - name: Install 3rdparty
+      - name: Update apt-get
         run: |
-          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
+      - name: Install clang
+        run: sudo apt-get install -yq clang-13 llvm-13 clang-tools-13
+      - name: Install 3rdparty
+        run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: cmake
         run: |
           mkdir build scan-build-output
-          scan-build-12 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-12 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-12 -DCMAKE_AR=/usr/bin/llvm-ar-12 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-12
-          scan-build-12 -o scan-build-output cmake --build build/ --target all --config Release
+          scan-build-13 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-13 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-13 -DCMAKE_AR=/usr/bin/llvm-ar-13 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-13
+          scan-build-13 -o scan-build-output cmake --build build/ --target all --config Release
       - name: Publish result
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:

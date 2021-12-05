@@ -17,10 +17,10 @@ jobs:
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
           - name: coverage-clang
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -37,16 +37,18 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
-      - name: Install 3rdparty
+      - name: Update apt-get
         run: |
-          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
+      - name: Install 3rdparty
+        run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
         run: sudo apt-get install -yq g++-11 gcc-11 libdatetime-perl libdatetime-format-w3cdtf-perl
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get install -yq clang-12 tidy
+        run: sudo apt-get install -yq clang-13 llvm-13 tidy
       - name: cmake
         run: |
           mkdir build
@@ -73,9 +75,9 @@ jobs:
         if: contains(matrix.cc, 'clang') && contains('master', github.event.workflow_run.head_branch)
         run: |
           shopt -s globstar dotglob
-          llvm-profdata-12 merge -output=code.profdata **/*.profraw
+          llvm-profdata-13 merge -output=code.profdata **/*.profraw
           mkdir build/coverage
-          llvm-cov-12 show -use-color --format html -instr-profile=code.profdata ./build/test/backend/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
+          llvm-cov-13 show -use-color --format html -instr-profile=code.profdata ./build/test/backend/calc/geotechnical/test_calc_meyerhof -output-dir=build/coverage
           find build/coverage -name "*.html" -exec tidy -i -m --doctype html5 --drop-empty-elements no {} \;
           find build/coverage -name "*.html" -exec sed -i -r "s#Created: .*-.*-.* .*:.*h4#</h4#g" {} \;
       - name: Publish test

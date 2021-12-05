@@ -30,13 +30,15 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
-      - name: Install 3rdparty
+      - name: Update apt-get
         run: |
-          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
+      - name: Install 3rdparty
+        run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install linters
         run: |
-          sudo apt-get update && sudo apt-get install -yq cppcheck shellcheck clang-tidy-12 clang-12 iwyu
+          sudo apt-get install -yq cppcheck shellcheck clang-tidy-13 clang-13 iwyu
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
         run: |
@@ -83,9 +85,9 @@ jobs:
           npx eslint --ext .js,.js.in,.html,.html.in . --fix || exit 0
       - name: Run linters
         env:
-          AR: /usr/bin/llvm-ar-12
-          CC: /usr/bin/clang-12
-          CXX: /usr/bin/clang++-12
-          RANLIB: /usr/bin/llvm-ranlib-12
+          AR: /usr/bin/llvm-ar-13
+          CC: /usr/bin/clang-13
+          CXX: /usr/bin/clang++-13
+          RANLIB: /usr/bin/llvm-ranlib-13
         run: |
           bash ./.github/scripts/linters.sh

@@ -45,8 +45,12 @@ jobs:
           gpg --version
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.ENCRYPT_PASSWORD }}" --output .github/encrypted/github-ci-private.key .github/encrypted/github-ci-private.key.gpg
           gpg --import .github/encrypted/github-ci-private.key
+      - name: Update apt-get
+        run: |
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
       - name: 3rdparty
-        run: sudo apt-get update && sudo apt-get install -yq clang-12 clang-format-12
+        run: sudo apt-get install -yq clang-13 llvm-13 clang-format-13
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:

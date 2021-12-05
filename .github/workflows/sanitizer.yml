@@ -32,32 +32,32 @@ jobs:
             cxx: /usr/bin/g++-11
             ranlib: /usr/bin/ranlib
           - sanitizer: address
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
           - sanitizer: thread
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
           - sanitizer: leak
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
           - sanitizer: undefined
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
           - sanitizer: cfi
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
             cxx_flags: -flto=thin -fvisibility=hidden -fno-sanitize-trap=cfi
             ld_flags: -fuse-ld=gold
-            ranlib: /usr/bin/llvm-ranlib-12
+            ranlib: /usr/bin/llvm-ranlib-13
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -69,16 +69,18 @@ jobs:
         with:
           submodules: recursive
           ref: ${{ github.event.workflow_run.head_commit.id }}
+      - name: Update apt-get
+        run: |
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11
+        run: sudo apt-get install -yq g++-11 gcc-11
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get install -yq clang-12
+        run: sudo apt-get install -yq clang-13 llvm-13
       - name: Install 3rdparty
-        run: |
-          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+        run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Fix cfi
         if: ${{ matrix.sanitizer == 'cfi' }}
         run: sudo sed -i 's/_M_ptr() .*/\0 __attribute__((__no_sanitize__("cfi"))) /g' /usr/include/c++/*/ext/aligned_buffer.h

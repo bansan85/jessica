@@ -12,7 +12,7 @@ done
 for i in {**/*.cc,**/*.h}
 do
   echo "clang-format $i... "
-  clang-format-12 -style=file "$i" -i
+  clang-format-13 -style=file "$i" -i
 done
 
 echo "prettier..."

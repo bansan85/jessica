@@ -18,10 +18,10 @@ jobs:
             ranlib: /usr/bin/ranlib
             os: ubuntu-latest
           - name: ubuntu-clang
-            ar: /usr/bin/llvm-ar-12
-            cc: /usr/bin/clang-12
-            cxx: /usr/bin/clang++-12
-            ranlib: /usr/bin/llvm-ranlib-12
+            ar: /usr/bin/llvm-ar-13
+            cc: /usr/bin/clang-13
+            cxx: /usr/bin/clang++-13
+            ranlib: /usr/bin/llvm-ranlib-13
             os: ubuntu-latest
     steps:
       - name: Stop if format failed
@@ -40,18 +40,21 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
+      - name: Update apt-get
+        run: |
+          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
+          sudo apt-get update
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get update && sudo apt-get install -yq g++-11 gcc-11
+        run: sudo apt-get install -yq g++-11 gcc-11
       - name: Install clang
         if: contains(matrix.cc, 'clang')
-        run: sudo apt-get install -yq clang-12
+        run: sudo apt-get install -yq clang-13 llvm-13
       - name: Install 3rdparty
-        run: |
-          sudo sed -i "s/focal/hirsute/g" /etc/apt/sources.list
-          sudo apt-get update && xargs -a config/apt-get.txt sudo apt-get install -yq
+        run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: cmake
         run: |
+          ls /usr/bin
           mkdir build
           cmake -S . -B build -DCMAKE_C_COMPILER="${{ matrix.cc }}" -DCMAKE_CXX_COMPILER="${{ matrix.cxx }}" -DCMAKE_AR="${{ matrix.ar }}" -DCMAKE_RANLIB="${{ matrix.ranlib }}" -DCMAKE_CXX_FLAGS="-DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY"
           cmake --build build/ --target all --config Release
