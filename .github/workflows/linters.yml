@@ -43,6 +43,7 @@ jobs:
         # Fixed in spdlog 1.8.5
         run: |
           sudo sed -i "s/set_formatter(std::move(f));/\0break;/g" /usr/include/spdlog/logger-inl.h
+          sudo sed -i "s/buffer\[len - 1.*/\0 \/\/NOLINT/g" /usr/include/rapidjson/internal/dtoa.h
       - name: Set up Python "3.9"
         uses: actions/setup-python@v2
         with:
