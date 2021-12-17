@@ -5,12 +5,12 @@ add_executable(test_load_vertical_eccentric
 
 target_link_libraries(
   test_geotechnical_foundation_strip
-  PRIVATE GTest::GTest GTest::Main spdlog::spdlog_header_only
-          jessica::header_only)
+  PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
+          simdjson::simdjson spdlog::spdlog_header_only jessica::header_only)
 target_link_libraries(
   test_load_vertical_eccentric
-  PRIVATE GTest::GTest GTest::Main spdlog::spdlog_header_only
-          jessica::header_only)
+  PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
+          simdjson::simdjson spdlog::spdlog_header_only jessica::header_only)
 if(cereal_DIR)
   target_link_libraries(test_geotechnical_foundation_strip PRIVATE cereal)
   target_link_libraries(test_load_vertical_eccentric PRIVATE cereal)

@@ -3,9 +3,12 @@
 
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <cereal/cereal.hpp>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -17,6 +20,8 @@
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/decorator_vertical_eccentric.h>
 #include <jessica/data/load/vertical_eccentric.h>
+#include <jessica/helper/adapter/json_parser/json_nlohmann.h>
+#include <jessica/helper/adapter/json_parser/json_simdjson.h>
 #include <jessica/helper/cereal/json.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/log_call.h>
@@ -66,6 +71,64 @@ JTEST_NAME(data, CalcMeyehof)  // NOLINT
     iarchive(calc4);
     JTEST_EQ(calc4.B_(), calc3->B_());
     JTEST_EQ(calc4.Qref(), calc3->Qref());
+  }
+
+  {
+    JsonNlohmann parser;
+    parser.ReadFile("MeyerhofShallowFoundation1.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.5);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
+    JsonNlohmann parser2 =
+        parser.Set(std::vector<std::string>{"value0", "load", "e"}, "0.3"_json)
+            .Set(std::vector<std::string>{"value0", "load", "v"}, "100050"_json)
+            .Set(std::vector<std::string>{"value0", "foundation", "b"},
+                 "1.05"_json);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "e"})
+                        .c_str(),
+                    nullptr),
+             0.3);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "v"})
+                        .c_str(),
+                    nullptr),
+             100050.);
+    JTEST_EQ(
+        strtod(
+            parser2.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                .c_str(),
+            nullptr),
+        1.05);
+  }
+  {
+    JsonSimdjson parser;
+    parser.ReadFile("MeyerhofShallowFoundation1.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.5);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
   }
 }
 
@@ -172,6 +235,64 @@ JTEST_NAME(data, CalcMeyehofMainDecorator)  // NOLINT
     JTEST_EQ(calc4.B_(), calc3->B_());
     JTEST_EQ(calc4.Qref(), calc3->Qref());
   }
+
+  {
+    JsonNlohmann parser;
+    parser.ReadFile("MeyerhofShallowFoundation3.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.5);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
+    JsonNlohmann parser2 =
+        parser.Set(std::vector<std::string>{"value0", "load", "e"}, "0.3"_json)
+            .Set(std::vector<std::string>{"value0", "load", "v"}, "100050"_json)
+            .Set(std::vector<std::string>{"value0", "foundation", "b"},
+                 "1.05"_json);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "e"})
+                        .c_str(),
+                    nullptr),
+             0.3);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "v"})
+                        .c_str(),
+                    nullptr),
+             100050.);
+    JTEST_EQ(
+        strtod(
+            parser2.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                .c_str(),
+            nullptr),
+        1.05);
+  }
+  {
+    JsonSimdjson parser;
+    parser.ReadFile("MeyerhofShallowFoundation3.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.5);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
+  }
 }
 
 JTEST_NAME(data, CalcMeyehofChildrenAccess)  // NOLINT
@@ -209,6 +330,64 @@ JTEST_NAME(data, CalcMeyehofChildrenAccess)  // NOLINT
     iarchive(calc3);
     JTEST_EQ(calc3.B_(), calc2->B_());
     JTEST_EQ(calc3.Qref(), calc2->Qref());
+  }
+
+  {
+    JsonNlohmann parser;
+    parser.ReadFile("MeyerhofShallowFoundation4.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.25);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
+    JsonNlohmann parser2 =
+        parser.Set(std::vector<std::string>{"value0", "load", "e"}, "0.3"_json)
+            .Set(std::vector<std::string>{"value0", "load", "v"}, "100050"_json)
+            .Set(std::vector<std::string>{"value0", "foundation", "b"},
+                 "1.05"_json);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "e"})
+                        .c_str(),
+                    nullptr),
+             0.3);
+    JTEST_EQ(strtod(parser2.Get(std::vector<std::string>{"value0", "load", "v"})
+                        .c_str(),
+                    nullptr),
+             100050.);
+    JTEST_EQ(
+        strtod(
+            parser2.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                .c_str(),
+            nullptr),
+        1.05);
+  }
+  {
+    JsonSimdjson parser;
+    parser.ReadFile("MeyerhofShallowFoundation4.cereal.json");
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "e"}).c_str(),
+            nullptr),
+        0.25);
+    JTEST_EQ(
+        strtod(
+            parser.Get(std::vector<std::string>{"value0", "load", "v"}).c_str(),
+            nullptr),
+        100000.);
+    JTEST_EQ(
+        strtod(parser.Get(std::vector<std::string>{"value0", "foundation", "b"})
+                   .c_str(),
+               nullptr),
+        1.);
   }
 }
 
