@@ -33,11 +33,6 @@ else()
     message(FATAL_ERROR "Cereal library is needed")
   endif()
 
-  if(DEFINED ENV{CI} AND CMAKE_CXX_FLAGS MATCHES "^.*-fanalyzer.*$")
-    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-analyzer")
-  endif()
-
   FetchContent_Declare(
     simdjson
     GIT_REPOSITORY https://github.com/simdjson/simdjson.git
@@ -45,10 +40,40 @@ else()
     GIT_TAG tags/v1.0.2)
 
   FetchContent_MakeAvailable(simdjson)
+endif()
 
-  if(DEFINED ENV{CI} AND CMAKE_CXX_FLAGS MATCHES "^.*-fanalyzer.*$")
+find_library(RESTBED_LIB restbed)
+if(NOT RESTBED_LIB)
+  set(BUILD_SSL
+      OFF
+      CACHE INTERNAL "")
+  set(BUILD_TESTS
+      OFF
+      CACHE INTERNAL "")
+  set(BUILD_SHARED
+      OFF
+      CACHE INTERNAL "")
+
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
+  endif()
+
+  FetchContent_Declare(
+    restbed
+    GIT_REPOSITORY https://github.com/bansan85/restbed.git
+    GIT_SHALLOW TRUE
+    GIT_TAG tags/4.8a)
+
+  FetchContent_MakeAvailable(restbed)
+
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
     set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
   endif()
+
+  include_directories(system "${restbed_SOURCE_DIR}/source")
+  link_directories(${restbed_BINARY_DIR})
+  set(RESTBED_LIB "restbed")
 endif()
 
 option(BUILD_COVERAGE "Enable coverage")
@@ -78,13 +103,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wno-weak-vtables
     -Wno-c99-extensions
     -Wno-global-constructors
-    -Wno-unneeded-member-function)
+    -Wno-unneeded-member-function
+    -Wno-deprecated-declarations)
   check_cxx_compiler_flag("-Wno-return-std-move-in-c++11"
                           COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
     add_compile_options(-Wno-return-std-move-in-c++11)
   endif()
-  check_cxx_compiler_flag("-Wno-reserved-identifier"
+  check_cxx_compiler_flag("-Wreserved-identifier"
                           COMPILER_SUPPORTS_reserved_identifier)
   if(COMPILER_SUPPORTS_reserved_identifier)
     add_compile_options(-Wno-reserved-identifier)
@@ -104,7 +130,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     endif()
   endif(BUILD_COVERAGE)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+  add_compile_options(-Wall -Werror -Wextra -Wpedantic
+                      -Wno-deprecated-declarations)
   if(BUILD_COVERAGE)
     add_compile_options(-O0 --coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
@@ -117,6 +144,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /WX
     /wd4251
     /wd4275
+    /wd4355
     /wd4514
     /wd4582
     /wd4623
@@ -125,6 +153,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd4668
     /wd4710
     /wd4820
+    /wd4996
+    /wd5204
+    /wd5220
     /wd5026
     /wd5027
     /wd5039

@@ -91,6 +91,10 @@ IncludeCategories:
     Priority: 2
     SortPriority: 0
     CaseSensitive:   true
+  - Regex: '<restbed>'
+    Priority: 2
+    SortPriority: 0
+    CaseSensitive:   true
   - Regex: '^<.*'
     Priority: 1
     SortPriority: 0

@@ -4,5 +4,6 @@
     { include: ["@<cereal/archives/json.hpp>", "private", "<jessica/helper/cereal/json.h>", "public"] },
     { include: ["@<nlohmann/json.hpp>", "private", "<jessica/helper/adapter/json_parser/json_nlohmann.h>", "public"] },
     { include: ["@<spdlog/sinks/stdout_sinks-inl.h>", "private", "<spdlog/sinks/stdout_sinks.h>", "public"] },
-    { include: ["@<spdlog/spdlog-inl.h>", "private", "<spdlog/spdlog.h>", "public"] }
+    { include: ["@<spdlog/spdlog-inl.h>", "private", "<spdlog/spdlog.h>", "public"] },
+    { include: ["@<corvusoft/restbed/.*>", "private", "<restbed>", "public"] }
 ]

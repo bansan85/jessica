@@ -2,7 +2,6 @@ libcereal-dev
 libfmt-dev
 libgmock-dev
 libgtest-dev
-librestbed-dev
 libsimdjson-dev
 libspdlog-dev
 nlohmann-json3-dev
