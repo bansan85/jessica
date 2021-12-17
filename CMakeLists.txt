@@ -55,6 +55,11 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
     add_compile_options(-Wno-return-std-move-in-c++11)
   endif()
+  check_cxx_compiler_flag("-Wno-reserved-identifier"
+                          COMPILER_SUPPORTS_reserved_identifier)
+  if(COMPILER_SUPPORTS_reserved_identifier)
+    add_compile_options(-Wno-reserved-identifier)
+  endif()
   if(BUILD_COVERAGE)
     add_compile_options(-O0 -fprofile-instr-generate -fcoverage-mapping -mllvm
                         -runtime-counter-relocation)
