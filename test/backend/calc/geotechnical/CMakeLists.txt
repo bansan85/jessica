@@ -2,8 +2,13 @@ add_executable(test_calc_meyerhof ${CMAKE_CURRENT_SOURCE_DIR}/meyerhof.cc)
 
 target_link_libraries(
   test_calc_meyerhof
-  PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
-          simdjson::simdjson spdlog::spdlog_header_only jessica::header_only)
+  PRIVATE GTest::GTest
+          GTest::Main
+          nlohmann_json::nlohmann_json
+          ${RESTBED_LIB}
+          simdjson::simdjson
+          spdlog::spdlog_header_only
+          jessica::header_only)
 if(cereal_DIR)
   target_link_libraries(test_calc_meyerhof PRIVATE cereal)
 endif()

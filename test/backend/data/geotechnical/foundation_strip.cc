@@ -122,7 +122,7 @@ JTEST_NAME(data, FoundationStripDecorator)  // NOLINT
   }
 }
 
-JTEST_NAME(data, WebServices)  // NOLINT
+JTEST_NAME(data, FoundationStripWebServicesRestBed)  // NOLINT
 {
   restbed::Service service;
 
