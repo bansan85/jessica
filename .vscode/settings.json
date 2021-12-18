@@ -101,7 +101,13 @@
     "shared_mutex": "cpp",
     "source_location": "cpp",
     "strstream": "cpp",
-    "valarray": "cpp"
+    "valarray": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "*.ipp": "cpp",
+    "restbed": "cpp",
+    "hash_map": "cpp",
+    "hash_set": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,

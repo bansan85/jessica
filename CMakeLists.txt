@@ -7,19 +7,73 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR EMSCRIPTEN)
+  set(USE_VCPKG ON)
+endif()
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
+include(FetchContent)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 find_package(spdlog REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
-# Ubuntu/gcc don't have the cereal-config.cmake but emscripten needs it.
-check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
-if(NOT HAVE_CEREAL)
+# Ubuntu/gcc don't have some xxx-config.cmake but vcpkg needs it.
+if(USE_VCPKG)
   find_package(cereal REQUIRED)
+  find_package(simdjson REQUIRED)
+else()
+  check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
+  if(NOT HAVE_CEREAL)
+    message(FATAL_ERROR "Cereal library is needed")
+  endif()
+
+  FetchContent_Declare(
+    simdjson
+    GIT_REPOSITORY https://github.com/simdjson/simdjson.git
+    GIT_SHALLOW TRUE
+    GIT_TAG tags/v1.0.2)
+
+  FetchContent_MakeAvailable(simdjson)
+endif()
+
+find_library(RESTBED_LIB restbed)
+if(NOT RESTBED_LIB)
+  set(BUILD_SSL
+      OFF
+      CACHE INTERNAL "")
+  set(BUILD_TESTS
+      OFF
+      CACHE INTERNAL "")
+  set(BUILD_SHARED
+      OFF
+      CACHE INTERNAL "")
+
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
+  endif()
+
+  FetchContent_Declare(
+    restbed
+    GIT_REPOSITORY https://github.com/bansan85/restbed.git
+    GIT_SHALLOW TRUE
+    GIT_TAG tags/4.8a)
+
+  FetchContent_MakeAvailable(restbed)
+
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+  endif()
+
+  include_directories(system "${restbed_SOURCE_DIR}/source")
+  link_directories(${restbed_BINARY_DIR})
+  set(RESTBED_LIB "restbed")
 endif()
 
 option(BUILD_COVERAGE "Enable coverage")
@@ -49,11 +103,17 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     -Wno-weak-vtables
     -Wno-c99-extensions
     -Wno-global-constructors
-    -Wno-unneeded-member-function)
+    -Wno-unneeded-member-function
+    -Wno-deprecated-declarations)
   check_cxx_compiler_flag("-Wno-return-std-move-in-c++11"
                           COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
   if(COMPILER_SUPPORTS_RETURN_STD_MOVE_IN_C_11)
     add_compile_options(-Wno-return-std-move-in-c++11)
+  endif()
+  check_cxx_compiler_flag("-Wreserved-identifier"
+                          COMPILER_SUPPORTS_reserved_identifier)
+  if(COMPILER_SUPPORTS_reserved_identifier)
+    add_compile_options(-Wno-reserved-identifier)
   endif()
   if(BUILD_COVERAGE)
     add_compile_options(-O0 -fprofile-instr-generate -fcoverage-mapping -mllvm
@@ -70,7 +130,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     endif()
   endif(BUILD_COVERAGE)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+  add_compile_options(-Wall -Werror -Wextra -Wpedantic
+                      -Wno-deprecated-declarations)
   if(BUILD_COVERAGE)
     add_compile_options(-O0 --coverage)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
@@ -83,6 +144,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /WX
     /wd4251
     /wd4275
+    /wd4355
     /wd4514
     /wd4582
     /wd4623
@@ -91,6 +153,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd4668
     /wd4710
     /wd4820
+    /wd4996
+    /wd5204
+    /wd5220
     /wd5026
     /wd5027
     /wd5039

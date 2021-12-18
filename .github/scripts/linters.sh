@@ -35,6 +35,9 @@ mypy $var || { retval=1 && echo "Failure mypy"; }
 mkdir build
 cmake -S . -B build
 cd build || exit 1
+sed -i -e 's#-I\(\S*build\S*_deps\S*\)#-isystem \1#g' compile_commands.json
+sed -i "1N;1N;$!N;N;s/^{\n[^\n]*directory[^\n]*_deps[^\n]*\n[^\n]*command[^\n]*\n[^\n]*file[^\n]*\n},//;P;D" compile_commands.json
+sed -i "1N;1N;$!N;N;s/^{\n[^\n]*directory[^\n]*_deps[^\n]*\n[^\n]*command[^\n]*\n[^\n]*file[^\n]*\n},//;P;D" compile_commands.json
 run-clang-tidy-13 '^((?!_deps).)*$' || { retval=1 && echo "Failure clang-tidy"; }
 
 echo "Start Iwyu"
