@@ -13,3 +13,17 @@
   CLASS& operator=(const CLASS&) = delete; \
   CLASS& operator=(CLASS&&) = delete;      \
   virtual ~CLASS() = default;
+
+#define RULE_OF_FIVE_NO_COPY(CLASS)        \
+  CLASS(const CLASS&) = delete;            \
+  CLASS(CLASS&&) = delete;                 \
+  CLASS& operator=(const CLASS&) = delete; \
+  CLASS& operator=(CLASS&&) = delete;      \
+  ~CLASS() = default;
+
+#define RULE_OF_FIVE_NO_COPY_VIRTUAL(CLASS) \
+  CLASS(const CLASS&) = delete;             \
+  CLASS(CLASS&&) = delete;                  \
+  CLASS& operator=(const CLASS&) = delete;  \
+  CLASS& operator=(CLASS&&) = delete;       \
+  virtual ~CLASS() = default;
