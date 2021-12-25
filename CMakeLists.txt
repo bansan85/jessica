@@ -43,7 +43,13 @@ else()
 endif()
 
 find_library(RESTBED_LIB restbed)
-if(NOT RESTBED_LIB)
+if(RESTBED_LIB)
+  message(STATUS "Found Restbed: TRUE")
+  find_path(RESTBED_INCLUDE_DIR restbed)
+  include_directories(system "${RESTBED_INCLUDE_DIR}")
+else()
+  message(STATUS "Restbed library not found. Build it from source.")
+
   set(BUILD_SSL
       OFF
       CACHE INTERNAL "")
