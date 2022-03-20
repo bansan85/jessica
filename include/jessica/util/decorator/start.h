@@ -5,7 +5,7 @@
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
-#include <jessica/helper/cereal/memory.h>
+#include <jessica/helper/clean/cereal/memory.h>
 #include <jessica/helper/poo.h>
 #include <jessica/helper/template.h>
 

@@ -9,8 +9,5 @@ target_link_libraries(
           simdjson::simdjson
           spdlog::spdlog_header_only
           jessica::header_only)
-if(cereal_DIR)
-  target_link_libraries(test_calc_meyerhof PRIVATE cereal)
-endif()
 
 add_test(NAME TestCalcMeyerhof COMMAND test_calc_meyerhof)

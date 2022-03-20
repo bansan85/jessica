@@ -3,12 +3,11 @@
 #include <cstdint>
 #include <memory>
 
-#include <cereal/types/memory.hpp>
-
 #include <jessica/compat.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/clean/cereal/cereal.h>
 #include <jessica/helper/template.h>
 #include <jessica/util/decorator/macro.h>
 

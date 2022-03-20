@@ -10,17 +10,16 @@
 #include <utility>
 #include <vector>
 
-#include <cereal/cereal.hpp>
-#include <spdlog/sinks/stdout_sinks.h>
-#include <spdlog/spdlog.h>
-
 #include <jessica/data/geotechnical/decorator_foundation_strip.h>
 #include <jessica/data/geotechnical/foundation_strip.h>
 #include <jessica/helper/adapter/json_parser/json_nlohmann.h>
 #include <jessica/helper/adapter/json_parser/json_simdjson.h>
 #include <jessica/helper/adapter/webservice/restbed.h>
-#include <jessica/helper/cereal/json.h>
 #include <jessica/helper/cfi.h>
+#include <jessica/helper/clean/cereal/cereal.h>
+#include <jessica/helper/clean/cereal/json.h>
+#include <jessica/helper/clean/spdlog/spdlog.h>
+#include <jessica/helper/clean/spdlog/stdout_sinks.h>
 #include <jessica/test/test.h>
 #include <jessica/util/decorator/log_call.h>
 #include <jessica/util/decorator/log_duration.h>

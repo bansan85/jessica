@@ -4,9 +4,8 @@
 #include <cstdint>
 #include <memory>
 
-#include <spdlog/spdlog.h>
-
 #include <jessica/helper/cfi.h>
+#include <jessica/helper/clean/spdlog/spdlog.h>
 #include <jessica/helper/poo.h>
 
 namespace jessica

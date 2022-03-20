@@ -6,6 +6,7 @@
 
 #include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
+#include <jessica/helper/clean/cereal/cereal.h>
 #include <jessica/helper/template.h>
 #include <jessica/util/decorator/macro.h>
 

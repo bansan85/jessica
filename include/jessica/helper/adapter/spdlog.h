@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <spdlog/spdlog.h>
+#include <jessica/helper/clean/spdlog/spdlog.h>
 
 namespace jessica
 {

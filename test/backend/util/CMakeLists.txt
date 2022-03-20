@@ -4,8 +4,5 @@ target_link_libraries(
   test_util_decorator
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
           simdjson::simdjson jessica::header_only)
-if(cereal_DIR)
-  target_link_libraries(test_util_decorator PRIVATE cereal)
-endif()
 
 add_test(NAME TestUtilDecorator COMMAND test_util_decorator)

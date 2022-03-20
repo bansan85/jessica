@@ -57,7 +57,7 @@ else()
       OFF
       CACHE INTERNAL "")
   set(BUILD_SHARED
-      OFF
+      ON
       CACHE INTERNAL "")
 
   if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
@@ -79,7 +79,7 @@ else()
 
   include_directories(system "${restbed_SOURCE_DIR}/source")
   link_directories(${restbed_BINARY_DIR})
-  set(RESTBED_LIB "restbed")
+  set(RESTBED_LIB "restbed-shared")
 endif()
 
 option(BUILD_COVERAGE "Enable coverage")
@@ -166,7 +166,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd5027
     /wd5039
     /wd5045
-    /EHsc)
+    /EHsc
+    /showIncludes)
 else()
   message(WARNING "${CMAKE_CXX_COMPILER_ID} is unknown")
 endif()

@@ -1,10 +1,13 @@
 [
     { include: ["@\"gtest/.*\"", "private", "<jessica/test/test.h>", "public"] },
     { include: ["@<gtest/.*>", "private", "<jessica/test/test.h>", "public"] },
-    { include: ["@<cereal/archives/json.hpp>", "private", "<jessica/helper/cereal/json.h>", "public"] },
-    { include: ["@<nlohmann/json.hpp>", "private", "<jessica/helper/adapter/json_parser/json_nlohmann.h>", "public"] },
-    { include: ["@<spdlog/sinks/stdout_sinks-inl.h>", "private", "<spdlog/sinks/stdout_sinks.h>", "public"] },
-    { include: ["@<spdlog/spdlog-inl.h>", "private", "<spdlog/spdlog.h>", "public"] },
+    { include: ["@<bits/exception.h>", "private", "<exception>", "public"] },
+    { include: ["@<cereal/archives/json.hpp>", "private", "<jessica/helper/clean/cereal/json.h>", "public"] },
+    { include: ["@<cereal/cereal.hpp>", "private", "<jessica/helper/clean/cereal/cereal.h>", "public"] },
+    { include: ["@<cereal/types/memory.hpp>", "private", "<jessica/helper/clean/cereal/memory.h>", "public"] },
     { include: ["@<corvusoft/restbed/.*>", "private", "<restbed>", "public"] },
-    { include: ["@<bits/exception.h>", "private", "<exception>", "public"] }
+    { include: ["@<nlohmann/json.hpp>", "private", "<jessica/helper/adapter/json_parser/json_nlohmann.h>", "public"] },
+    { include: ["@<spdlog/sinks/stdout_sinks-inl.h>", "private", "<jessica/helper/clean/spdlog/stdout_sinks.h>", "public"] },
+    { include: ["@<spdlog/spdlog.h>", "private", "<jessica/helper/clean/spdlog/spdlog.h>", "public"] },
+    { include: ["@<spdlog/spdlog-inl.h>", "private", "<jessica/helper/clean/spdlog/spdlog.h>", "public"] }
 ]
