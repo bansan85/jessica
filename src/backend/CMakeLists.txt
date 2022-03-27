@@ -3,7 +3,7 @@ if(NOT DEFINED EMSCRIPTEN)
   target_sources(jessica PRIVATE jessica/helper/adapter/webservice/restbed.cc)
 endif()
 target_include_directories(jessica PUBLIC ${Jessica_SOURCE_DIR}/include)
-target_link_libraries(jessica PRIVATE ${RESTBED_LIB})
+target_link_libraries(jessica PUBLIC ${RESTBED_LIB})
 
 # Define to build Jessica as a library and not as a header only.
 add_compile_definitions(JESSICA_BUILDING_DLL)

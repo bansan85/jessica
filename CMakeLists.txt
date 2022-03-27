@@ -26,6 +26,8 @@ find_package(nlohmann_json REQUIRED)
 # Ubuntu/gcc don't have some xxx-config.cmake but vcpkg needs it.
 if(USE_VCPKG)
   find_package(cereal REQUIRED)
+  include_directories(system
+                      "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include")
   find_package(simdjson REQUIRED)
 else()
   check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
@@ -42,45 +44,78 @@ else()
   FetchContent_MakeAvailable(simdjson)
 endif()
 
-find_library(RESTBED_LIB restbed)
-if(RESTBED_LIB)
-  message(STATUS "Found Restbed: TRUE")
-  find_path(RESTBED_INCLUDE_DIR restbed)
-  include_directories(system "${RESTBED_INCLUDE_DIR}")
-else()
-  message(STATUS "Restbed library not found. Build it from source.")
+if(NOT EMSCRIPTEN)
+  find_library(RESTBED_LIB restbed)
+  if(RESTBED_LIB)
+    message(STATUS "Found Restbed: TRUE")
+    find_path(RESTBED_INCLUDE_DIR restbed)
+    include_directories(system "${RESTBED_INCLUDE_DIR}")
+  else(RESTBED_LIB)
+    message(STATUS "Restbed library not found. Build it from source.")
 
-  set(BUILD_SSL
-      OFF
-      CACHE INTERNAL "")
-  set(BUILD_TESTS
-      OFF
-      CACHE INTERNAL "")
-  set(BUILD_SHARED
-      ON
-      CACHE INTERNAL "")
+    set(BUILD_SSL
+        OFF
+        CACHE INTERNAL "")
+    set(BUILD_TESTS
+        OFF
+        CACHE INTERNAL "")
+    set(BUILD_SHARED
+        ON
+        CACHE INTERNAL "")
 
-  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
-  endif()
+    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+      set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
+    endif()
 
-  FetchContent_Declare(
-    restbed
-    GIT_REPOSITORY https://github.com/bansan85/restbed.git
-    GIT_SHALLOW TRUE
-    GIT_TAG tags/4.8a)
+    FetchContent_Declare(
+      restbed
+      GIT_REPOSITORY https://github.com/bansan85/restbed.git
+      GIT_SHALLOW TRUE
+      GIT_TAG tags/4.8a)
 
-  FetchContent_MakeAvailable(restbed)
+    FetchContent_MakeAvailable(restbed)
 
-  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
-  endif()
+    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+      set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+    endif()
 
-  include_directories(system "${restbed_SOURCE_DIR}/source")
-  link_directories(${restbed_BINARY_DIR})
-  set(RESTBED_LIB "restbed-shared")
-endif()
+    include_directories(system "${restbed_SOURCE_DIR}/source")
+    link_directories(${restbed_BINARY_DIR})
+    set(RESTBED_LIB "restbed-shared")
+  endif(RESTBED_LIB)
+
+  find_library(DROGON_LIB drogon)
+
+  if(DROGON_LIB)
+    message(STATUS "Found Drogon: TRUE")
+    find_path(DROGON_INCLUDE_DIR drogon)
+    include_directories(system "${DROGON_INCLUDE_DIR}")
+  else(DROGON_LIB)
+    message(STATUS "Drogon library not found. Build it from source.")
+
+    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+      set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
+    endif()
+
+    FetchContent_Declare(
+      drogon
+      GIT_REPOSITORY https://github.com/drogonframework/drogon.git
+      GIT_SHALLOW TRUE
+      GIT_TAG tags/v1.7.4)
+
+    FetchContent_MakeAvailable(drogon)
+
+    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
+      set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+    endif()
+
+    include_directories(system "${drogon_SOURCE_DIR}/lib/inc/drogon")
+    link_directories(${drogon_BINARY_DIR})
+    set(DROGON_LIB "drogon")
+  endif(DROGON_LIB)
+endif(NOT EMSCRIPTEN)
 
 option(BUILD_COVERAGE "Enable coverage")
 
