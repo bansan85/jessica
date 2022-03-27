@@ -5,8 +5,7 @@
 #include <memory>
 #include <string>
 
-#include <spdlog/spdlog.h>
-
+#include <jessica/helper/clean/spdlog/spdlog.h>
 #include <jessica/helper/poo.h>
 
 namespace jessica

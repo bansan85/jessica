@@ -11,9 +11,6 @@ $<$<CONFIG:DEBUG>:--closure 0 -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 \
 http://localhost:4200/assets/> \
 ${EMSCRIPTEN_FLAGS} -s ENVIRONMENT=web,worker"
     jessica)
-if(cereal_DIR)
-  target_link_libraries(jessica_web_js PRIVATE cereal)
-endif()
 set_target_properties(jessica_web_js PROPERTIES OUTPUT_NAME "jessica-web")
 
 add_executable(jessica_node_js ${CMAKE_CURRENT_SOURCE_DIR}/bindings-test.cc)
@@ -27,9 +24,6 @@ http://localhost:4200/assets/> \
 ${EMSCRIPTEN_FLAGS}"
     jessica
     spdlog::spdlog)
-if(cereal_DIR)
-  target_link_libraries(jessica_node_js PRIVATE cereal)
-endif()
 set_target_properties(jessica_node_js PROPERTIES OUTPUT_NAME "jessica-node")
 
 add_custom_target(
@@ -40,6 +34,8 @@ add_custom_target(
     sed -i
     "s#[\\'\\\"]jessica-web.wasm[\\'\\\"]#\\'assets/jessica-web.wasm\\'#g"
     "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
+  COMMAND sed -i "s#var jessica#export var jessica#g"
+          "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.*"
           "${CMAKE_SOURCE_DIR}/src/angular/projects/jessica/src/assets/")
 

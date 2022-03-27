@@ -4,7 +4,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import likelySubtags from 'cldr-data/supplemental/likelySubtags.json';
 import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 
-import * as globalize from 'globalize';
+import gglobalize from 'globalize';
 import 'globalize/number';
 import { I18nForm } from '../i18n-form';
 
@@ -19,7 +19,7 @@ export class TranslateExService {
 
   constructor(@Inject('languages') public languages: string[]) {
     this._language = 'en';
-    this.Globalize = globalize;
+    this.Globalize = gglobalize;
     this.Globalize.load([likelySubtags, numberingSystems]);
   }
 

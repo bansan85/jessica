@@ -27,8 +27,8 @@ export class AppComponent {
   async changeLanguage(language: string): Promise<void> {
     const selectedLang = this.translateEx.extractLanguage(language);
     const locale = await import(
-      /* webpackInclude: /(en|fr)\.js$/ */
-      '@angular/common/locales/' + selectedLang
+      /* webpackInclude: /(en|fr)\.mjs$/ */
+      '../../node_modules/@angular/common/locales/' + selectedLang
     );
     registerLocaleData(locale.default, selectedLang);
     const cldrLocale = await import(
