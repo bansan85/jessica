@@ -6,11 +6,11 @@ add_executable(test_load_vertical_eccentric
 target_link_libraries(
   test_geotechnical_foundation_strip
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
-          simdjson::simdjson spdlog::spdlog_header_only jessica::header_only)
+          simdjson::simdjson spdlog::spdlog_header_only jessica)
 target_link_libraries(
   test_load_vertical_eccentric
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
-          simdjson::simdjson spdlog::spdlog_header_only jessica::header_only)
+          simdjson::simdjson spdlog::spdlog_header_only jessica)
 
 add_test(NAME TestGeotechnicalFoundationStrip
          COMMAND test_geotechnical_foundation_strip)

@@ -9,6 +9,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+if(NOT BUILD_SHARED_LIBS)
+  add_compile_definitions("DROGON_STATIC_DEFINE" "TRANTOR_STATIC_DEFINE")
+endif()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR EMSCRIPTEN)
   set(USE_VCPKG ON)
 endif()
@@ -23,18 +31,26 @@ find_package(Threads REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
-# Ubuntu/gcc don't have some xxx-config.cmake but vcpkg needs it.
+# Add -I various paths.
 if(USE_VCPKG)
-  find_package(cereal REQUIRED)
   include_directories(system
                       "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include")
-  find_package(simdjson REQUIRED)
+endif()
+
+# Cereal library
+if(USE_VCPKG)
+  find_package(cereal REQUIRED)
 else()
   check_include_file_cxx("cereal/cereal.hpp" HAVE_CEREAL)
   if(NOT HAVE_CEREAL)
     message(FATAL_ERROR "Cereal library is needed")
   endif()
+endif()
 
+# Simdjson library
+if(USE_VCPKG)
+  find_package(simdjson REQUIRED)
+else()
   FetchContent_Declare(
     simdjson
     GIT_REPOSITORY https://github.com/simdjson/simdjson.git
@@ -44,80 +60,81 @@ else()
   FetchContent_MakeAvailable(simdjson)
 endif()
 
+# Drogon library
 if(NOT EMSCRIPTEN)
-  find_library(RESTBED_LIB restbed)
-  if(RESTBED_LIB)
-    message(STATUS "Found Restbed: TRUE")
-    find_path(RESTBED_INCLUDE_DIR restbed)
-    include_directories(system "${RESTBED_INCLUDE_DIR}")
-  else(RESTBED_LIB)
-    message(STATUS "Restbed library not found. Build it from source.")
-
-    set(BUILD_SSL
-        OFF
-        CACHE INTERNAL "")
-    set(BUILD_TESTS
-        OFF
-        CACHE INTERNAL "")
-    set(BUILD_SHARED
-        ON
-        CACHE INTERNAL "")
-
-    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-      set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
-    endif()
-
-    FetchContent_Declare(
-      restbed
-      GIT_REPOSITORY https://github.com/bansan85/restbed.git
-      GIT_SHALLOW TRUE
-      GIT_TAG tags/4.8a)
-
-    FetchContent_MakeAvailable(restbed)
-
-    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-      set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
-    endif()
-
-    include_directories(system "${restbed_SOURCE_DIR}/source")
-    link_directories(${restbed_BINARY_DIR})
-    set(RESTBED_LIB "restbed-shared")
-  endif(RESTBED_LIB)
-
+  set(CMAKE_DISABLE_FIND_PACKAGE_OpenSSL
+      OFF
+      CACHE INTERNAL "")
   find_library(DROGON_LIB drogon)
 
   if(DROGON_LIB)
-    message(STATUS "Found Drogon: TRUE")
-    find_path(DROGON_INCLUDE_DIR drogon)
-    include_directories(system "${DROGON_INCLUDE_DIR}")
+    message(STATUS "Found library Drogon: TRUE")
+
+    find_program(PKG_CONFIG_EXECUTABLE NAMES pkgconf pkg-config)
+    find_package(PkgConfig REQUIRED)
+    find_package(jsoncpp CONFIG REQUIRED)
+    find_library(TRANTOR_LIB trantor REQUIRED)
+    set(DROGON_LIB ${DROGON_LIB} ${TRANTOR_LIB} ${JSONCPP_LIBRARIES})
+    if(WIN32)
+      set(DROGON_LIB ${DROGON_LIB} "Ws2_32.lib")
+    endif(WIN32)
   else(DROGON_LIB)
     message(STATUS "Drogon library not found. Build it from source.")
 
-    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-      set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
-    endif()
+    set(BUILD_PROGRAMS FALSE FORCE)
+    set(BUILD_EXAMPLES
+        FALSE
+        CACHE INTERNAL "")
 
     FetchContent_Declare(
       drogon
-      GIT_REPOSITORY https://github.com/drogonframework/drogon.git
-      GIT_SHALLOW TRUE
-      GIT_TAG tags/v1.7.4)
+      GIT_REPOSITORY https://github.com/bansan85/drogon.git
+      GIT_TAG origin/temp)
 
     FetchContent_MakeAvailable(drogon)
 
-    if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=cfi.*$")
-      set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+    if(IS_DIRECTORY "${drogon_SOURCE_DIR}")
+      set_property(DIRECTORY ${drogon_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
     endif()
 
-    include_directories(system "${drogon_SOURCE_DIR}/lib/inc/drogon")
-    link_directories(${drogon_BINARY_DIR})
     set(DROGON_LIB "drogon")
   endif(DROGON_LIB)
 endif(NOT EMSCRIPTEN)
 
-option(BUILD_COVERAGE "Enable coverage")
+# Restbed library
+if(NOT EMSCRIPTEN)
+  # Need to build from source to force use of fork.
+  message(STATUS "Build restbed from source.")
+
+  set(BUILD_SSL
+      OFF
+      CACHE BOOL "")
+  set(BUILD_TESTS
+      OFF
+      CACHE BOOL "")
+  set(BUILD_EXAMPLES
+      OFF
+      CACHE BOOL "")
+  set(BUILD_CTL
+      OFF
+      CACHE BOOL "")
+
+  FetchContent_Declare(
+    restbed
+    GIT_REPOSITORY https://github.com/bansan85/restbed.git
+    GIT_SHALLOW TRUE
+    GIT_TAG tags/4.8c)
+
+  FetchContent_MakeAvailable(restbed)
+
+  if(IS_DIRECTORY "${restbed_SOURCE_DIR}")
+    set_property(DIRECTORY ${restbed_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
+  endif()
+
+  include_directories(system "${restbed_SOURCE_DIR}/source")
+endif()
+
+option(BUILD_COVERAGE "Enable coverage" OFF)
 
 # Set a default build type if none was specified
 set(DEFAULT_BUILD_TYPE "Release")

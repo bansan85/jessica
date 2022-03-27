@@ -107,7 +107,16 @@
     "*.ipp": "cpp",
     "restbed": "cpp",
     "hash_map": "cpp",
-    "hash_set": "cpp"
+    "hash_set": "cpp",
+    "*.tcc": "cpp",
+    "cfenv": "cpp",
+    "csetjmp": "cpp",
+    "cuchar": "cpp",
+    "cwctype": "cpp",
+    "memory_resource": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "scoped_allocator": "cpp"
   },
   "git.ignoreLimitWarning": true,
   "editor.tabSize": 2,

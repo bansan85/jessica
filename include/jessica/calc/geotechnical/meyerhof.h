@@ -14,7 +14,7 @@
 namespace jessica
 {
 template <typename T0, typename T1>
-class JESSICA_DLL_PUBLIC MeyerhofShallowFoundation final
+class MeyerhofShallowFoundation final
 {
  public:
   MeyerhofShallowFoundation() = default;

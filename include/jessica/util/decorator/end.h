@@ -11,7 +11,7 @@
 namespace jessica
 {
 template <typename T>
-class JESSICA_DLL_PUBLIC DecoratorEnd
+class DecoratorEnd
 {
  public:
   using RootType = T;

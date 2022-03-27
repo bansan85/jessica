@@ -1,7 +1,8 @@
 cereal
-drogon
 gtest
+jsoncpp
 nlohmann-json
-restbed
+pkgconf
 simdjson
 spdlog
+zlib

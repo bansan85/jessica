@@ -86,8 +86,9 @@ std::pair<int, std::string> RestbedRequest::Sync(const std::string& hostname,
 
   try
   {
-    restbed::Http::fetch(std::stoul(response->get_header("Content-Length")),
-                         response);
+    restbed::Http::fetch(
+        cfi_to_number<size_t>(response->get_header("Content-Length")),
+        response);
 
     std::string data(
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
