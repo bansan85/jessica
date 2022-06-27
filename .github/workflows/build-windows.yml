@@ -22,7 +22,7 @@ jobs:
       - uses: bansan85/action-workflow_run-status@main
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
           ref: ${{ github.event.workflow_run.head_commit.id }}
@@ -33,7 +33,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: github.com ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS_WINDOWS }}
       - name: Install Windows Vcpkg
-        uses: lukka/run-vcpkg@v6
+        uses: lukka/run-vcpkg@v10
         id: runvcpkg
         with:
           vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_windows.txt'

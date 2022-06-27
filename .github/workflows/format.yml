@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout@v2 with token
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           ref: ${{ github.event.workflow_run.head_commit.id }}
       - name: checkout@v2 without token
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name != 'push' }}
         with:
           ref: ${{ github.event.workflow_run.head_commit.id }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
           cache: 'npm'
@@ -52,7 +52,7 @@ jobs:
       - name: 3rdparty
         run: sudo apt-get install -yq clang-13 llvm-13 clang-format-13
       - name: Set up Python "3.9"
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install python modules dependencies

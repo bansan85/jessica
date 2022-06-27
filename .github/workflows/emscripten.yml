@@ -22,11 +22,11 @@ jobs:
       - uses: bansan85/action-workflow_run-status@main
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
           ref: ${{ github.event.workflow_run.head_commit.id }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
           cache: 'npm'
@@ -56,7 +56,7 @@ jobs:
           echo "${{ github.workspace }}/emsdk/upstream/emscripten" >> $GITHUB_PATH
           cd ..
       - name: Install Windows Vcpkg
-        uses: lukka/run-vcpkg@v6
+        uses: lukka/run-vcpkg@v10
         id: runvcpkg
         with:
           vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_emscripten.txt'
@@ -81,19 +81,19 @@ jobs:
           cd src/angular || exit 1
           npm run start &
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           working-directory: src/angular
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 300
           browser: chrome
           headless: true
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
           path: src/angular/cypress/screenshots
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos

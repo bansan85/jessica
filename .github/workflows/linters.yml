@@ -13,11 +13,11 @@ jobs:
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
         run: exit 1
       - uses: bansan85/action-workflow_run-status@main
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           ref: ${{ github.event.workflow_run.head_commit.id }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
           cache: 'npm'
@@ -45,7 +45,7 @@ jobs:
           sudo sed -i "s/set_formatter(std::move(f));/\0break;/g" /usr/include/spdlog/logger-inl.h
           sudo sed -i "s/buffer\[len - 1.*/\0 \/\/NOLINT/g" /usr/include/rapidjson/internal/dtoa.h
       - name: Set up Python "3.9"
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install python modules dependencies
