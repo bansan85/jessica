@@ -82,27 +82,27 @@ IncludeCategories:
   - Regex: '^<jessica/.*\.h>'
     Priority: 4
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
   - Regex: '^<.*\.h>'
     Priority: 2
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
   - Regex: '^<.*\.hpp>'
     Priority: 2
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
   - Regex: '<restbed>'
     Priority: 2
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
   - Regex: '^<.*'
     Priority: 1
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
   - Regex: '.*'
     Priority: 3
     SortPriority: 0
-    CaseSensitive:   true
+    CaseSensitive: true
 IncludeIsMainRegex: '([-_](test|unittest))?$'
 IncludeIsMainSourceRegex: ''
 IndentAccessModifiers: false
@@ -138,7 +138,7 @@ PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PenaltyIndentedWhitespace: 0
 PointerAlignment: Left
-PPIndentWidth:   -1
+PPIndentWidth: -1
 RawStringFormats:
   - Language: Cpp
     Delimiters:
@@ -170,9 +170,8 @@ RawStringFormats:
     CanonicalDelimiter: ''
     BasedOnStyle: google
 ReflowComments: false
-SortIncludes: true
 ShortNamespaceLines: 0
-SortIncludes:    CaseSensitive
+SortIncludes: CaseSensitive
 SortJavaStaticImport: Before
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: false
@@ -194,8 +193,8 @@ SpacesInConditionalStatement: false
 SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
 SpacesInLineCommentPrefix:
-  Minimum:         1
-  Maximum:         -1
+  Minimum: 1
+  Maximum: -1
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 SpaceBeforeSquareBrackets: false
@@ -215,5 +214,5 @@ WhitespaceSensitiveMacros:
   - BOOST_PP_STRINGIZE
   - NS_SWIFT_NAME
   - CF_SWIFT_NAME
-...
+---
 

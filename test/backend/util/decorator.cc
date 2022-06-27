@@ -7,7 +7,6 @@
 #include <memory>
 #include <utility>
 
-#include <jessica/compat.h>
 #include <jessica/helper/accessor.h>
 #include <jessica/helper/poo.h>
 #include <jessica/test/test.h>
@@ -71,7 +70,7 @@ class DecoratorMiddle
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Test)
+class DECORATOR_START_HEADER(Test)
 {
  public:
   DECORATOR_START_RULE_OF_FIVE(Test);
@@ -83,7 +82,7 @@ class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Test)
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(Test)
+class DECORATOR_END_HEADER(Test)
 {
  public:
   using RootType = T;

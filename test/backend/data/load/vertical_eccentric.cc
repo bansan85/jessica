@@ -1,7 +1,6 @@
 // IWYU pragma: no_include "jessica/util/math/hash.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -14,6 +13,7 @@
 #include <jessica/data/load/vertical_eccentric.h>
 #include <jessica/helper/adapter/json_parser/json_nlohmann.h>
 #include <jessica/helper/adapter/json_parser/json_simdjson.h>
+#include <jessica/helper/adapter/webservice/drogon.h>
 #include <jessica/helper/adapter/webservice/restbed.h>
 #include <jessica/helper/cfi.h>
 #include <jessica/helper/clean/cereal/cereal.h>
@@ -59,32 +59,30 @@ JTEST_NAME(data, VerticalEccentric)  // NOLINT
   {
     JsonNlohmann parser;
     parser.ReadFile("VerticalEccentric1.cereal.json");
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "e"})),
              0.2);
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "v"})),
              100000.);
     JsonNlohmann parser2 =
         parser.Set(std::vector<std::string>{"value0", "e"}, "0.3"_json)
             .Set(std::vector<std::string>{"value0", "v"}, "100050"_json);
-    JTEST_EQ(
-        strtod(parser2.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-               nullptr),
-        0.3);
-    JTEST_EQ(
-        strtod(parser2.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-               nullptr),
-        100050.);
+    JTEST_EQ(cfi_to_number<double>(
+                 parser2.Get(std::vector<std::string>{"value0", "e"})),
+             0.3);
+    JTEST_EQ(cfi_to_number<double>(
+                 parser2.Get(std::vector<std::string>{"value0", "v"})),
+             100050.);
   }
   {
     JsonSimdjson parser;
     parser.ReadFile("VerticalEccentric1.cereal.json");
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "e"})),
              0.2);
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "v"})),
              100000.);
   }
 }
@@ -127,32 +125,30 @@ JTEST_NAME(data, VerticalEccentricDecorator)  // NOLINT
   {
     JsonNlohmann parser;
     parser.ReadFile("VerticalEccentric2.cereal.json");
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "e"})),
              0.2);
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "v"})),
              100000.);
     JsonNlohmann parser2 =
         parser.Set(std::vector<std::string>{"value0", "e"}, "0.3"_json)
             .Set(std::vector<std::string>{"value0", "v"}, "100050"_json);
-    JTEST_EQ(
-        strtod(parser2.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-               nullptr),
-        0.3);
-    JTEST_EQ(
-        strtod(parser2.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-               nullptr),
-        100050.);
+    JTEST_EQ(cfi_to_number<double>(
+                 parser2.Get(std::vector<std::string>{"value0", "e"})),
+             0.3);
+    JTEST_EQ(cfi_to_number<double>(
+                 parser2.Get(std::vector<std::string>{"value0", "v"})),
+             100050.);
   }
   {
     JsonSimdjson parser;
     parser.ReadFile("VerticalEccentric2.cereal.json");
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "e"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "e"})),
              0.2);
-    JTEST_EQ(strtod(parser.Get(std::vector<std::string>{"value0", "v"}).c_str(),
-                    nullptr),
+    JTEST_EQ(cfi_to_number<double>(
+                 parser.Get(std::vector<std::string>{"value0", "v"})),
              100000.);
   }
 }
@@ -180,11 +176,8 @@ JTEST_NAME(data, VerticalEccentricWebServicesRestBed)  // NOLINT
 
   webservice.AddPath(
       "GET", "/quit",
-      [&webservice](const std::string& /*data*/) -> std::pair<int, std::string>
-      {
-        webservice.Stop();
-        return std::make_pair(200, "");
-      });
+      [](const std::string& /*data*/) -> std::pair<int, std::string>
+      { return std::make_pair(200, ""); });
 
   std::thread server([&webservice]() { webservice.Start(1984); });
 
@@ -205,8 +198,62 @@ JTEST_NAME(data, VerticalEccentricWebServicesRestBed)  // NOLINT
   const auto [status_code2, json_str2] =
       RestbedRequest::Sync("localhost", 1984, "GET", "/quit", "");
 
-  JTEST_EQ(status_code2, 500);
+  JTEST_EQ(status_code2, 200);
+  JTEST_EQ(json_str2, "");
 
+  webservice.Stop();
+  server.join();
+}
+
+JTEST_NAME(data, VerticalEccentricWebServicesDrogon)  // NOLINT
+{
+  DrogonWs webservice;
+
+  const auto load =
+      std::make_shared<VerticalEccentric>()->SetV(100000.)->SetE(0.2);
+
+  webservice.AddPath("POST", "/resource",
+                     [](const std::string& data) -> std::pair<int, std::string>
+                     {
+                       std::stringstream is(data);
+                       cereal::JSONInputArchive iarchive(is);
+
+                       VerticalEccentric eccentric;
+                       iarchive(eccentric);
+                       std::string retval = cfi_to_string(eccentric.V()) + "," +
+                                            cfi_to_string(eccentric.E());
+
+                       return std::make_pair(200, retval);
+                     });
+
+  webservice.AddPath(
+      "GET", "/quit",
+      [](const std::string& /*data*/) -> std::pair<int, std::string>
+      { return std::make_pair(200, ""); });
+
+  std::thread server([&webservice]() { webservice.Start(1984); });
+
+  webservice.WaitStarted();
+
+  std::stringstream stream;
+  {
+    cereal::JSONOutputArchive archive(stream);
+    archive(*load);
+  }
+
+  const auto [status_code, json_str] = DrogonRequest::Sync(
+      "http://127.0.0.1", 1984, "POST", "/resource", stream.str());
+
+  JTEST_EQ(status_code, 200);
+  JTEST_EQ(json_str, "100000,0.2");
+
+  const auto [status_code2, json_str2] =
+      DrogonRequest::Sync("http://127.0.0.1", 1984, "GET", "/quit", "");
+
+  JTEST_EQ(status_code2, 200);
+  JTEST_EQ(json_str2, "");
+
+  webservice.Stop();
   server.join();
 }
 

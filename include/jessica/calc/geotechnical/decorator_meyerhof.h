@@ -13,7 +13,7 @@
 namespace jessica
 {
 template <typename T>
-class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Meyerhof)
+class DECORATOR_START_HEADER(Meyerhof)
 {
  public:
   DECORATOR_START_RULE_OF_FIVE(Meyerhof);
@@ -31,7 +31,7 @@ class JESSICA_DLL_PUBLIC DECORATOR_START_HEADER(Meyerhof)
 };
 
 template <typename T>
-class JESSICA_DLL_PUBLIC DECORATOR_END_HEADER(Meyerhof)
+class DECORATOR_END_HEADER(Meyerhof)
 {
  public:
   using RootType = T;

@@ -7,7 +7,7 @@
     #else
       #define JESSICA_DLL_PUBLIC __declspec(dllexport)
     #endif
-  #elif defined(JESSICA_HEADER_ONLY)
+  #elif defined(JESSICA_STATIC_LIB)
     #define JESSICA_DLL_PUBLIC
   #else
     #ifdef __GNUC__
@@ -20,10 +20,10 @@
 #else
   #ifdef JESSICA_BUILDING_DLL
     #define JESSICA_DLL_PUBLIC __attribute__((visibility("default")))
-  #elif defined(JESSICA_HEADER_ONLY)
+  #elif defined(JESSICA_STATIC_LIB)
     #define JESSICA_DLL_PUBLIC __attribute__((visibility("hidden")))
   #else
-    #define JESSICA_DLL_PUBLIC
+    #define JESSICA_DLL_PUBLIC __attribute__((visibility("default")))
   #endif
   #define JESSICA_DLL_LOCAL __attribute__((visibility("hidden")))
 #endif

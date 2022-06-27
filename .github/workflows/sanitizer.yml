@@ -84,8 +84,8 @@ jobs:
       - name: Fix cfi
         if: ${{ matrix.sanitizer == 'cfi' }}
         run: |
-          sudo sed -i 's/_M_ptr() .*/\0 __attribute__((__no_sanitize__("cfi"))) /g' /usr/include/c++/*/ext/aligned_buffer.h
-          sudo sed -i 's/__stoa.*\.\.\.)/\0 noexcept/g' /usr/include/c++/*/ext/string_conversions.h
+          sudo sed -i 's/_M_ptr() .*/\0 __attribute__((__no_sanitize__("cfi")))/g' /usr/include/c++/*/ext/aligned_buffer.h
+          sudo sed -i 's/__base)/\0 __attribute__((__no_sanitize__("cfi")))/g' /usr/include/c++/*/ext/string_conversions.h
       - name: cmake
         run: |
           mkdir build

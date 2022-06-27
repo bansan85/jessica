@@ -12,7 +12,7 @@
 namespace jessica
 {
 template <typename T, typename ShrT>
-class JESSICA_DLL_PUBLIC DecoratorStart
+class DecoratorStart
 {
  public:
   template <typename... Args>
