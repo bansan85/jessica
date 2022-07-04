@@ -119,6 +119,11 @@ if(NOT EMSCRIPTEN)
       OFF
       CACHE BOOL "")
 
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=address.*$")
+    set(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize=all")
+  endif()
+
   FetchContent_Declare(
     restbed
     GIT_REPOSITORY https://github.com/bansan85/restbed.git
@@ -126,6 +131,10 @@ if(NOT EMSCRIPTEN)
     GIT_TAG tags/4.8c)
 
   FetchContent_MakeAvailable(restbed)
+
+  if(CMAKE_CXX_FLAGS MATCHES "^.*-fsanitize=address.*$")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+  endif()
 
   if(IS_DIRECTORY "${restbed_SOURCE_DIR}")
     set_property(DIRECTORY ${restbed_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
