@@ -9,14 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout@v2 with token
-        uses: actions/checkout@v2
+      - name: checkout with token
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ secrets.WORKFLOW_TOKEN }}
           ref: ${{ github.event.workflow_run.head_commit.id }}
-      - name: checkout@v2 without token
-        uses: actions/checkout@v2
+      - name: checkout without token
+        uses: actions/checkout@v3
         if: ${{ github.event_name != 'push' }}
         with:
           ref: ${{ github.event.workflow_run.head_commit.id }}

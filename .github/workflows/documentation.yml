@@ -15,7 +15,7 @@ jobs:
           echo ${{ github.event.workflow_run.conclusion }}
           exit 1
       - uses: bansan85/action-workflow_run-status@main
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_commit.id }}
       - name: Install SSH key
