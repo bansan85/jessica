@@ -1,8 +1,0 @@
-cereal
-gtest
-jsoncpp
-nlohmann-json
-pkgconf
-simdjson
-spdlog
-zlib

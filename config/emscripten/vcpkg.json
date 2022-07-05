@@ -1,0 +1,5 @@
+{
+  "name": "jessica",
+  "version-string": "0.0.1",
+  "dependencies": ["cereal", "nlohmann-json", "simdjson", "spdlog"]
+}

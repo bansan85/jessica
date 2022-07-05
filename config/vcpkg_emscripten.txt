@@ -1,4 +1,0 @@
-cereal
-nlohmann-json
-simdjson
-spdlog

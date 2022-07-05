@@ -15,6 +15,9 @@ jobs:
             config-angular: -dev
           - config: Release
             config-angular: ''
+    env:
+      VCPKG_DEFAULT_TRIPLET: 'wasm32-emscripten'
+      VCPKG_INSTALLED_DIR: '${{ github.workspace }}/vcpkg/installed'
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -58,13 +61,10 @@ jobs:
           echo "${{ github.workspace }}/emsdk/upstream/emscripten" >> $GITHUB_PATH
           cd ..
       - name: Install Windows Vcpkg
-        uses: lukka/run-vcpkg@v6
-        id: runvcpkg
+        uses: lukka/run-vcpkg@v10
         with:
-          vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_emscripten.txt'
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgTriplet: 'wasm32-emscripten'
-          appendedCacheKey: ${{ hashFiles( format('{0}/config/vcpkg_emscripten.txt', github.workspace) ) }}
+          vcpkgJsonGlob: '${{ github.workspace }}/config/emscripten/vcpkg.json'
+          runVcpkgInstall: true
       - name: cmake
         run: |
           source ./emsdk/emsdk_env.sh

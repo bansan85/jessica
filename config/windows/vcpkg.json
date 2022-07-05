@@ -1,0 +1,14 @@
+{
+  "name": "jessica",
+  "version-string": "0.0.1",
+  "dependencies": [
+    "cereal",
+    "gtest",
+    "jsoncpp",
+    "nlohmann-json",
+    "pkgconf",
+    "simdjson",
+    "spdlog",
+    "zlib"
+  ]
+}

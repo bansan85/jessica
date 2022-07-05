@@ -15,6 +15,10 @@ jobs:
             cc: cl
             cxx: cl
             os: windows-latest
+    env:
+      VCPKG_DEFAULT_TRIPLET: 'x64-windows'
+      # Need to hardcode path to avoid escape delimiter path
+      VCPKG_INSTALLED_DIR: 'D:/a/jessica/jessica/vcpkg/installed'
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -35,13 +39,10 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: github.com ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS_WINDOWS }}
       - name: Install Windows Vcpkg
-        uses: lukka/run-vcpkg@v6
-        id: runvcpkg
+        uses: lukka/run-vcpkg@v10
         with:
-          vcpkgArguments: '@${{ github.workspace }}/config/vcpkg_windows.txt'
-          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgTriplet: 'x64-windows'
-          appendedCacheKey: ${{ hashFiles( format('{0}/config/vcpkg_windows.txt', github.workspace) ) }}
+          vcpkgJsonGlob: 'D:/a/jessica/jessica/config/windows/vcpkg.json'
+          runVcpkgInstall: true
       - name: CMake
         run: |
           mkdir "${{ github.workspace }}/build"
