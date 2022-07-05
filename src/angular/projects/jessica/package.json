@@ -2,19 +2,19 @@
   "name": "jessica",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "~13.3.0",
-    "@angular/core": "~13.3.0",
-    "@angular/forms": "~13.3.0",
+    "@angular/common": "~14.0.3",
+    "@angular/core": "~14.0.3",
+    "@angular/forms": "~14.0.3",
     "@ngx-translate/core": "^14.0.0",
     "rxjs": "~7.5.5"
   },
   "dependencies": {
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@angular/platform-browser-dynamic": "~13.3.0",
-    "cldr-data": "^36.0.0",
+    "@angular/platform-browser-dynamic": "~14.0.3",
+    "cldr-data": "^36.0.1",
     "globalize": "^1.7.0",
-    "zone.js": "~0.11.5"
+    "zone.js": "~0.11.6"
   }
 }
