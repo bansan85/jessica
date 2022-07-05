@@ -83,7 +83,7 @@ jobs:
           cd src/angular || exit 1
           npm run start &
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           working-directory: src/angular
           wait-on: 'http://localhost:4200'
