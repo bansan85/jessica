@@ -88,8 +88,8 @@ if(NOT EMSCRIPTEN)
 
     FetchContent_Declare(
       drogon
-      GIT_REPOSITORY https://github.com/bansan85/drogon.git
-      GIT_TAG origin/temp)
+      GIT_REPOSITORY https://github.com/drogonframework/drogon.git
+      GIT_TAG cf543716ce33fce395bac3e34fc8aa4c81353783)
 
     FetchContent_MakeAvailable(drogon)
 
