@@ -7,7 +7,7 @@ on:
       - completed
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -32,24 +32,20 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
-      - name: Update apt-get
-        run: |
-          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
-          sudo apt-get update
       - name: Install 3rdparty
         run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install linters
         run: |
-          sudo apt-get install -yq cppcheck shellcheck clang-tidy-13 clang-13 iwyu
+          sudo apt-get install -yq cppcheck shellcheck clang-tidy-14 clang-14 iwyu
       - name: Fix clang-tidy
         # Fixed in spdlog 1.8.5
         run: |
           sudo sed -i "s/set_formatter(std::move(f));/\0break;/g" /usr/include/spdlog/logger-inl.h
           sudo sed -i "s/buffer\[len - 1.*/\0 \/\/NOLINT/g" /usr/include/rapidjson/internal/dtoa.h
-      - name: Set up Python "3.9"
+      - name: Set up Python "3.10"
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install python modules dependencies
         run: |
           python -m pip install --upgrade pip pipdeptree wheel
@@ -88,9 +84,9 @@ jobs:
           npx eslint --ext .js,.js.in,.html,.html.in . --fix || exit 0
       - name: Run linters
         env:
-          AR: /usr/bin/llvm-ar-13
-          CC: /usr/bin/clang-13
-          CXX: /usr/bin/clang++-13
-          RANLIB: /usr/bin/llvm-ranlib-13
+          AR: /usr/bin/llvm-ar-14
+          CC: /usr/bin/clang-14
+          CXX: /usr/bin/clang++-14
+          RANLIB: /usr/bin/llvm-ranlib-14
         run: |
           bash ./.github/scripts/linters.sh

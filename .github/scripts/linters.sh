@@ -37,7 +37,7 @@ cd build || exit 1
 sed -i -e 's#-I\(\S*build\S*_deps\S*\)#-isystem \1#g' compile_commands.json
 sed -i "1N;1N;$!N;N;s/^{\n[^\n]*directory[^\n]*_deps[^\n]*\n[^\n]*command[^\n]*\n[^\n]*file[^\n]*\n},//;P;D" compile_commands.json
 sed -i "1N;1N;$!N;N;s/^{\n[^\n]*directory[^\n]*_deps[^\n]*\n[^\n]*command[^\n]*\n[^\n]*file[^\n]*\n},//;P;D" compile_commands.json
-run-clang-tidy-13 '^((?!_deps).)*$' || { retval=1 && echo "Failure clang-tidy"; }
+run-clang-tidy-14 '^((?!_deps).)*$' || { retval=1 && echo "Failure clang-tidy"; }
 
 echo "Start Iwyu"
 iwyu_tool -p . -- -Xiwyu --mapping_file="$(pwd)/../.iwyu-suppressions" -Xiwyu --no_fwd_decls >iwyu_tool.log

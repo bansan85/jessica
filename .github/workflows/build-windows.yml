@@ -7,14 +7,13 @@ on:
       - completed
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
     strategy:
       matrix:
         include:
           - name: windows-msbuild
             cc: cl
             cxx: cl
-            os: windows-latest
     env:
       VCPKG_DEFAULT_TRIPLET: 'x64-windows'
       # Need to hardcode path to avoid escape delimiter path

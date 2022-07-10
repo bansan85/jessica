@@ -114,5 +114,6 @@ class JsonSimdjson
     return Get(retval2, list, i + 1);
   }
 };
+
 static_assert(JsonParserReader<JsonSimdjson>);
 }  // namespace jessica

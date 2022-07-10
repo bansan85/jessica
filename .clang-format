@@ -3,6 +3,7 @@ Language: Cpp
 # BasedOnStyle:  Google
 AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
+AlignArrayOfStructures: None
 AlignConsecutiveMacros: None
 AlignConsecutiveAssignments: None
 AlignConsecutiveBitFields: None
@@ -11,7 +12,6 @@ AlignEscapedNewlines: Left
 AlignOperands: Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortEnumsOnASingleLine: true
 AllowShortBlocksOnASingleLine: Never
@@ -59,8 +59,8 @@ BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
 ColumnLimit: 80
 CommentPragmas: '^ IWYU pragma:'
+QualifierAlignment: Leave
 CompactNamespaces: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
@@ -70,6 +70,7 @@ DisableFormat: false
 EmptyLineAfterAccessModifier: Never
 EmptyLineBeforeAccessModifier: Always
 ExperimentalAutoDetectBinPacking: false
+PackConstructorInitializers: NextLine
 FixNamespaceComments: true
 ForEachMacros:
   - foreach
@@ -169,7 +170,10 @@ RawStringFormats:
       - ParsePartialTestProto
     CanonicalDelimiter: ''
     BasedOnStyle: google
+ReferenceAlignment: Pointer
 ReflowComments: false
+RemoveBracesLLVM: false
+SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 0
 SortIncludes: CaseSensitive
 SortJavaStaticImport: Before
@@ -183,6 +187,14 @@ SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterForeachMacros: true
+  AfterFunctionDefinitionName: false
+  AfterFunctionDeclarationName: false
+  AfterIfMacros: true
+  AfterOverloadedOperator: false
+  BeforeNonEmptyParentheses: false
 SpaceAroundPointerQualifiers: Default
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceInEmptyBlock: false

@@ -1,6 +1,6 @@
 cmakelang==0.6.13
   six==1.16.0
-flake8-bugbear==22.6.22
+flake8-bugbear==22.7.1
   attrs==21.4.0
   flake8==4.0.1
     mccabe==0.6.1
@@ -12,7 +12,7 @@ flake8-import-order==0.18.1
 mypy==0.961
   mypy-extensions==0.4.3
   tomli==2.0.1
-  typing_extensions==4.2.0
+  typing_extensions==4.3.0
 pipdeptree==2.2.1
   pip==22.1.2
 prospector==1.7.7
@@ -28,137 +28,118 @@ prospector==1.7.7
   pydocstyle==6.1.1
     snowballstemmer==2.2.0
   pyflakes==2.4.0
-  pylint==2.14.3
-    astroid==2.11.6
+  pylint==2.14.4
+    astroid==2.11.7
       lazy-object-proxy==1.7.1
       setuptools==58.1.0
-      typing_extensions==4.2.0
       wrapt==1.14.1
     dill==0.3.5.1
     isort==5.10.1
     mccabe==0.6.1
     platformdirs==2.5.2
     tomli==2.0.1
-    tomlkit==0.11.0
-    typing_extensions==4.2.0
+    tomlkit==0.11.1
   pylint-celery==0.3
-    astroid==2.11.6
+    astroid==2.11.7
       lazy-object-proxy==1.7.1
       setuptools==58.1.0
-      typing_extensions==4.2.0
       wrapt==1.14.1
-    pylint==2.14.3
-      astroid==2.11.6
+    pylint==2.14.4
+      astroid==2.11.7
         lazy-object-proxy==1.7.1
         setuptools==58.1.0
-        typing_extensions==4.2.0
         wrapt==1.14.1
       dill==0.3.5.1
       isort==5.10.1
       mccabe==0.6.1
       platformdirs==2.5.2
       tomli==2.0.1
-      tomlkit==0.11.0
-      typing_extensions==4.2.0
+      tomlkit==0.11.1
     pylint-plugin-utils==0.7
-      pylint==2.14.3
-        astroid==2.11.6
+      pylint==2.14.4
+        astroid==2.11.7
           lazy-object-proxy==1.7.1
           setuptools==58.1.0
-          typing_extensions==4.2.0
           wrapt==1.14.1
         dill==0.3.5.1
         isort==5.10.1
         mccabe==0.6.1
         platformdirs==2.5.2
         tomli==2.0.1
-        tomlkit==0.11.0
-        typing_extensions==4.2.0
+        tomlkit==0.11.1
   pylint-django==2.5.3
-    pylint==2.14.3
-      astroid==2.11.6
+    pylint==2.14.4
+      astroid==2.11.7
         lazy-object-proxy==1.7.1
         setuptools==58.1.0
-        typing_extensions==4.2.0
         wrapt==1.14.1
       dill==0.3.5.1
       isort==5.10.1
       mccabe==0.6.1
       platformdirs==2.5.2
       tomli==2.0.1
-      tomlkit==0.11.0
-      typing_extensions==4.2.0
+      tomlkit==0.11.1
     pylint-plugin-utils==0.7
-      pylint==2.14.3
-        astroid==2.11.6
+      pylint==2.14.4
+        astroid==2.11.7
           lazy-object-proxy==1.7.1
           setuptools==58.1.0
-          typing_extensions==4.2.0
           wrapt==1.14.1
         dill==0.3.5.1
         isort==5.10.1
         mccabe==0.6.1
         platformdirs==2.5.2
         tomli==2.0.1
-        tomlkit==0.11.0
-        typing_extensions==4.2.0
+        tomlkit==0.11.1
   pylint-flask==0.6
-    astroid==2.11.6
+    astroid==2.11.7
       lazy-object-proxy==1.7.1
       setuptools==58.1.0
-      typing_extensions==4.2.0
       wrapt==1.14.1
-    pylint==2.14.3
-      astroid==2.11.6
+    pylint==2.14.4
+      astroid==2.11.7
         lazy-object-proxy==1.7.1
         setuptools==58.1.0
-        typing_extensions==4.2.0
         wrapt==1.14.1
       dill==0.3.5.1
       isort==5.10.1
       mccabe==0.6.1
       platformdirs==2.5.2
       tomli==2.0.1
-      tomlkit==0.11.0
-      typing_extensions==4.2.0
+      tomlkit==0.11.1
     pylint-plugin-utils==0.7
-      pylint==2.14.3
-        astroid==2.11.6
+      pylint==2.14.4
+        astroid==2.11.7
           lazy-object-proxy==1.7.1
           setuptools==58.1.0
-          typing_extensions==4.2.0
           wrapt==1.14.1
         dill==0.3.5.1
         isort==5.10.1
         mccabe==0.6.1
         platformdirs==2.5.2
         tomli==2.0.1
-        tomlkit==0.11.0
-        typing_extensions==4.2.0
+        tomlkit==0.11.1
   pylint-plugin-utils==0.7
-    pylint==2.14.3
-      astroid==2.11.6
+    pylint==2.14.4
+      astroid==2.11.7
         lazy-object-proxy==1.7.1
         setuptools==58.1.0
-        typing_extensions==4.2.0
         wrapt==1.14.1
       dill==0.3.5.1
       isort==5.10.1
       mccabe==0.6.1
       platformdirs==2.5.2
       tomli==2.0.1
-      tomlkit==0.11.0
-      typing_extensions==4.2.0
+      tomlkit==0.11.1
   PyYAML==6.0
   requirements-detector==0.7
-    astroid==2.11.6
+    astroid==2.11.7
       lazy-object-proxy==1.7.1
       setuptools==58.1.0
-      typing_extensions==4.2.0
       wrapt==1.14.1
   setoptconf-tmp==0.3.1
   toml==0.10.2
-safety==1.10.3
+safety==2.0.0
   click==8.1.3
   dparse==0.5.1
     packaging==21.3
@@ -167,14 +148,16 @@ safety==1.10.3
     toml==0.10.2
   packaging==21.3
     pyparsing==3.0.9
-  requests==2.28.0
+  requests==2.28.1
     certifi==2022.6.15
-    charset-normalizer==2.0.12
+    charset-normalizer==2.1.0
     idna==3.3
-    urllib3==1.26.9
+    urllib3==1.26.10
+  ruamel.yaml==0.17.21
+    ruamel.yaml.clib==0.2.6
   setuptools==58.1.0
 wheel==0.37.1
-yamllint==1.26.3
+yamllint==1.27.1
   pathspec==0.9.0
   PyYAML==6.0
   setuptools==58.1.0

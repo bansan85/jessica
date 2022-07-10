@@ -7,7 +7,7 @@ on:
       - completed
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         include:
@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_commit.id }}
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '16'
           cache: 'npm'
           cache-dependency-path: |
             package-lock.json
@@ -89,7 +89,6 @@ jobs:
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 300
           browser: chrome
-          headless: true
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
@@ -100,10 +99,10 @@ jobs:
         with:
           name: cypress-videos
           path: src/angular/cypress/videos
-      - name: pa11y
-        run: |
-          cd src/angular || exit 1
-          npx pa11y http://localhost:4200
+      #- name: pa11y
+      #  run: |
+      #    cd src/angular || exit 1
+      #    npx pa11y http://localhost:4200
       - name: Lighthouse
         run: |
           cd src/angular || exit 1

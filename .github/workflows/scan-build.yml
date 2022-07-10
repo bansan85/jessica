@@ -7,7 +7,7 @@ on:
       - completed
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -25,19 +25,15 @@ jobs:
         with:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
-      - name: Update apt-get
-        run: |
-          sudo sed -i "s/focal/impish/g" /etc/apt/sources.list
-          sudo apt-get update
       - name: Install clang
-        run: sudo apt-get install -yq clang-13 llvm-13 clang-tools-13
+        run: sudo apt-get install -yq clang-14 llvm-14 clang-tools-14
       - name: Install 3rdparty
         run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: cmake
         run: |
           mkdir build scan-build-output
-          scan-build-13 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-13 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-13 -DCMAKE_AR=/usr/bin/llvm-ar-13 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-13
-          scan-build-13 -o scan-build-output cmake --build build/ --target all --config Release
+          scan-build-14 -o scan-build-output cmake -S . -B build -DCMAKE_C_COMPILER=/usr/bin/clang-14 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-14 -DCMAKE_AR=/usr/bin/llvm-ar-14 -DCMAKE_RANLIB=/usr/bin/llvm-ranlib-14
+          scan-build-14 -o scan-build-output cmake --build build/ --target all --config Release
       - name: Publish result
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         env:

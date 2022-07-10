@@ -19,6 +19,7 @@ std::string cfi_to_string(T number)
 // std::stoul generates:
 // /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/include/g++-v11/ext/string_conversions.h:80:27: runtime error: control flow integrity check for type 'unsigned long (const char *, char **, int)' failed during indirect function call
 template <typename T>
+// cppcheck-suppress passedByValue
 T cfi_to_number(const std::string_view text)
 {
   std::stringstream s;

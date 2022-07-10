@@ -48,6 +48,7 @@ void RestbedWs::AddPath(
 
   service_.publish(resource);
 }
+
 void RestbedWs::Start(unsigned short port)
 {
   auto settings = std::make_shared<restbed::Settings>();

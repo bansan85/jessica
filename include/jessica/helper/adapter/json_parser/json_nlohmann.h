@@ -10,11 +10,10 @@
 
 namespace jessica
 {
-template <class Type>
-struct S;
 class JsonNlohmann
 {
  public:
+  // NOLINTNEXTLINE(bugprone-exception-escape)
   JsonNlohmann() = default;
   JsonNlohmann(const JsonNlohmann&) = default;
   JsonNlohmann(JsonNlohmann&&) = default;
@@ -84,5 +83,6 @@ class JsonNlohmann
         Get(static_cast<const nlohmann::json&>(data), list, i));
   }
 };
+
 //static_assert(JsonParser<JsonNlohmann, nlohmann::json>);
 }  // namespace jessica

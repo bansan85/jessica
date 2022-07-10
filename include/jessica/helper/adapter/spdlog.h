@@ -9,9 +9,11 @@ namespace jessica
 class LoggerSpdlog
 {
   LoggerSpdlog() = delete;
+
   LoggerSpdlog(const std::shared_ptr<spdlog::logger>& spdlog) : logger_(spdlog)
   {
   }
+
   LoggerSpdlog(const LoggerSpdlog&) = default;
   LoggerSpdlog(LoggerSpdlog&&) = delete;
   LoggerSpdlog& operator=(const LoggerSpdlog&) = delete;
