@@ -13,11 +13,14 @@ jobs:
         include:
           - config: Debug
             config-angular: -dev
+            emcc_debug: '2'
           - config: Release
             config-angular: ''
+            emcc_debug: '0'
     env:
       VCPKG_DEFAULT_TRIPLET: 'wasm32-emscripten'
       VCPKG_INSTALLED_DIR: '${{ github.workspace }}/vcpkg/installed'
+      EMCC_DEBUG: ${{ matrix.emcc_debug }}
     steps:
       - name: Stop if format failed
         if: ${{ github.event.workflow_run.conclusion != 'success' }}
@@ -48,7 +51,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: localhost ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS }}
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install -yq sshpass
+        run: sudo apt-get install -yq sshpass
       - name: Install emscripten
         run: |
           git clone --depth=1 https://github.com/emscripten-core/emsdk.git

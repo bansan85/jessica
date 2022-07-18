@@ -189,8 +189,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         "${CMAKE_EXE_LINKER_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
   else(BUILD_COVERAGE)
     if(EMSCRIPTEN)
-      add_compile_options("$<$<CONFIG:RELEASE>:-O2>"
-                          "$<$<CONFIG:DEBUG>:-O0;-g>")
+      add_compile_options("$<$<CONFIG:RELEASE>:-O3;-g0>"
+                          "$<$<CONFIG:DEBUG>:-O0;-g3>" --no-entry)
     else()
       add_compile_options("$<$<CONFIG:RELEASE>:-O3>"
                           "$<$<CONFIG:DEBUG>:-O0;-g>")
