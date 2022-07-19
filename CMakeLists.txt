@@ -190,7 +190,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   else(BUILD_COVERAGE)
     if(EMSCRIPTEN)
       add_compile_options("$<$<CONFIG:RELEASE>:-O3;-g0>"
-                          "$<$<CONFIG:DEBUG>:-O0;-g3>" --no-entry)
+                          "$<$<CONFIG:DEBUG>:-O0;-g3>")
     else()
       add_compile_options("$<$<CONFIG:RELEASE>:-O3>"
                           "$<$<CONFIG:DEBUG>:-O0;-g>")
