@@ -37,7 +37,7 @@ jobs:
           key: ${{ secrets.GITHUBCI_PRIVATE_KEY }}
           known_hosts: github.com ssh-rsa ${{ secrets.GITHUBCI_KNOW_HOSTS_WINDOWS }}
       - name: Install Windows Vcpkg
-        uses: lukka/run-vcpkg@dev/issue144
+        uses: lukka/run-vcpkg@v10
         with:
           vcpkgJsonGlob: '**/config/windows/vcpkg.json'
           runVcpkgInstall: true
