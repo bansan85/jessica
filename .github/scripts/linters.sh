@@ -20,7 +20,7 @@ shellcheck -- **/*.sh || { retval=1 && echo "Failure shellcheck"; }
 
 safety check -r requirements-linter.txt || { retval=1 && echo "Failure safety"; }
 
-var=$(find . -name "*.py" ! -path "./vcpkg/*" ! -path "./src/angular/node_modules/*" ! -path "./venv/*")
+var=$(find . -name "*.py" ! -path "./vcpkg/*" ! -path "*/node_modules/*" ! -path "./venv/*")
 echo "Python files: ${var}"
 # shellcheck disable=SC2086
 pylint $var || { retval=1 && echo "Failure pylint"; }
