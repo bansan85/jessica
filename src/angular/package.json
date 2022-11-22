@@ -19,7 +19,7 @@
     "@angular/compiler": "~14.0.3",
     "@angular/compiler-cli": "~14.0.3",
     "@angular/core": "~14.0.3",
-    "@lhci/cli": "^0.9.0",
+    "@lhci/cli": "^0.10.0",
     "@types/globalize": "^1.5.2",
     "@types/jasmine": "~4.0.3",
     "@types/lodash-es": "^4.17.6",
