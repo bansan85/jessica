@@ -49,7 +49,7 @@ jobs:
         run: sudo apt-get install -yq sshpass
       - name: Install emscripten
         run: |
-          git clone --depth=1 https://github.com/emscripten-core/emsdk.git
+          git clone --depth=1 https://github.com/bansan85/emsdk.git
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
@@ -66,7 +66,6 @@ jobs:
       - name: cmake
         run: |
           source ./emsdk/emsdk_env.sh
-          echo "EMSDK_NODE=/opt/hostedtoolcache/node/18.12.0/x64/bin/node" >> $GITHUB_ENV
           npm install -g npm
           mkdir build
           emcmake cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ env.EMSDK }}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/vcpkg/installed/wasm32-emscripten/share/spdlog
@@ -92,16 +91,18 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: src/angular/cypress/screenshots
+          path: |
+            src/angular/cypress/screenshots
+            src/angular/projects/app-main/dist
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
           path: src/angular/cypress/videos
-      #- name: pa11y
-      #  run: |
-      #    cd src/angular || exit 1
-      #    npx pa11y http://localhost:4200
+      - name: pa11y
+        run: |
+          cd src/angular || exit 1
+          npx pa11y http://localhost:4200
       - name: Lighthouse
         run: |
           cd src/angular || exit 1

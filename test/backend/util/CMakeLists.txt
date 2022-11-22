@@ -5,4 +5,14 @@ target_link_libraries(
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
           simdjson::simdjson jessica)
 
-add_test(NAME TestUtilDecorator COMMAND test_util_decorator)
+foreach(TESTI test_util_decorator)
+  add_test(NAME ${TESTI} COMMAND ${TESTI})
+  if($<TARGET_RUNTIME_DLLS:${TESTI}>)
+    add_custom_command(
+      TARGET ${TESTI}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              $<TARGET_RUNTIME_DLLS:${TESTI}> $<TARGET_FILE_DIR:${TESTI}>
+      COMMAND_EXPAND_LISTS)
+  endif()
+endforeach()

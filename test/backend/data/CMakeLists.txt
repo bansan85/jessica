@@ -12,6 +12,14 @@ target_link_libraries(
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
           simdjson::simdjson spdlog::spdlog_header_only jessica)
 
-add_test(NAME TestGeotechnicalFoundationStrip
-         COMMAND test_geotechnical_foundation_strip)
-add_test(NAME TestLoadVerticalEccentric COMMAND test_load_vertical_eccentric)
+foreach(TESTI test_geotechnical_foundation_strip test_load_vertical_eccentric)
+  add_test(NAME ${TESTI} COMMAND ${TESTI})
+  if($<TARGET_RUNTIME_DLLS:${TESTI}>)
+    add_custom_command(
+      TARGET ${TESTI}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              $<TARGET_RUNTIME_DLLS:${TESTI}> $<TARGET_FILE_DIR:${TESTI}>
+      COMMAND_EXPAND_LISTS)
+  endif()
+endforeach()
