@@ -5,4 +5,14 @@ target_link_libraries(
   PRIVATE GTest::GTest GTest::Main nlohmann_json::nlohmann_json
           simdjson::simdjson spdlog::spdlog_header_only jessica)
 
-add_test(NAME TestCalcMeyerhof COMMAND test_calc_meyerhof)
+foreach(TESTI test_calc_meyerhof)
+  add_test(NAME ${TESTI} COMMAND ${TESTI})
+  if($<TARGET_RUNTIME_DLLS:${TESTI}>)
+    add_custom_command(
+      TARGET ${TESTI}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              $<TARGET_RUNTIME_DLLS:${TESTI}> $<TARGET_FILE_DIR:${TESTI}>
+      COMMAND_EXPAND_LISTS)
+  endif()
+endforeach()

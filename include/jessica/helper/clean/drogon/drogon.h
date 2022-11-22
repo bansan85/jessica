@@ -23,12 +23,15 @@
   #pragma clang diagnostic ignored "-Wctad-maybe-unsupported"
   #pragma clang diagnostic ignored "-Wsuggest-override"
   #pragma clang diagnostic ignored "-Wdeprecated-copy-with-dtor"
+  #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
+  #pragma clang diagnostic ignored "-Wimplicit-int-conversion"
 #endif
 
 #ifdef _MSC_VER
   #pragma warning(push)
   #pragma warning(disable : 4242)
   #pragma warning(disable : 4244)
+  #pragma warning(disable : 4265)
   #pragma warning(disable : 4365)
   #pragma warning(disable : 4435)
   #pragma warning(disable : 4866)

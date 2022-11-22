@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 project(Jessica VERSION 0.0.1)
 
@@ -89,7 +89,7 @@ if(NOT EMSCRIPTEN)
     FetchContent_Declare(
       drogon
       GIT_REPOSITORY https://github.com/drogonframework/drogon.git
-      GIT_TAG cf543716ce33fce395bac3e34fc8aa4c81353783)
+      GIT_TAG v1.8.2)
 
     FetchContent_MakeAvailable(drogon)
 
@@ -228,7 +228,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     /wd5039
     /wd5045
     /EHsc
-    /showIncludes)
+    /showIncludes
+    /Wv:18)
 else()
   message(WARNING "${CMAKE_CXX_COMPILER_ID} is unknown")
 endif()

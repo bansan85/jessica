@@ -43,7 +43,7 @@ jobs:
         run: xargs -a config/apt-get.txt sudo apt-get install -yq
       - name: Install gcc
         if: contains(matrix.cc, 'gcc')
-        run: sudo apt-get install -yq g++-12 gcc-12 libdatetime-perl libdatetime-format-w3cdtf-perl
+        run: sudo apt-get install -yq g++-12 gcc-12 libdatetime-perl libdatetime-format-w3cdtf-perl libcapture-tiny-perl
       - name: Install clang
         if: contains(matrix.cc, 'clang')
         run: sudo apt-get install -yq clang-14 llvm-14 tidy
