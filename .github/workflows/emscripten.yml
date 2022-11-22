@@ -36,14 +36,9 @@ jobs:
           ref: ${{ github.event.workflow_run.head_commit.id }}
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18.12.0'
           cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
-            src/angular/package-lock.json
-            src/angular/projects/toolbox/package-lock.json
-            src/angular/projects/jessica/package-lock.json
-            src/angular/projects/app-main/package-lock.json
+          cache-dependency-path: '**/package-lock.json'
       - name: Install SSH key
         if: ${{ github.event.workflow_run.head_branch == 'master' }}
         uses: shimataro/ssh-key-action@v2
@@ -71,6 +66,7 @@ jobs:
       - name: cmake
         run: |
           source ./emsdk/emsdk_env.sh
+          echo "EMSDK_NODE=/opt/hostedtoolcache/node/18.12.0/x64/bin/node" >> $GITHUB_ENV
           npm install -g npm
           mkdir build
           emcmake cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${{ env.EMSDK }}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DVCPKG_TARGET_TRIPLET=wasm32-emscripten -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/vcpkg/installed/wasm32-emscripten/share/spdlog
