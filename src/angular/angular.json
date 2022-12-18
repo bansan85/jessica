@@ -27,7 +27,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/toolbox/src/test.ts",
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/toolbox/tsconfig.spec.json",
             "karmaConfig": "projects/toolbox/karma.conf.js"
           }
@@ -58,7 +58,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/jessica/src/test.ts",
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/jessica/tsconfig.spec.json",
             "karmaConfig": "projects/jessica/karma.conf.js"
           }
@@ -82,7 +82,7 @@
             "outputPath": "projects/app-main/dist",
             "index": "projects/app-main/src/index.html",
             "main": "projects/app-main/src/main.ts",
-            "polyfills": "projects/app-main/src/polyfills.ts",
+            "polyfills": "zone.js",
             "tsConfig": "projects/app-main/tsconfig.app.json",
             "assets": [
               "projects/app-main/src/favicon.ico",
@@ -151,8 +151,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/app-main/src/test.ts",
-            "polyfills": "projects/app-main/src/polyfills.ts",
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/app-main/tsconfig.spec.json",
             "karmaConfig": "projects/app-main/karma.conf.js",
             "assets": [
@@ -166,5 +165,8 @@
       }
     }
   },
-  "defaultProject": "app-main"
+  "defaultProject": "app-main",
+  "cli": {
+    "analytics": "4153d04a-e76f-4106-aef5-5479d2538134"
+  }
 }

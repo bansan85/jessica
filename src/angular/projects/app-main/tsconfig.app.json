@@ -16,7 +16,7 @@
       "toolbox": ["./projects/toolbox/dist"]
     }
   },
-  "files": ["src/main.ts", "src/polyfills.ts"],
+  "files": ["src/main.ts"],
   "include": [
     "src/**/*.d.ts",
     "./projects/app-main/node_modules/@angular/common/locales/*.d.ts",

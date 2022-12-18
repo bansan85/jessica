@@ -18,7 +18,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent {
-  result!: MeyerhofResult;
+  result!: MeyerhofResult | undefined;
   form: FormGroup;
   private _lang?: string;
 
