@@ -34,7 +34,7 @@ add_custom_target(
     sed -i
     "s#[\\'\\\"]jessica-web.wasm[\\'\\\"]#\\'assets/jessica-web.wasm\\'#g"
     "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
-  COMMAND sed -i "s#var jessica#export var jessica#g"
+  COMMAND sed -i "s#^var jessica#export var jessica#g"
           "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.js"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/jessica-web.*"
           "${CMAKE_SOURCE_DIR}/src/angular/projects/jessica/src/assets/")
